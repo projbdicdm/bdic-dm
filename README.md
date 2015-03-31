@@ -1,15 +1,16 @@
-#Projeto BDIC3M
+# bdic-dm
+Reposit√≥rio oficial do Projeto BDIC-DM
 
-##Os diretÛrios s„o:
+##Os diret√≥rios s√£o:
 1. api
 armazena os fontes da API Rest em NodeJS
 2. schema
-armazena os scripts para criaÁ„o das bases de dados
+armazena os scripts para cria√ß√£o das bases de dados
 3. site
 armazena os fontes do portal web
 4. scripts
 armazena scripts de analise de fraude em R
 
 ##Arquitetura
-Utilizamos uma API Rest para comunicaÁ„o com as demais camadas
+Utilizamos uma API Rest para comunica√ß√£o com as demais camadas
 O portal web consome a API REST
