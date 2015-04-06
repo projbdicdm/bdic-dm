@@ -17,6 +17,12 @@ var moment = require('moment');
 //precisamos depois mudar a constante para uma gerada ao logar!
 var tokenFake = "ASKDJHQWOEY98172354123";
 
+//adicionando o driver cassandra
+var cassandra = require('cassandra-driver');
+var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDI'});
+var query_login = 'SELECT * FROM usuarios WHERE "login" = ? AND "password" = ? ';
+var query_update_token = 'UPDATE usuarios SET "usr_token" = ? WHERE "login" = ? AND "password" = ?;';
+var Uuid = require('cassandra-driver').types.Uuid;
 
 app.post('/api/user/login', jsonParser, function(req, res){
 	if(!req.body.hasOwnProperty('login') || 
@@ -26,12 +32,38 @@ app.post('/api/user/login', jsonParser, function(req, res){
 		return res.send('Error 400: use of login with bad data.');
 	} 
 	
-	if(req.body.login == 'usuario' && req.body.password == 'usuario'){
-		return res.json({token: tokenFake});
-	}else{
-		res.statusCode = 400;
-		return res.json({status: "auth error"});
-	}
+	client.execute(query_login, [req.body.login, req.body.password], function(err, result) {
+    if(err){
+       console.log("Erron no query_login" + err);
+    }else{
+	
+		if(result.rows.length == 1){
+			//o ususario ja tem token?
+			
+			if(result.rows[0].usr_token == null){
+				//o usuario logou a 1a vez e nao tem token
+				//cria o token, atualiza o usuario
+				var id = Uuid.random().toString();
+				id = "T" + id;
+				client.execute(query_update_token, [id, req.body.login, req.body.password], function(err, result) {
+					if(err){
+						console.log("Erro no query_update_token" + err);
+					}else{
+						res.json({token: id});
+					}
+				});
+				//retorna o bendito
+				
+			}else{
+				res.json({token: result.rows[0].usr_token});
+			}
+		}else{
+			res.statusCode = 400;
+			res.json({status: "falhou...."});
+		}
+    }
+	});
+
 });
 
 app.post('/api/user/register', jsonParser, function(req, res){
@@ -154,6 +186,8 @@ app.get('/api/transaction/query/:token/:dateStart/:dateEnd/:page', jsonParser, f
 	return res.json(retorno);
 	
 });
+
+
 
 
 app.listen(process.env.PORT || 8899, '0.0.0.0');
