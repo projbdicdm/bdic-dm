@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS "BDI"."CLIENT" (
 
 CREATE TABLE IF NOT EXISTS "BDI"."TRANSACTION" (
 	tra_id	uuid,
-	usr_login	text,
+	usr_token	text,
 	car_id 	int, 
 	loc_id 	int, 
 	tra_date	timestamp,
@@ -32,7 +32,5 @@ CREATE TABLE IF NOT EXISTS "BDI"."TRANSACTION" (
 	tra_lon	float,
 	tra_confirmationcode	text,
 	tra_status	text,
-	PRIMARY KEY (tra_id)
+	PRIMARY KEY (usr_token, tra_id)
 );
-
-CREATE INDEX IF NOT EXISTS idx_tra_usr_login ON "BDI"."TRANSACTION" (usr_login);
