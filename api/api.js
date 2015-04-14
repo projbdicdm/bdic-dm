@@ -20,9 +20,9 @@ var tokenFake = "ASKDJHQWOEY98172354123";
 //adicionando o driver cassandra
 var cassandra = require('cassandra-driver');
 var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDI'});
-var query_login = 'SELECT * FROM usuarios WHERE "login" = ? AND "password" = ? ';
-var query_login_by_token = 'SELECT * FROM usuarios WHERE "token" = ?';
-var query_update_token = 'UPDATE usuarios SET "usr_token" = ? WHERE "login" = ? AND "password" = ?;';
+var query_login = 'SELECT * FROM "USER" WHERE "usr_login" = ? ';
+var query_login_by_token = 'SELECT * FROM "USER" WHERE "usr_token" = ?';
+var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = ?';
 var Uuid = require('cassandra-driver').types.Uuid;
 
 app.post('/api/user/login', jsonParser, function(req, res){
@@ -30,36 +30,40 @@ app.post('/api/user/login', jsonParser, function(req, res){
 	   !req.body.hasOwnProperty('password')) {
     
 		res.statusCode = 400;
-		return res.send('Error 400: use of login with bad data.');
+		return res.json({status: 'Error 400: use of login with bad data.'});
 	} 
 	
-	client.execute(query_login, [req.body.login, req.body.password], function(err, result) {
-    if(err){
-       console.log("Erron no query_login" + err);
-    }else{
-	
-		if(result.rows.length == 1){
+	client.execute(query_login, [req.body.login], function(err, result) {
+		if(err){
+			res.statusCode = 500;
+			return res.json({status: "query_login Failed"});
+		}else{
+			if(result.rows.length == 1){
+				//precisamos verificar a senha 1o
+				if(result.rows[0].usr_password != req.body.password){
+					res.statusCode = 403;
+					return res.json({status: "Auth failed"});
+				} //senha OK, continua (menus um else...)
 			//o ususario ja tem token?
-			
 			if(result.rows[0].usr_token == null){
 				//o usuario logou a 1a vez e nao tem token
 				//cria o token, atualiza o usuario
 				var id = Uuid.random().toString();
-				id = "T" + id;
-				client.execute(query_update_token, [id, req.body.login, req.body.password], function(err, result) {
+				client.execute(query_update_token, [id, req.body.login], {prepare: true}, function(err, result) {
 					if(err){
-						console.log("Erro no query_update_token" + err);
+						res.statusCode = 500;
+						return res.json({status: "Erro no query_update_token" + err});
 					}else{
-						res.json({token: id});
+						return res.json({token: id});
 					}
 				});
-				//retorna o bendito
+				//retorna o token
 			}else{
-				res.json({token: result.rows[0].usr_token});
+				return res.json({token: result.rows[0].usr_token});
 			}
 		}else{
 			res.statusCode = 400;
-			res.json({status: "falhou...."});
+			return res.json({status: "Auth failed"});
 		}
     }
 	});
@@ -101,6 +105,38 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 		return res.send('Error 400: use of buy with bad data.');
 	}
 
+	
+		client.execute(query_login, [req.body.login, req.body.password], function(err, result) {
+    if(err){
+       console.log("Erron no query_login" + err);
+    }else{
+	
+		if(result.rows.length == 1){
+			//o ususario ja tem token?
+			
+			if(result.rows[0].usr_token == null){
+				//o usuario logou a 1a vez e nao tem token
+				//cria o token, atualiza o usuario
+				var id = Uuid.random().toString();
+				id = "T" + id;
+				client.execute(query_update_token, [id, req.body.login, req.body.password], function(err, result) {
+					if(err){
+						console.log("Erro no query_update_token" + err);
+					}else{
+						res.json({token: id});
+					}
+				});
+				//retorna o bendito
+			}else{
+				res.json({token: result.rows[0].usr_token});
+			}
+		}else{
+			res.statusCode = 400;
+			res.json({status: "falhou...."});
+		}
+    }
+	});
+	
 	if(res.body.token == tokenFake){
 		return res.json({status: "ok"});
 	}else{
