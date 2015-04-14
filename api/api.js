@@ -21,6 +21,7 @@ var tokenFake = "ASKDJHQWOEY98172354123";
 var cassandra = require('cassandra-driver');
 var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDI'});
 var query_login = 'SELECT * FROM usuarios WHERE "login" = ? AND "password" = ? ';
+var query_login_by_token = 'SELECT * FROM usuarios WHERE "token" = ?';
 var query_update_token = 'UPDATE usuarios SET "usr_token" = ? WHERE "login" = ? AND "password" = ?;';
 var Uuid = require('cassandra-driver').types.Uuid;
 
@@ -53,7 +54,6 @@ app.post('/api/user/login', jsonParser, function(req, res){
 					}
 				});
 				//retorna o bendito
-				
 			}else{
 				res.json({token: result.rows[0].usr_token});
 			}
