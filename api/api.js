@@ -6,6 +6,7 @@ var express = require('express');
 
 //criamos a instancia do App
 var app = express();
+app.listen(3000);
 
 //criamos instancia do servidor de email
 var email   = require("emailjs");
@@ -36,6 +37,23 @@ var query_add_buy = 'INSERT INTO "TRANSACTION" (tra_id, usr_token, car_id, loc_i
 var query_transaction = 'SELECT tra_confirmationcode FROM "TRANSACTION" where usr_token = ? AND tra_id = ?'; 
 var query_confirm_transaction = 'UPDATE "TRANSACTION" SET tra_status = ? WHERE usr_token = ? AND tra_id = ?'
 var Uuid = require('cassandra-driver').types.Uuid;
+
+//adicionando o driver Node-Hive
+var hive = require('node-hive').for({server:"192.168.56.101:9000", timeout:10000});
+
+
+app.get('/api/custntrans', jsonParser, function(req, res){
+var statusFlag;
+	hive.fetch("SELECT * FROM testAlecdsil", function(err, data) {
+  		if(data){
+			statusFlag='connected';
+			return res.json(statusFlag);
+  		}else{
+			statusFlag='Not connected';
+		}
+	});
+});	
+ 
 
 app.post('/api/user/login', jsonParser, function(req, res){
 	if(!req.body.hasOwnProperty('login') || 
