@@ -16,13 +16,13 @@
       <ul class="right hide-on-med-and-down">
         <li><a href="#">Cadastre-se</a></li>
 		<li><a href="#">Meus Pedidos</a></li>
-		<li><a href="#">Fazer Login</a></li>
+		<li><a href="#modal-login"class="modal-trigger">Fazer Login</a></li>
       </ul>
 
       <ul id="nav-mobile" class="side-nav">
         <li><a href="#">Cadastre-se</a></li>
 		<li><a href="#">Meus Pedidos</a></li>
-		<li><a href="#">Fazer Login</a></li>
+		<li><a href="#" data-target="modal-login" class="modal-trigger">Fazer Login</a></li>
       </ul>
       <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
     </div>
@@ -76,6 +76,40 @@
     <div class="section">
 
     </div>
+  </div>
+  
+  <!-- Login -->
+  <div id="modal-login" class="modal modal-fixed-footer">
+    <div class="container">
+      <br><br>
+      <h3 class="header center orange-text">
+	  <i class="medium mdi-action-lock-outline"></i>
+	  Faça o Login</h3>
+      <div class="row center">
+        <h6 class="header col s12 light">Informe seu email e senha para ter acesso a sua conta.</h6>
+      </div>
+    </div>  
+	<div class="row">
+		  <form class="col s12">
+			<div class="row">
+			  <div class="input-field col s12">
+				<input id="email" type="email" class="validate">
+				<label for="email">Email</label>
+			  </div>
+			</div>
+			<div class="row">
+			  <div class="input-field col s12">
+				<input id="password" type="password" class="validate">
+				<label for="password">Password</label>
+			  </div>
+			</div>
+			<div class="row">
+				<button class="btn waves-effect waves-light" type="button" name="action" onclick="usuario.index._submitLogin();">Entrar
+				<i class="mdi-content-send right"></i>
+				</button>
+			</div>
+		  </form>
+      </div>
   </div>
   
   <!-- Detalhe do produto -->
