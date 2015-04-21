@@ -93,18 +93,18 @@
 		  <form class="col s12">
 			<div class="row">
 			  <div class="input-field col s12">
-				<input id="email" type="email" class="validate">
+				<input id="email" type="email" class="validate" value="admin@email.com.br">
 				<label for="email">Email</label>
 			  </div>
 			</div>
 			<div class="row">
 			  <div class="input-field col s12">
-				<input id="password" type="password" class="validate">
+				<input id="password" type="password" class="validate" value="123456">
 				<label for="password">Password</label>
 			  </div>
 			</div>
 			<div class="row">
-				<button class="btn waves-effect waves-light" type="button" name="action" onclick="usuario.index._submitLogin();">Entrar
+				<button class="btn waves-effect waves-light" type="button" name="action" onclick="api_user_login($(this).closest('form'))">Entrar
 				<i class="mdi-content-send right"></i>
 				</button>
 			</div>
