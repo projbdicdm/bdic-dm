@@ -102,7 +102,8 @@ app.post('/api/user/register', jsonParser, function(req, res){
 });
 
 app.listen(process.env.PORT || 8899, '0.0.0.0');
-console.log("Running API mock and portal web in http://localhost:8999");
+console.log("Running API mock and portal web");
+console.log("Access http://localhost:8899");
 
 
 
