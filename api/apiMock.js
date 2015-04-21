@@ -32,6 +32,7 @@ var adminEmail = "admin@email.com.br";
 var adminPass = "123456";
 var clientEmail = "client@email.com.br";
 var clientPass = "123456";
+var tokenForResetPassword = "23530ddb-a566-485d-bc8f-237305b0bc3b";
 
 // redireciona acesso aos arquivos para a pasta 'site'
 app.use("/", express.static(__dirname + '/site'));
@@ -63,29 +64,44 @@ app.post('/api/user/login', jsonParser, function(req, res){
     return res.json({status: "Auth failed"});
 });
 
-app.put('/api/user/resetpassword', jsonParser, function(req, res){
+app.post('/api/user/resetpassword', jsonParser, function(req, res){
+    
+    var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
     
 	if(!req.body.hasOwnProperty('login')) {
-    
 		res.statusCode = 400;
 		return res.send('Error 400: use of resetpassword with bad data.');
 	}
     
-	
-	return res.json({status: "ok"});
+    // na versao final da api (integracao com o Cassandra), api deve procurar se o email existe na base
+    
+    // depois enviamos um email ao usuario com o token temporario para redefinicao de senha
+    var message = {
+        text:    "Redefine your password.\nClick in link bellow\n" + fullUrl + "/" + tokenForResetPassword, 
+        from:    "projbdic32@gmail.com",
+        to:      [req.body.login],
+        subject: "Reset your password"
+    };
+    server.send(message, function(err, message) { 
+        if(err){
+            return res.json({status: "error", error: err, message: message});
+        } else {
+            return res.json({status: "ok"});
+        }
+    });
 });
 
-app.get('/api/user/redefinepassword/{token}', jsonParser, function(req, res){
+app.get('/api/user/resetpassword/:token', jsonParser, function(req, res){
     
-	if(!req.body.hasOwnProperty('login')) {
-    
+	if(req.params.token !== tokenForResetPassword) {
 		res.statusCode = 400;
 		return res.send('Error 400: use of resetpassword with bad data.');
 	}
     
-    // Get token
-	
-	return res.json({status: "ok"});
+    // na versao final da api (integracao com o Cassandra), api deve procurar se o email existe na base
+    
+    // se o email for encontrado na base, direcionar o usuario para uma pagina para inserir a nova senha
+    res.redirect("/resetpassword.html");
 });
 
 app.post('/api/user/register', jsonParser, function(req, res){
