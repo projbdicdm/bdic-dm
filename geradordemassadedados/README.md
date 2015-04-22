@@ -11,6 +11,8 @@ Você informa:
 
 ##Build local
 
+O projeto foi criado usando Eclipse Luna e Gradlew
+
 Para trazer as dependencias (as outras bibliotecas) você entra no diretório do projeto e executa:
 
 gradlew.bat build
