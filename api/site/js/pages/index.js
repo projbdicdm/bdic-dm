@@ -42,7 +42,16 @@ index = function(){
 			dataType: 'json',
 			data: requestData
 		}).done(function(data, textStatus, jqXHR) {
-			$('#modal-user-resetpassword-success').openModal();
+            
+            console.log(data.status);
+            
+            if(data.status == "error"){
+                console.log(data.error);
+                console.log(data.message);
+                $('#modal-user-resetpassword-fail').openModal();
+            } else {
+                $('#modal-user-resetpassword-success').openModal();
+            }
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			$('#modal-user-resetpassword-fail').openModal();
 		});

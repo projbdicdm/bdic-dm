@@ -13,7 +13,8 @@ var server  = email.server.connect({
 	user:     "projbdic32@gmail.com", 
 	password: "projbdic322015", 
 	host:     "smtp.gmail.com",
-	ssl: true
+	ssl: true,
+    port : 465
 });
 
 //criamos instancia do body-parser, usado nos handlers
@@ -85,8 +86,11 @@ app.post('/api/user/resetpassword', jsonParser, function(req, res){
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     server.send(message, function(err, message) { 
         if(err){
+            console.log("Error on send email");
+            console.log(err);
             return res.json({status: "error", error: err, message: message});
         } else {
+            console.log("Email sended with success!");
             return res.json({status: "ok"});
         }
     });
