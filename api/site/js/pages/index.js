@@ -14,6 +14,7 @@ index = function(){
 	}
 	var _api_user_login = function (){
 		var requestData = JSON.stringify($('#formLogin').serializeObject());
+        var baseUrl = location.protocol + "//" + location.host;
 		
 		$.ajax({
 			url: '/api/user/login',
@@ -23,9 +24,9 @@ index = function(){
 			data: requestData
 		}).done(function(data, textStatus, jqXHR) {
 			if(data.userType == "admin")
-				location.href = "http://localhost:8899/indexadmin.html";
+                location.href = baseUrl + "/indexadmin.html";
 			else
-				location.href = "http://localhost:8899/indexclient.html";
+                location.href = baseUrl + "/indexclient.html";
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			$('#modal-user-login-fail').openModal();
 		});
