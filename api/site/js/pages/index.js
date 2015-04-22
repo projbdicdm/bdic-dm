@@ -16,13 +16,12 @@ function api_user_login(form){
         dataType: 'json',
         data: JSON.stringify(currentData)
     }).done(function(data, textStatus, jqXHR) {
-        console.log("Success: " + JSON.stringify(data));
-        alert("Success: " + JSON.stringify(data));
+        if(data.userType == "admin")
+            location.href = "http://localhost:8899/indexadmin.html";
+        else
+            location.href = "http://localhost:8899/indexclient.html";
     }).fail(function(jqXHR, textStatus, errorThrown) {
-        console.log("Error: " + errorThrown);
-        alert("Error: " + errorThrown);
-    }).always(function() {
-        console.log("Done!");
+        $('#modal-user-login-fail').openModal();
     });
 };
 
@@ -38,41 +37,14 @@ function api_user_resetpassword(form){
         dataType: 'json',
         data: JSON.stringify(currentData)
     }).done(function(data, textStatus, jqXHR) {
-        console.log("Success: " + JSON.stringify(data));
-        alert("Success: " + JSON.stringify(data));
+        $('#modal-user-resetpassword-success').openModal();
     }).fail(function(jqXHR, textStatus, errorThrown) {
-        console.log("Error: " + errorThrown);
-        alert("Error: " + errorThrown);
-    }).always(function() {
-        console.log("Done!");
+        $('#modal-user-resetpassword-fail').openModal();
     });
 };
 
 function api_user_changepassword(form){
-    
-    if(form.find("#password01").val() != form.find("#password02").val()) {
-        alert("Senha inválida!");
-        return;
-    }
-
-    currentData = new Object();
-    currentData.password = form.find("#email").val();
-
-    $.ajax({
-        url: '/api/user/resetpassword',
-        type: 'POST',
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        data: JSON.stringify(currentData)
-    }).done(function(data, textStatus, jqXHR) {
-        console.log("Success: " + JSON.stringify(data));
-        alert("Success: " + JSON.stringify(data));
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-        console.log("Error: " + errorThrown);
-        alert("Error: " + errorThrown);
-    }).always(function() {
-        console.log("Done!");
-    });
+    alert("Tela sem implementação");
 };
 
 

@@ -30,7 +30,7 @@ var Uuid = require('cassandra-driver').types.Uuid;
 // variaveis 'mock'
 var adminEmail = "admin@email.com.br";
 var adminPass = "123456";
-var clientEmail = "client@email.com.br";
+var clientEmail = "cliente@email.com.br";
 var clientPass = "123456";
 var tokenForResetPassword = "23530ddb-a566-485d-bc8f-237305b0bc3b";
 
@@ -77,11 +77,12 @@ app.post('/api/user/resetpassword', jsonParser, function(req, res){
     
     // depois enviamos um email ao usuario com o token temporario para redefinicao de senha
     var message = {
-        text:    "Redefine your password.\nClick in link bellow\n" + fullUrl + "/" + tokenForResetPassword, 
+        text:    "Recuperação de senha\n\nVocê solicitou alteração da sua senha.\nClique no link abaixo para redefini-la.\n" + fullUrl + "/" + tokenForResetPassword + "\n\nCaso não tenha solicitado essa alteração, ignore este email.", 
         from:    "projbdic32@gmail.com",
         to:      [req.body.login],
-        subject: "Reset your password"
+        subject: "BDIC-DM - Recuperação de Senha"
     };
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     server.send(message, function(err, message) { 
         if(err){
             return res.json({status: "error", error: err, message: message});
@@ -100,8 +101,8 @@ app.get('/api/user/resetpassword/:token', jsonParser, function(req, res){
     
     // na versao final da api (integracao com o Cassandra), api deve procurar se o email existe na base
     
-    // se o email for encontrado na base, direcionar o usuario para uma pagina para inserir a nova senha
-    res.redirect("/resetpassword.html");
+    // se token for encontrado na base, redireciona o usuario para a pagina de redefinicao de senha
+    res.redirect("/userresetpassword.html");
 });
 
 app.post('/api/user/register', jsonParser, function(req, res){

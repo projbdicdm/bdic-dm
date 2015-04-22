@@ -31,7 +31,7 @@
   <div class="container">
     <div class="section">
 
-      <!--   Esqueleto do eCommerce   -->
+    <!-- Esqueleto do eCommerce -->
 	<div class="row">
 	
 		<div class="col s12 m4 l3">
@@ -78,7 +78,10 @@
     </div>
   </div>
   
-  <!-- Login -->
+  <!-- =========================================== -->
+  <!-- LOGIN -->
+  
+  <!-- Realizar login -->
   <div id="modal-user-login" class="modal modal-fixed-footer">
     <div class="container">
       <br><br>
@@ -93,54 +96,114 @@
 		  <form class="col s12">
 			<div class="row">
 			  <div class="input-field col s12">
+                <i class="mdi-communication-email prefix"></i>
 				<input id="email" type="email" class="validate" value="admin@email.com.br">
 				<label for="email">Email</label>
 			  </div>
 			</div>
 			<div class="row">
 			  <div class="input-field col s12">
+                <i class="mdi-communication-vpn-key prefix"></i>
 				<input id="password" type="password" class="validate" value="123456">
 				<label for="password">Password</label>
 			  </div>
 			</div>
 			<div class="row">
-				<button class="btn waves-effect waves-light" type="button" name="action" onclick="api_user_login($(this).closest('form'))">Entrar
-				<i class="mdi-content-send right"></i>
-				</button>
-                <a href="#modal-user-resetpassword" class="modal-trigger">Esqueci minha senha</a>
+				<div class="col s3">
+					<button class="btn waves-effect waves-light" type="button" name="action" onclick="api_user_login($(this).closest('form'))">Entrar
+					<i class="mdi-content-send right"></i>
+					</button>
+				</div>
+				<div class="col s9">
+					<a href="#modal-user-resetpassword" class="modal-trigger">Esqueci minha senha</a>
+				</div>
 			</div>
 		  </form>
       </div>
   </div>
+  
+  <!-- Falha ao realizar login -->
+  <div id="modal-user-login-fail" class="modal modal-fixed-footer">
+    <div class="container">
+      <br><br>
+      <h3 class="header center orange-text">
+      <i class="medium mdi-action-lock-outline"></i>
+      Login</h3>
+      <div class="row center">
+        <h5 class="header col s12 light"></h5>
+        <div class="col s12">
+            Não foi possível realizar o login.</br>
+        </div>
+      </div>
+    </div>  
+  </div>
+  
+  <!-- =========================================== -->
+  <!-- SENHA -->
   
   <!-- Esqueci minha senha -->
   <div id="modal-user-resetpassword" class="modal modal-fixed-footer">
     <div class="container">
       <br><br>
       <h3 class="header center orange-text">
-	  <i class="medium mdi-action-lock-outline"></i>
-	  Esqueci minha Senha</h3>
+      <i class="medium mdi-action-lock-outline"></i>
+      Esqueci minha Senha</h3>
       <div class="row center">
-        <h6 class="header col s12 light">Informe seu email para receber as instruções de senha.</h6>
+        <h6 class="header col s12 light">Informe seu email para receber as instruções de alteração de senha.</h6>
       </div>
     </div>  
-	<div class="row">
-		  <form class="col s12">
-			<div class="row">
-			  <div class="input-field col s12">
-				<input id="email" type="email" class="validate" value="">
-				<label for="email">Email</label>
-			  </div>
-			</div>
-			<div class="row">
-				<button class="btn waves-effect waves-light" type="button" name="action" onclick="api_user_resetpassword($(this).closest('form'))">Entrar
-				<i class="mdi-content-send right"></i>
-				</button>
-			</div>
-		  </form>
+    <div class="row">
+          <form class="col s12">
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="email" type="email" class="validate" value="">
+                <label for="email">Email</label>
+              </div>
+            </div>
+            <div class="row">
+                <button class="btn waves-effect waves-light" type="button" name="action" onclick="api_user_resetpassword($(this).closest('form'))">Enviar
+                <i class="mdi-content-send right"></i>
+                </button>
+            </div>
+          </form>
       </div>
   </div>
   
+  <!-- Confirmacao de envio de email -->
+  <div id="modal-user-resetpassword-success" class="modal modal-fixed-footer">
+    <div class="container">
+      <br><br>
+      <h3 class="header center orange-text">
+      <i class="medium mdi-action-lock-outline"></i>
+      Email enviado com sucesso!</h3>
+      <div class="row center">
+        <h5 class="header col s12 light"></h5>
+        <div class="col s12">
+            Enviamos para o email informado as instruções para alteração de senha.</br>
+            Acesse seu email e verifique a caixa de entrada ou a pasta de lixo eletrônico.</br>
+        </div>
+      </div>
+    </div>  
+  </div>
+  
+  <!-- Falha ao enviar email -->
+  <div id="modal-user-resetpassword-fail" class="modal modal-fixed-footer">
+    <div class="container">
+      <br><br>
+      <h3 class="header center orange-text">
+      <i class="medium mdi-action-lock-outline"></i>
+      Ops, alguma coisa deu errado...</h3>
+      <div class="row center">
+        <h5 class="header col s12 light"></h5>
+        <div class="col s12">
+            Não foi possível enviarmos uma mensagem para o email informado.</br>
+            Tente novamente mais tarde ou entre em contato com o administrador do sistema.</br>
+        </div>
+      </div>
+    </div>  
+  </div>
+
+  <!-- =========================================== -->
   <!-- Detalhe do produto -->
   <div id="modal1" class="modal modal-fixed-footer">
     <div class="modal-content">
