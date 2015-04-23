@@ -44,17 +44,26 @@ index = function(){
 		});
 	}
 	var _valida_form = function (form){
+        
+        var isValid = true;
+        
 		$("#formLogin .validate" ).each(function( index ) {
 			if($(this).val() == ""){
 				Materialize.toast('Os campos devem estar preenchidos!', 4000);
+                isValid = false;
 				return false;
 			}
 			if($(this).attr('class').search("invalid") != -1 && $(this).attr('type') == "email"){
 				Materialize.toast('O email informado não é valido!', 4000);
+                isValid = false;
 				return false;
 			}
-			_api_user_login();
 		});
+        
+        if(isValid)
+            _api_user_login();
+        else
+            return false;
 	}	
 	var _api_user_resetpassword = function(form){
 
