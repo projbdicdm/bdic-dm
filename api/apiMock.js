@@ -13,8 +13,7 @@ var server  = email.server.connect({
 	user:     "projbdic32@gmail.com", 
 	password: "projbdic322015", 
 	host:     "smtp.gmail.com",
-	ssl: true,
-    port : 465
+	ssl: true
 });
 
 //criamos instancia do body-parser, usado nos handlers
