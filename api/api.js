@@ -29,7 +29,7 @@ var tokenFake = "ASKDJHQWOEY98172354123";
 //adicionando o driver cassandra
 var cassandra = require('cassandra-driver');
 var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDI'});
-var query_login = 'SELECT "usr_password" FROM "USER" WHERE "usr_login" = ? ';
+var query_login = 'SELECT "usr_password", "usr_token" FROM "USER" WHERE "usr_login" = ? ';
 var query_login_by_token = 'SELECT "usr_login" FROM "USER" WHERE "usr_token" = ?';
 var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = ?';
 var query_add_buy = 'INSERT INTO "TRANSACTION" (tra_id, usr_token, car_id, loc_id, tra_date, tra_value, tra_lat, tra_lon, tra_confirmationcode, tra_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
