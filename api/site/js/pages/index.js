@@ -1,3 +1,15 @@
+var _valida_form = function (form){
+	$(form+" .validate" ).each(function( index ) {
+		if($(this).val() == ""){
+			Materialize.toast('Os campos devem estar preenchidos!', 4000);
+			return false;
+		}
+		if($(this).attr('class').search("invalid") != -1 && $(this).attr('type') == "email"){
+			Materialize.toast('O email informado não é valido!', 4000);
+			return false;
+		}			
+	});
+}	
 index = function(){
 	var _init = function (){
 		//carrega conteudo do modal do login
@@ -13,6 +25,8 @@ index = function(){
 		$('.modal-trigger').leanModal();		
 	}
 	var _api_user_login = function (){
+		_valida_form('#formLogin');
+		
 		var requestData = JSON.stringify($('#formLogin').serializeObject());
         var baseUrl = location.protocol + "//" + location.host;
 		
