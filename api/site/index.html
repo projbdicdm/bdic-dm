@@ -14,15 +14,24 @@
     <div class="nav-wrapper container">
 	<a id="logo-container" href="#" class="brand-logo">BDIC-DM - eCommerce</a>
       <ul class="right hide-on-med-and-down">
-        <li><a href="#">Cadastre-se</a></li>
-		<li><a href="#">Meus Pedidos</a></li>
-		<li><a href="#modal-user-login"class="modal-trigger">Fazer Login</a></li>
+        <li class="lnkLogin"><a href="#">Cadastre-se</a></li>
+		<li class="lnkLogin"><a href="#modal-user-login"class="modal-trigger">Fazer Login</a></li>
+		<li class="liLogged"><a class="dropdown-button userName" href="#!" data-activates="dropdown1">Olá userName<i class="mdi-navigation-arrow-drop-down right"></i></a></li>
+			<ul id='dropdown1' class='dropdown-content'>
+			  <li><a href="#">Meus Pedidos</a></li>
+			  <li><a href="#!">Meus Dados</a></li>
+			  <li class="divider"></li>
+			  <li><a href="#!" onclick="logout();">Logout</a></li>
+			</ul>		
       </ul>
 
       <ul id="nav-mobile" class="side-nav">
-        <li><a href="#">Cadastre-se</a></li>
-		<li><a href="#">Meus Pedidos</a></li>
-		<li><a href="#modal-user-login"class="modal-trigger">Fazer Login</a></li>
+        <li class="lnkLogin"><a href="#">Cadastre-se</a></li>
+		<li class="lnkLogin"><a href="#modal-user-login"class="modal-trigger">Fazer Login</a></li>
+		<li class="liLogged"><a href="#!" class="userName">Olá userName</a></li>
+		<li class="liLogged"><a href="#">Meus Pedidos</a></li>
+		<li class="liLogged"><a href="#!">Meus Dados</a></li>
+		<li class="liLogged"><a href="#!" onclick="logout();">Logout</a></li>
       </ul>
       <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
     </div>
@@ -203,6 +212,7 @@
 
   <!--  Scripts-->
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="js/jquery.html5storage.min.js"></script>
   <script src="js/materialize.js"></script>
   <script src="js/util.js"></script>
   <script src="js/init.js"></script>

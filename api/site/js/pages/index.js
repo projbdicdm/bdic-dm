@@ -1,15 +1,3 @@
-var _valida_form = function (form){
-	$(form+" .validate" ).each(function( index ) {
-		if($(this).val() == ""){
-			Materialize.toast('Os campos devem estar preenchidos!', 4000);
-			return false;
-		}
-		if($(this).attr('class').search("invalid") != -1 && $(this).attr('type') == "email"){
-			Materialize.toast('O email informado não é valido!', 4000);
-			return false;
-		}			
-	});
-}	
 index = function(){
 	var _init = function (){
 		//carrega conteudo do modal do login
@@ -22,10 +10,18 @@ index = function(){
             }
         });
 		//identifica div como modal
-		$('.modal-trigger').leanModal();		
-	}
+		$('.modal-trigger').leanModal();
+
+		//valida se o usuário esta logado
+		$(".liLogged").hide();
+		if($.sessionStorage.getItem('userType') == "client"){
+			setNameUser();
+			$(".lnkLogin").hide();
+			$(".liLogged").show();
+			
+		}
+	}	
 	var _api_user_login = function (){
-		_valida_form('#formLogin');
 		
 		var requestData = JSON.stringify($('#formLogin').serializeObject());
         var baseUrl = location.protocol + "//" + location.host;
@@ -37,14 +33,29 @@ index = function(){
 			dataType: 'json',
 			data: requestData
 		}).done(function(data, textStatus, jqXHR) {
+			$.sessionStorage.setItem('userName', data.userName);
+			$.sessionStorage.setItem('userType', data.userType);
 			if(data.userType == "admin")
                 location.href = baseUrl + "/indexadmin.html";
 			else
-                location.href = baseUrl + "/indexclient.html";
+                location.href = baseUrl + "/index.html";
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			$('#modal-user-login-fail').openModal();
 		});
 	}
+	var _valida_form = function (form){
+		$("#formLogin .validate" ).each(function( index ) {
+			if($(this).val() == ""){
+				Materialize.toast('Os campos devem estar preenchidos!', 4000);
+				return false;
+			}
+			if($(this).attr('class').search("invalid") != -1 && $(this).attr('type') == "email"){
+				Materialize.toast('O email informado não é valido!', 4000);
+				return false;
+			}
+			_api_user_login();
+		});
+	}	
 	var _api_user_resetpassword = function(form){
 
 		var requestData = JSON.stringify($('#formResetPWS').serializeObject());
@@ -75,8 +86,8 @@ index = function(){
 	}
 	return {
 		init:_init,
-		api_user_login: _api_user_login,
 		api_user_resetpassword: _api_user_resetpassword,
-		api_user_changepassword: _api_user_changepassword
+		api_user_changepassword: _api_user_changepassword,
+		valida_form: _valida_form
 	}
 }();

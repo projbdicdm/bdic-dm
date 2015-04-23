@@ -14,3 +14,14 @@ $.fn.serializeObject = function()
     });
     return o;
 };
+function setNameUser(){
+	$(".userName").each(function( index ) {
+		 valElement = $(this).html();
+		 valElement = valElement.replace("userName", $.sessionStorage.getItem('userName'));
+		 $(this).html(valElement);
+	});
+}
+function logout(){
+	$.sessionStorage.clear();
+	window.location = "/";
+}

@@ -51,12 +51,12 @@ app.post('/api/user/login', jsonParser, function(req, res){
 
     // mock da autenticacao de administrador
     if([req.body.login] == adminEmail && adminPass == [req.body.password]){
-        return res.json({token: id, userType: "admin"});
+        return res.json({token: id, userType: "admin", userName: "Maria da Silva"});
     }
     
     // mock da autenticacao de cliente / comprador
     if([req.body.login] == clientEmail && clientPass == [req.body.password]){
-        return res.json({token: id, userType: "client"});
+        return res.json({token: id, userType: "client", userName: "João Santos"});
     }
     
     // mock do erro na autenticacao
