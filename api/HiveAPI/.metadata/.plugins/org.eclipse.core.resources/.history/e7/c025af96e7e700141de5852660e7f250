@@ -1,0 +1,13 @@
+package com.ita.bdicdm.DAO;
+import java.sql.*;
+
+public class HiveConnector {
+static String hiveClassName = "org.apache.hive.jdbc.HiveDriver";
+	public static void main(String[] args) {
+		// Loading connection
+		
+		Class.forName(hiveClassName);
+
+	}
+
+}

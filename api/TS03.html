@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function getIndexUS04() {
+    document.getElementById("ResultadoUS04").innerHTML =
+    document.getElementById("mySelect04").selectedIndex;
+}
+
+function postUs04(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+    path = "http://192.168.56.101:8899/api/hive2"
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("queryId", document.getElementById("mySelect04").selectedIndex);
+            form.appendChild(hiddenField);
+         }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function getIndexUS10() {
+    document.getElementById("ResultadoUS10").innerHTML =
+    document.getElementById("mySelect10").selectedIndex;
+}
+
+function postUs10(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+    path = "http://192.168.56.101:8899/api/hive"
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("queryId", document.getElementById("mySelect04").selectedIndex);
+            form.appendChild(hiddenField);
+         }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+</script>
+</head>
+<body>
+
+<form>
+Busca de informacoes de clientes ou transacoes:
+
+<br><br>
+
+<select id="mySelect04">
+<option>NOT SELECTED</option>	
+		
+<option>Classificar clientes que mais compraram em ordem decrescente</option>	
+	<option>Classificar, em ordem decrescente, os clientes por valor das transacoes.</option>												
+	<option>Selecionar todos os campos de Transacoes e nome do cliente</option>												
+	<option>Ordenar as transacoes em ordem decrescente por valor.</option>												
+	<option>Ordenar todos os clientes que realizaram compras por ordem alfabetica.</option>												
+	<option>Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor.</option>	
+	<option>Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc.</option>												
+	<option>Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor</option>												
+	<option>Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor</option>												
+	<option>Classificar clientes por quantidade de transacoes mensais no ultimo ano em ordem decrescente.</option>												
+	<option>Classificar a quantidade de transacoes por país no ultimo ano, agrupadas em meses.</option>											
+
+</select>
+<br><br>
+<input type="button" onclick="postUs04()" 
+value="Search">
+</form>
+
+<p id="ResultadoUS04"></p>
+
+<form>
+Busca de informacoes de Produtos ou Categorias:
+<br><br>
+<select id="mySelect10">
+<option>NOT SELECTED</option>	
+<option>Classificar Categorias</option>			
+<option>Classificar clientes que mais compraram em ordem decrescente</option>	
+	<option>Classificar, em ordem decrescente, os clientes por valor das transacoes.</option>												
+	<option>Selecionar todos os campos de Transacoes e nome do cliente</option>												
+	<option>Ordenar as transacoes em ordem decrescente por valor.</option>												
+	<option>Ordenar todos os clientes que realizaram compras por ordem alfabetica.</option>												
+	<option>Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor.</option>	
+	<option>Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc.</option>												
+	<option>Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor</option>												
+	<option>Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor</option>												
+	<option>Classificar clientes por quantidade de transacoes mensais no ultimo ano em ordem decrescente.</option>												
+	<option>Classificar a quantidade de transacoes por país no ultimo ano, agrupadas em meses.</option>											
+</select>
+<br><br>
+<input type="button" onclick="postUs10()" 
+value="Search">
+</form>
+<p id="ResultadoUS10"></p>
+
+</body>
+</html>
+

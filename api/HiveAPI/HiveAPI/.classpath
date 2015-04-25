@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/hive-jdbc-0.10.0.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/HiveJDBC41.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/hive_metastore.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/TCLIServiceClient.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/ql.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/hive_service.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/zookeeper-3.4.6.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/slf4j-log4j12-1.5.11.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/slf4j-api-1.5.11.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/libthrift-0.9.0.jar"/>
+	<classpathentry kind="lib" path="/home/usuario/app/HiveAPI/2.5.10.1012 GA/libfb303-0.9.0.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>
