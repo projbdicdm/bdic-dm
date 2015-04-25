@@ -1,0 +1,3 @@
+127.0.0.1 - - [21/Apr/2015:02:00:46 -0300] "GET / HTTP/1.1" 404 969
+127.0.0.1 - - [21/Apr/2015:02:31:32 -0300] "GET / HTTP/1.1" 404 969
+127.0.0.1 - - [21/Apr/2015:02:32:06 -0300] "GET /HiveAPI/WEB-INF/classes/com/ita/bdicdm/DAO/HiveConnector.java HTTP/1.1" 404 967

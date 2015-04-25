@@ -1,0 +1,5 @@
+package com.ita.bdicdm.DAO;
+
+public class HiveConnector {
+
+}

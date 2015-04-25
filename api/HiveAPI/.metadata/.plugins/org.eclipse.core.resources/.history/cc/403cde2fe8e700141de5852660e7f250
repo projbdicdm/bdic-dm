@@ -1,0 +1,27 @@
+package com.ita.bdicdm.DAO;
+import java.sql.*;
+
+public class HiveConnector {
+
+	public static void main(String[] args) {
+		String hiveClassName = "org.apache.hive.jdbc.HiveDriver";
+		
+		try {
+			// Loading connection
+			Class.forName(hiveClassName);
+			Connection hiveConnection = DriverManager.getConnection("jdbc:hive://localhost:9091", "hduser", "");
+			Statement data2Sql = hiveConnection.createStatement();
+			// regular hive query
+		    String sql = "select aleID from alecdsilTest";
+		    System.out.println("Running: " + sql);
+		    ResultSet res  = data2Sql.executeQuery(sql);
+		    while (res.next()) {
+		      System.out.println(res.getString(1));
+		    }
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+}

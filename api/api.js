@@ -7,6 +7,7 @@ var express = require('express');
 //criamos a instancia do App
 var app = express();
 
+
 //criamos instancia do servidor de email
 var email   = require("emailjs");
 var server  = email.server.connect({
@@ -36,6 +37,30 @@ var query_add_buy = 'INSERT INTO "TRANSACTION" (tra_id, usr_token, car_id, loc_i
 var query_transaction = 'SELECT tra_confirmationcode FROM "TRANSACTION" where usr_token = ? AND tra_id = ?'; 
 var query_confirm_transaction = 'UPDATE "TRANSACTION" SET tra_status = ? WHERE usr_token = ? AND tra_id = ?'
 var Uuid = require('cassandra-driver').types.Uuid;
+ 
+//adicionando o driver npm install thrift-hive
+var hive = require('thrift-hive');
+var clientHive = hive.createClient({
+				version: '0.7.1-cdh3u2',
+				server: '127.0.0.1',
+				port: 9000,
+				timeout: 1000
+			    });
+
+app.get('/api/custntrans', jsonParser, function(req, res){
+	clientHive.execute('SELECT aleId FROM testAlecdsil limit 1');
+	var id = clientHive.fetch();
+	    
+
+	var letra = 'a';		
+	return res.json({Value: letra});
+});
+
+app.get('/api/conexaotest', jsonParser, function(req, res){
+return res.json({status: 'Error 0000000: use of login with bad data.'});
+	
+});
+
 
 app.post('/api/user/login', jsonParser, function(req, res){
 	if(!req.body.hasOwnProperty('login') || 
