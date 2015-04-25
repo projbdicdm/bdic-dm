@@ -6,7 +6,7 @@ var express = require('express');
 
 //criamos a instancia do App
 var app = express();
-app.listen(3000);
+
 
 //criamos instancia do servidor de email
 var email   = require("emailjs");
@@ -52,6 +52,11 @@ var statusFlag;
 			statusFlag='Not connected';
 		}
 	});
+});	
+
+app.get('/api/conexaotest', jsonParser, function(req, res){
+return res.json({status: 'Error 0000000: use of login with bad data.'});
+	
 });	
  
 
