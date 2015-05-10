@@ -1,0 +1,38 @@
+    <div class="container">
+      <br><br>
+      <h3 class="header center orange-text">
+	  <i class="medium mdi-action-lock-outline"></i>
+	  Faça o Login</h3>
+      <div class="row center">
+        <h6 class="header col s12 light">Informe seu email e senha para ter acesso a sua conta.</h6>
+      </div>
+    </div>  
+	<div class="row">
+		  <form id="formLogin" class="col s12">
+			<div class="row">
+			  <div class="input-field col s12">
+                <i class="mdi-communication-email prefix"></i>
+				<input name="login" type="email" class="validate" value="">
+				<label for="email">Email (admin@email.com.br ou cliente@email.com.br)</label>
+			  </div>
+			</div>
+			<div class="row">
+			  <div class="input-field col s12">
+                <i class="mdi-communication-vpn-key prefix"></i>
+				<input name="password" type="password" class="validate" value="">
+				<label for="password">Password (123456)</label>
+			  </div>
+			</div>
+			<div class="row">
+				<div class="col s3">
+					<button class="btn waves-effect waves-light" type="button" name="action" onclick="index.valida_form();">Entrar
+					<i class="mdi-content-send right"></i>
+					</button>
+				</div>
+				<div class="col s9">
+					<a href="#modal-user-resetpassword" class="modal-trigger waves-effect waves-light" >Esqueci minha senha</a>
+				</div>
+			</div>
+		  </form>
+      </div>
+  
