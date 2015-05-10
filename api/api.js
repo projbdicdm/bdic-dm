@@ -37,75 +37,6 @@ var query_transaction = 'SELECT tra_confirmationcode FROM "TRANSACTION" where us
 var query_confirm_transaction = 'UPDATE "TRANSACTION" SET tra_status = ? WHERE usr_token = ? AND tra_id = ?'
 var Uuid = require('cassandra-driver').types.Uuid;
 
-app.post('/api/user/login', jsonParser, function(req, res){
-	if(!req.body.hasOwnProperty('login') || 
-	   !req.body.hasOwnProperty('password')) {
-    
-		res.statusCode = 400;
-		return res.json({status: 'Error 400: use of login with bad data.'});
-	} 
-	
-	client.execute(query_login, [req.body.login], function(err, result) {
-		if(err){
-			res.statusCode = 500;
-			return res.json({status: "query_login Failed"});
-		}else{
-			if(result.rows.length == 1){
-				//precisamos verificar a senha 1o
-				if(result.rows[0].usr_password != req.body.password){
-					res.statusCode = 403;
-					return res.json({status: "Auth failed"});
-				} //senha OK, continua (menus um else...)
-			//o ususario ja tem token?
-			if(result.rows[0].usr_token == null){
-				//o usuario logou a 1a vez e nao tem token
-				//cria o token, atualiza o usuario
-				var id = Uuid.random().toString();
-				client.execute(query_update_token, [id, req.body.login], {prepare: true}, function(err, result) {
-					if(err){
-						res.statusCode = 500;
-						return res.json({status: "Erro no query_update_token" + err});
-					}else{
-						return res.json({token: id});
-					}
-				});
-				//retorna o token
-			}else{
-				return res.json({token: result.rows[0].usr_token});
-			}
-		}else{
-			res.statusCode = 400;
-			return res.json({status: "Auth failed"});
-		}
-    }
-	});
-
-});
-
-app.post('/api/user/register', jsonParser, function(req, res){
-	if(!req.body.hasOwnProperty('name') || 
-	   !req.body.hasOwnProperty('login')|| 
-	   !req.body.hasOwnProperty('email')|| 
-	   !req.body.hasOwnProperty('password')) {
-    
-		res.statusCode = 400;
-		return res.send('Error 400: use of register with bad data.');
-	} 
-	
-	return res.json({status: "ok"});
-});
-
-
-app.put('/api/user/resetpassword', jsonParser, function(req, res){
-	if(!req.body.hasOwnProperty('login')) {
-    
-		res.statusCode = 400;
-		return res.send('Error 400: use of resetpassword with bad data.');
-	} 
-	
-	return res.json({status: "ok"});
-});
-
 app.post('/api/transaction/buy', jsonParser, function(req, res){
 	if(!req.body.hasOwnProperty('token')|| 
 	   !req.body.hasOwnProperty('creditcardNumber')|| 
@@ -299,8 +230,5 @@ app.get('/api/transaction/query/:token/:dateStart/:dateEnd/:page', jsonParser, f
 	return res.json(retorno);
 	
 });
-
-
-
 
 app.listen(process.env.PORT || 8899, '0.0.0.0');
