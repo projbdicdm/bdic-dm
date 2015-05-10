@@ -176,7 +176,7 @@ app.post('/api/user/register', jsonParser, function(req, res){
 	return res.json({status: "ok"});
 });
 
-app.listen(process.env.PORT || 8899, '0.0.0.0');
+app.listen(process.env.PORT || 8888, '0.0.0.0');
 console.log("Running API portal");
 console.log("Access http://localhost:8899");
 
