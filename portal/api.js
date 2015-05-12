@@ -49,13 +49,33 @@ app.use("/", express.static(__dirname + '/site'));
 
 app.get('/api/products', jsonParser, function(req, res){
 
-	//query que extrai os produtos da base
-	var query = 'SELECT * FROM tabela;';
-
 	//objeto de retorno
 	retorno = [];
 
 	try {
+		
+		retorno.push({
+			descricao: 'Produto 1',
+			valor: 100,
+			observacao: ''
+		});
+
+		retorno.push({
+			descricao: 'Produto 2',
+			valor: 50,
+			observacao: ''
+		});
+
+		//retorno (remover esta linha ao buscar diretamente da base)
+		res.json(retorno);
+
+		//conexão com a base MySQL
+		//descomentar o bloco abaixo para buscar direto do banco MySQL
+		/*
+
+		//query que extrai os produtos da base
+		var query = 'SELECT * FROM tabela;';
+
 		connection.query(query, function (error, rows, fields) {
 
 			if (error) {
@@ -85,6 +105,7 @@ app.get('/api/products', jsonParser, function(req, res){
 		connection.end(function(err){
 			connection.destroy( );  
 		});
+		*/
 	}
 	catch(e){
 		// erro na conexão ou query mysql
