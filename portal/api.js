@@ -47,10 +47,10 @@ var tokenForResetPassword = "23530ddb-a566-485d-bc8f-237305b0bc3b";
 // redireciona acesso aos arquivos para a pasta 'site'
 app.use("/", express.static(__dirname + '/site'));
 
-app.get('/api/produtos', jsonParser, function(req, res){
+app.get('/api/products', jsonParser, function(req, res){
 
 	//query que extrai os produtos da base
-	var query = 'SELECT * FROM test.auth_permission;';
+	var query = 'SELECT * FROM tabela;';
 
 	//objeto de retorno
 	retorno = [];
@@ -70,6 +70,7 @@ app.get('/api/produtos', jsonParser, function(req, res){
 						var item = rows[i];
 
 						//objeto que reflete a modelagem da base de dados
+						//TOTO: MODELAGEM
 						retorno.push({
 							name: item.name
 						});
