@@ -35,14 +35,19 @@ var moment = require('moment');
 
 var path = require('path');
 
-var Uuid = require('cassandra-driver').types.Uuid;
-
 // variaveis 'mock'
 var adminEmail = "admin@email.com.br";
 var adminPass = "123456";
 var clientEmail = "cliente@email.com.br";
 var clientPass = "123456";
 var tokenForResetPassword = "23530ddb-a566-485d-bc8f-237305b0bc3b";
+
+//adicionando o driver cassandra
+var cassandra = require('cassandra-driver');
+var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDI'});
+var query_login = 'SELECT "usr_password" FROM "USER" WHERE "usr_login" = ? ';
+var query_login_by_token = 'SELECT "usr_login" FROM "USER" WHERE "usr_token" = ?';
+var Uuid = require('cassandra-driver').types.Uuid;
 
 // redireciona acesso aos arquivos para a pasta 'site'
 app.use("/", express.static(__dirname + '/site'));
@@ -116,6 +121,8 @@ app.get('/api/products', jsonParser, function(req, res){
 
 app.post('/api/user/login', jsonParser, function(req, res){
 	
+	/*
+	// Usado na sprint 1
 	if(!req.body.hasOwnProperty('login') || 
 	   !req.body.hasOwnProperty('password')) {
 	
@@ -139,6 +146,50 @@ app.post('/api/user/login', jsonParser, function(req, res){
 	// mock do erro na autenticacao
 	res.statusCode = 400;
 	return res.json({status: "Auth failed"});
+	*/
+
+	if(!req.body.hasOwnProperty('login') || 
+	   !req.body.hasOwnProperty('password')) {
+    
+		res.statusCode = 400;
+		return res.json({status: 'Error 400: use of login with bad data.'});
+	} 
+	
+	client.execute(query_login, [req.body.login], function(err, result) {
+		if(err){
+			res.statusCode = 500;
+			return res.json({status: "query_login Failed"});
+		}else{
+			if(result.rows.length == 1){
+				//precisamos verificar a senha 1o
+				if(result.rows[0].usr_password != req.body.password){
+					res.statusCode = 403;
+					return res.json({status: "Auth failed"});
+				} //senha OK, continua (menus um else...)
+			//o ususario ja tem token?
+			if(result.rows[0].usr_token == null){
+				//o usuario logou a 1a vez e nao tem token
+				//cria o token, atualiza o usuario
+				var id = Uuid.random().toString();
+				client.execute(query_update_token, [id, req.body.login], {prepare: true}, function(err, result) {
+					if(err){
+						res.statusCode = 500;
+						return res.json({status: "Erro no query_update_token" + err});
+					}else{
+						return res.json({token: id});
+					}
+				});
+				//retorna o token
+			}else{
+				return res.json({token: result.rows[0].usr_token});
+			}
+		}else{
+			res.statusCode = 400;
+			return res.json({status: "Auth failed"});
+		}
+    }
+	});
+
 });
 
 app.post('/api/user/resetpassword', jsonParser, function(req, res){
