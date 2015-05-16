@@ -9,8 +9,6 @@ index = function(){
 				$("#modal-user-login").html(data);
             }
         });
-		//identifica div como modal
-		$('.modal-trigger').leanModal();
 
 		//valida se o usuário esta logado
 		$(".liLogged").hide();
@@ -20,7 +18,53 @@ index = function(){
 			$(".liLogged").show();
 			
 		}
-	}	
+		
+		//carrega produtos
+		 $.ajax({
+            type: 'GET',
+			dataType: "json",
+			async: false,
+            url: 'api/products',
+            success: function (data) {
+				var listaProdutos = "";
+				$.each(data, function(index, produtos) {
+					 $.each(produtos, function (i, item) {
+						var div  = "<div class='col s4 center'>";
+								div += "<div class='row'><img src='"+item.imagem+"' height='100px'/></div>";
+								div += "<div class='row'>"+ item.descricao.substring(0,80);
+									if (item.descricao.length > 80){
+										div +="...";
+									}
+								div += "</div>";
+								div += "<div class='row'>"+formatReal(item.valor)+"</div>";
+								div += "<div class='row'>"
+									div += "<button data-target='modal1' onclick='index.load_details_product(this.id);' id='"+item.id+"' class='btn modal-trigger'>[+] Detalhes</button>";
+								div += "</div>";
+							div += "</div>";
+						listaProdutos+=div;						
+					});
+				});
+						$("#listaProdutos").html(listaProdutos);
+			}
+        });
+		
+		//identifica div como modal
+		$('.modal-trigger').leanModal();
+	}
+	var _load_details_product = function(id){
+		$.ajax({
+            type: 'GET',
+			async: false,
+			dataType: "json",
+            url: 'api/products/details/'+id,
+            success: function (data) {
+				$("#modal1 #descricaoProduto").html(data.descricao);
+				$("#modal1 #imagemProduto").attr('src',data.imagem);
+				$("#modal1 #observacaoProduto").html(data.observacao);
+				$("#modal1 #precoProduto").html('R$ '+formatReal(data.valor));
+            }
+        });
+	}
 	var _api_user_login = function (){
 		
 		var requestData = JSON.stringify($('#formLogin').serializeObject());
@@ -97,6 +141,7 @@ index = function(){
 		init:_init,
 		api_user_resetpassword: _api_user_resetpassword,
 		api_user_changepassword: _api_user_changepassword,
-		valida_form: _valida_form
+		valida_form: _valida_form,
+		load_details_product: _load_details_product
 	}
 }();
