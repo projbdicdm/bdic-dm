@@ -38,13 +38,18 @@ index = function(){
 								div += "</div>";
 								div += "<div class='row'>"+formatReal(item.valor)+"</div>";
 								div += "<div class='row'>"
-									div += "<button data-target='modal1' onclick='index.load_details_product(this.id);' id='"+item.id+"' class='btn modal-trigger'>[+] Detalhes</button>";
+									div += "<button onclick='index.load_details_product(this.id);' id='"+item.id+"' class='btn'>[+] Detalhes</button>";
 								div += "</div>";
 							div += "</div>";
 						listaProdutos+=div;						
 					});
 				});
 						$("#listaProdutos").html(listaProdutos);
+			},
+			statusCode: {
+				400: function(error) {
+				  Materialize.toast(error.responseJSON.status, 4000);
+				}
 			}
         });
 		
@@ -62,7 +67,13 @@ index = function(){
 				$("#modal1 #imagemProduto").attr('src',data.imagem);
 				$("#modal1 #observacaoProduto").html(data.observacao);
 				$("#modal1 #precoProduto").html('R$ '+formatReal(data.valor));
-            }
+				$("#modal1").openModal();
+            },
+			statusCode: {
+				400: function(error) {
+				  Materialize.toast(error.responseJSON.status, 4000);
+				}
+			}
         });
 	}
 	var _api_user_login = function (){
