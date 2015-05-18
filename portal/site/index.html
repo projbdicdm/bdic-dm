@@ -31,7 +31,7 @@
 		<li class="liLogged"><a href="#!" class="userName">Olá userName</a></li>
 		<li class="liLogged"><a href="#">Meus Pedidos</a></li>
 		<li class="liLogged"><a href="#!">Meus Dados</a></li>
-		<li class="liLogged"><a href="#!" onclick="logout();">Logout</a></li>
+		<li class="liLogged"><a href="#!" onclick="util.logout();">Logout</a></li>
       </ul>
       <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
     </div>
@@ -159,13 +159,20 @@
 			<div id="observacaoProduto">
 				Este produto é de ótima qualidade ... </br>
 			</div>
-			<h5 id="precoProduto"></h5>
+			<div class="row">
+			  <div class="input-field col s8">
+                <i class="mdi-action-add-shopping-cart prefix"></i>
+				<input id="quantity" type="number" min="1" max="100" value="1">
+				<label for="Quantidade">Quantidade</label>
+			  </div>
+			</div>
+			<div class="row"><h5 id="precoProduto"></h5></div>
 		</div>
 	  </p>
     </div>
 	</div>
     <div class="modal-footer">
-	  <a href="#!" class="modal-action modal-close waves-effect waves-green btn">Comprar</a>
+	  <a href="#!" class="modal-action modal-close waves-effect waves-green btn" id="btnComprar">Comprar</a>
       <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ver outros produtos</a>
     </div>
   </div>

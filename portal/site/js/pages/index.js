@@ -13,7 +13,7 @@ index = function(){
 		//valida se o usuário esta logado
 		$(".liLogged").hide();
 		if($.sessionStorage.getItem('userType') == "client"){
-			setNameUser();
+			util.setNameUser();
 			$(".lnkLogin").hide();
 			$(".liLogged").show();
 			
@@ -36,9 +36,9 @@ index = function(){
 										div +="...";
 									}
 								div += "</div>";
-								div += "<div class='row'>"+formatReal(item.valor)+"</div>";
+								div += "<div class='row'>"+util.formatReal(item.valor)+"</div>";
 								div += "<div class='row'>"
-									div += "<button onclick='index.load_details_product(this.id);' id='"+item.id+"' class='btn'>[+] Detalhes</button>";
+									div += "<button onclick='util.load_details_product(this.id);' id='"+item.id+"' class='btn'>[+] Detalhes</button>";
 								div += "</div>";
 							div += "</div>";
 						listaProdutos+=div;						
@@ -55,26 +55,6 @@ index = function(){
 		
 		//identifica div como modal
 		$('.modal-trigger').leanModal();
-	}
-	var _load_details_product = function(id){
-		$.ajax({
-            type: 'GET',
-			async: false,
-			dataType: "json",
-            url: 'api/products/details/'+id,
-            success: function (data) {
-				$("#modal1 #descricaoProduto").html(data.descricao);
-				$("#modal1 #imagemProduto").attr('src',data.imagem);
-				$("#modal1 #observacaoProduto").html(data.observacao);
-				$("#modal1 #precoProduto").html('R$ '+formatReal(data.valor));
-				$("#modal1").openModal();
-            },
-			statusCode: {
-				400: function(error) {
-				  Materialize.toast(error.responseJSON.status, 4000);
-				}
-			}
-        });
 	}
 	var _api_user_login = function (){
 		
@@ -152,7 +132,6 @@ index = function(){
 		init:_init,
 		api_user_resetpassword: _api_user_resetpassword,
 		api_user_changepassword: _api_user_changepassword,
-		valida_form: _valida_form,
-		load_details_product: _load_details_product
+		valida_form: _valida_form
 	}
 }();

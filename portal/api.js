@@ -120,7 +120,7 @@ app.get('/api/products', jsonParser, function(req, res){
 				"observacao":"A Samsung, provando mais uma vez que inovação não tem limites, apresenta o novo Galaxy Tab S. Uma experiência visual rica em cores e detalhes que vão além do digital, tornando imagens e filmes muito mais realistas. Uma imersão completa em 10,5 em polegadas."
 			},
 			{
-				"id":4,
+				"id":3,
 				"imagem":"http://isuba.s8.com.br/produtos/01/03/item/122107/4/122107498G1.jpg",
 				"descricao": "Monitor LED 27' Samsung S27D590CS Tela Curva", 
 				"valor": 1779.00, 
@@ -311,9 +311,3 @@ app.post('/api/user/register', jsonParser, function(req, res){
 app.listen(process.env.PORT || 8888, '0.0.0.0');
 console.log("Running API portal");
 console.log("Access http://localhost:8888");
-
-
-
-
-
-
