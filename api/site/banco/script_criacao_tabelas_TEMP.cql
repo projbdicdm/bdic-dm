@@ -1,6 +1,10 @@
 --ESTE SCRIPT CRIA USUARIOS PARA TESTES NO PORTAL
 --Este arquivo é temporário e será enviado ao time 5 para se integrar na versão definitiva
---Abra o DataStax DevCenter e cole este script
+--
+--Siga o tutorial de instalação do Cassandra para o Windows:
+--https://docs.google.com/document/d/1eu_DxAqp1-oXQGyBL9CWrrGuwJLbqljMCwsJ8gDNts0/edit?usp=drive_web
+--
+--Depois abra o DataStax DevCenter e cole este script
 
 ------------------------------
 --BANCO DE USUARIOS - DROP E CRIACAO
