@@ -95,7 +95,7 @@ CREATE TABLE fone
 -- Criação da tabela "Cartão"
 CREATE TABLE cartao
 (
-	car_id				INT			PRIMARY KEY,
+	car_id				INT			AUTO_INCREMENT	PRIMARY KEY,
 	car_band			CHAR(35)	NOT NULL,
 	car_num				CHAR(16)	NOT NULL,
 	car_valid_mes		CHAR(02)	NOT NULL,
@@ -132,7 +132,9 @@ CREATE TABLE histpreco
 	his_id		INT			PRIMARY KEY,
 	his_pro_cod	INT,
 	his_dt		DATETIME,
-	his_vl		DEC(9,2)
+	his_vl		DEC(9,2),
+	CONSTRAINT FK_his_pro_cod FOREIGN KEY (his_pro_cod)
+		REFERENCES produto (pro_id)
 );
 
 -- Criação da tabela "Status"
