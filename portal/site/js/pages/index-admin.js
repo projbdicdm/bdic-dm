@@ -1,7 +1,13 @@
 index = function(){
 	var _init = function (){
-		//carrega nome usuário
-		setNameUser();
+		//valida se o usuário esta logado
+		$(".liLogged").hide();
+		if($.sessionStorage.getItem('userType') == "admin"){
+			util.setNameUser();
+			$(".lnkLogin").hide();
+			$(".liLogged").show();
+			
+		}
 	}
 	return {
 		init:_init
