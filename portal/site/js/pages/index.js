@@ -1,5 +1,9 @@
 index = function(){
 	var _init = function (){
+		//carrega cabeçalho
+		util.loadHeader();
+		//carrega rodape
+		util.loadFooter();
 		//carrega conteudo do modal do login
 		 $.ajax({
             type: 'GET',
@@ -10,7 +14,7 @@ index = function(){
             }
         });
 
-		//valida se o usuário esta logado
+		//valida o tipo do usuário que logado
 		$(".liLogged").hide();
 		if($.sessionStorage.getItem('userType') == "client"){
 			util.setNameUser();

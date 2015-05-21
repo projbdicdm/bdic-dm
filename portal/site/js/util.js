@@ -65,8 +65,10 @@ util = function(){
         });
 	}
 	var _addProductCart = function(id){
-	//$.sessionStorage.clear();
-		Materialize.toast('Item adicionado no carrinho!', 4000);
+		if(!sessionStorage.getItem('userName')){
+			Materialize.toast('Faça o login para comprar produtos!', 4000);
+			return false;
+		}
 		cartNow = $.sessionStorage.getItem('cartProducts');
 		if(cartNow == null){		
 			var cart = [
@@ -80,16 +82,68 @@ util = function(){
 			];
 		$.sessionStorage.setItem('cartProducts', JSON.stringify(cart));
 		}else{
+			console.log(cartNow+' <<ANTIGO');
+			var newCart = [];
+			var isNewProduct = false;
 			$.each(JSON.parse(cartNow), function(index, item) {
-					console.log(item.id);
+				if(item.id ==id){
+					newCart.push({"id":id,
+								  "imagem":item.imagem,
+								  "descricao":item.descricao,
+								  "quantidade":$("#modal1 #quantity").val(),
+								  "valor":item.valor
+								});
+					isNewProduct = true;
+				}else{
+					newCart.push({"id":item.id,
+								  "imagem":item.imagem,
+								  "descricao":item.descricao,
+								  "quantidade":item.quantidade,
+								  "valor":item.valor
+								});				
+				}
 			});
+			if(!isNewProduct){
+					newCart.push({"id":id,
+								  "imagem": $("#modal1 #imagemProduto").attr('src'),
+								  "descricao":$("#modal1 #descricaoProduto").html(),
+								  "quantidade":$("#modal1 #quantity").val(),
+								  "valor": $("#modal1 #precoProduto").html().replace('R$ ','')
+								});
+			}
+					console.log(JSON.stringify(newCart)+' << NOVO');
 		}
+		Materialize.toast('Item adicionado no carrinho!', 4000);
 	}
+	var _loadHeader = function (){
+		$.ajax({
+			type:'GET',
+			dataType: 'html',
+			async:false,
+			url:'header.html',
+			success: function(data){
+				$(".headerPage").html(data);
+			}
+		});
+	}
+	var _loadFooter = function (){
+		$.ajax({
+			type:'GET',
+			dataType: 'html',
+			async:false,
+			url:'footer.html',
+			success: function(data){
+				$(".page-footer").html(data);
+			}
+		});
+	}	
 	return {
 		setNameUser: _setNameUser,
 		logout: _logout,
 		formatReal: _formatReal,
 		load_details_product: _load_details_product,
-		addProductCart: _addProductCart
+		addProductCart: _addProductCart,
+		loadHeader: _loadHeader,
+		loadFooter: _loadFooter
 	}
 }();

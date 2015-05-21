@@ -60,7 +60,7 @@ app.get('/api/products/details/:id', jsonParser, function(req, res){
 		if (req.params.id == "1"){
 			retorno = {
 					"id":1,
-					"imagem":"http://isuba.s8.com.br/produtos/01/00/item/121460/2/121460290G1.jpg",
+					"imagem":"img/121460290G1.jpg",
 					"descricao": "Ultrabook ASUS S46CB Intel Core i7 6GB 1TB (2GB Memória Dedicada) 24GB SSD Tela LED 14", 
 					"valor": 2599.00, 
 					"observacao":"O Ultrabook S46CB é ultrafino, leve e ainda conta com DVD-RW para oferecer grande experiência multimídia com jogos, filmes e outros conteúdos. Tem uma poderosa configuração para oferecer excelente desempenho tanto em produtividade quanto em momentos de diversão."
@@ -69,7 +69,7 @@ app.get('/api/products/details/:id', jsonParser, function(req, res){
 		if (req.params.id == "2"){
 			retorno = {
 					"id":2,
-					"imagem":"http://isuba.s8.com.br/produtos/01/00/item/120000/5/120000574G1.jpg",
+					"imagem":"img/120000574G1.jpg",
 					"descricao": "Tablet Samsung Galaxy Tab S T805M 16GB Wi-fi + 4G Tela Super AMOLED 10.5' Android 4.4 Processador Octa-Core", 
 					"valor": 1889.20, 
 					"observacao":"A Samsung, provando mais uma vez que inovação não tem limites, apresenta o novo Galaxy Tab S. Uma experiência visual rica em cores e detalhes que vão além do digital, tornando imagens e filmes muito mais realistas. Uma imersão completa em 10,5 em polegadas."
@@ -78,7 +78,7 @@ app.get('/api/products/details/:id', jsonParser, function(req, res){
 		if (req.params.id == "3"){
 			retorno = {
 					"id":3,
-					"imagem":"http://isuba.s8.com.br/produtos/01/03/item/122107/4/122107498G1.jpg",
+					"imagem":"img/122107498G1.jpg",
 					"descricao": "Monitor LED 27' Samsung S27D590CS Tela Curva", 
 					"valor": 1779.00, 
 					"observacao":"Leve sua experiência de entretenimento a um patamar totalmente novo!O raio e a profundidade da curva do Monitor LED 27'' Samsung S27D590CS criam um campo de visão mais amplo e fazem a tela parecer maior e mais envolvente do que uma tela plana do mesmo tamanho. E como as bordas da tela estão fisicamente mais perto, correspondendo às curvas naturais de seus olhos, você tem a distância visual uniforme em toda a tela."
@@ -107,21 +107,21 @@ app.get('/api/products', jsonParser, function(req, res){
 		retorno = {"list":[
 			{
 				"id":1,
-				"imagem":"http://isuba.s8.com.br/produtos/01/00/item/121460/2/121460290G1.jpg",
+				"imagem":"img/121460290G1.jpg",
 				"descricao": "Ultrabook ASUS S46CB Intel Core i7 6GB 1TB (2GB Memória Dedicada) 24GB SSD Tela LED 14", 
 				"valor": 2599.00, 
 				"observacao":"O Ultrabook S46CB é ultrafino, leve e ainda conta com DVD-RW para oferecer grande experiência multimídia com jogos, filmes e outros conteúdos. Tem uma poderosa configuração para oferecer excelente desempenho tanto em produtividade quanto em momentos de diversão."
 			},
 			{
 				"id":2,
-				"imagem":"http://isuba.s8.com.br/produtos/01/00/item/120000/5/120000574G1.jpg",
+				"imagem":"img/120000574G1.jpg",
 				"descricao": "Tablet Samsung Galaxy Tab S T805M 16GB Wi-fi + 4G Tela Super AMOLED 10.5' Android 4.4 Processador Octa-Core", 
 				"valor": 1889.20, 
 				"observacao":"A Samsung, provando mais uma vez que inovação não tem limites, apresenta o novo Galaxy Tab S. Uma experiência visual rica em cores e detalhes que vão além do digital, tornando imagens e filmes muito mais realistas. Uma imersão completa em 10,5 em polegadas."
 			},
 			{
 				"id":3,
-				"imagem":"http://isuba.s8.com.br/produtos/01/03/item/122107/4/122107498G1.jpg",
+				"imagem":"img/122107498G1.jpg",
 				"descricao": "Monitor LED 27' Samsung S27D590CS Tela Curva", 
 				"valor": 1779.00, 
 				"observacao":"Leve sua experiência de entretenimento a um patamar totalmente novo!O raio e a profundidade da curva do Monitor LED 27'' Samsung S27D590CS criam um campo de visão mais amplo e fazem a tela parecer maior e mais envolvente do que uma tela plana do mesmo tamanho. E como as bordas da tela estão fisicamente mais perto, correspondendo às curvas naturais de seus olhos, você tem a distância visual uniforme em toda a tela."
