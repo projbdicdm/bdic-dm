@@ -28,6 +28,9 @@ INSERT INTO user ( usr_login, usr_name, usr_pwd, usr_type )
 VALUES ( 'admin@email.com.br', 'Usuário Administrador', '123456', 'admin' );
 
 INSERT INTO user ( usr_login, usr_name, usr_pwd, usr_type )
+VALUES ( 'adtf@email.com.br', 'Usuário AdTF', '123456', 'adtf' );
+
+INSERT INTO user ( usr_login, usr_name, usr_pwd, usr_type )
 VALUES ('cliente@email.com.br', 'Usuário Cliente', '123456', 'client' );
 
 ------------------------------

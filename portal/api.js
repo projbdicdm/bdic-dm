@@ -44,6 +44,7 @@ var tokenForResetPassword = "23530ddb-a566-485d-bc8f-237305b0bc3b";
 
 //adicionando o driver cassandra
 var cassandra = require('cassandra-driver');
+//var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDI'});
 var client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: 'BDICDM'});
 var query_login = 'SELECT * FROM "user" WHERE "usr_login" = ? ';
 var query_login_by_token = 'SELECT "usr_login" FROM "user" WHERE "usr_token" = ?';
