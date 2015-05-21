@@ -1,5 +1,10 @@
 index = function(){
 	var _init = function (){
+	
+		//retirar essas duas linhas
+		$.sessionStorage.setItem('userName', 'Danilo Felipe');
+		$.sessionStorage.setItem('userType', 'client');
+		
 		//carrega cabeçalho
 		util.loadHeader();
 		//carrega rodape
@@ -59,6 +64,8 @@ index = function(){
 		
 		//identifica div como modal
 		$('.modal-trigger').leanModal();
+		//habilitar submenu qdo usuário está logado como cliente
+		$(".dropdown-button").dropdown();
 	}
 	var _api_user_login = function (){
 		

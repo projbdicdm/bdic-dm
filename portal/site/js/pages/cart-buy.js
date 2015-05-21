@@ -21,6 +21,35 @@ cart_buy = function(){
 		
 		//identifica div como modal
 		$('.modal-trigger').leanModal();
+		
+		//preenche os produtos na tabela
+		cart = $.sessionStorage.getItem('cartProducts');
+		if(!cart){
+			tr = $('<tr/>');
+			tr.append("<td colspan='5' class='center'>O carrinho está vazinho!</td>");
+			$('table').append(tr);
+			return false;
+		}
+		var total = 0;
+		$.each(JSON.parse(cart), function(index, item) {
+			tr = $('<tr/>');
+			tr.append("<td><img height='100px' src='"+item.imagem+"'/></td>");
+			tr.append("<td>" + item.descricao + "</td>");
+			tr.append("<td><input type='number' class='center' min='1' max='100' value='"+item.quantidade+"'></td>");
+			tr.append("<td class='right2'>" + item.valor + "</td>");
+			valorCalc = item.valor;
+			valorCalc = valorCalc.replace(".","");
+			valorCalc = valorCalc.replace(",",".");
+			subTotal = parseFloat(valorCalc)*parseFloat(item.quantidade);
+			total+=subTotal;
+			tr.append("<td class='right2'>" + util.formatReal(subTotal) + "</td>");
+			$('table tbody').append(tr);
+		});
+			tr = $('<tr/>');
+			tr.append("<td colspan='4' class='right2'><b>Total</b></td>");
+			tr.append("<td class='right2'>" + util.formatReal(total) + "</td>");
+			$('table').append(tr);		
+		
 	}
 	return {
 		init:_init

@@ -82,7 +82,6 @@ util = function(){
 			];
 		$.sessionStorage.setItem('cartProducts', JSON.stringify(cart));
 		}else{
-			console.log(cartNow+' <<ANTIGO');
 			var newCart = [];
 			var isNewProduct = false;
 			$.each(JSON.parse(cartNow), function(index, item) {
@@ -111,7 +110,7 @@ util = function(){
 								  "valor": $("#modal1 #precoProduto").html().replace('R$ ','')
 								});
 			}
-					console.log(JSON.stringify(newCart)+' << NOVO');
+			$.sessionStorage.setItem('cartProducts', JSON.stringify(newCart));
 		}
 		Materialize.toast('Item adicionado no carrinho!', 4000);
 	}
