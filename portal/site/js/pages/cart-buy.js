@@ -28,6 +28,7 @@ cart_buy = function(){
 			tr = $('<tr/>');
 			tr.append("<td colspan='5' class='center'>O carrinho está vazinho!</td>");
 			$('table').append(tr);
+			$('.pagamentofinalizacao').hide();
 			return false;
 		}
 		var total = 0;
@@ -35,7 +36,8 @@ cart_buy = function(){
 			tr = $('<tr/>');
 			tr.append("<td><img height='100px' src='"+item.imagem+"'/></td>");
 			tr.append("<td>" + item.descricao + "</td>");
-			tr.append("<td><input type='number' class='center' min='1' max='100' value='"+item.quantidade+"'></td>");
+			tr.append("<td class='center'>" + item.quantidade + "</td>");
+			//tr.append("<td><input type='number' class='center' min='1' max='100' value='"+item.quantidade+"'></td>");
 			tr.append("<td class='right2'>" + item.valor + "</td>");
 			valorCalc = item.valor;
 			valorCalc = valorCalc.replace(".","");
@@ -48,8 +50,8 @@ cart_buy = function(){
 			tr = $('<tr/>');
 			tr.append("<td colspan='4' class='right2'><b>Total</b></td>");
 			tr.append("<td class='right2'>" + util.formatReal(total) + "</td>");
-			$('table').append(tr);		
-		
+			$('table').append(tr);
+			$('.pagamentofinalizacao').show();
 	}
 	return {
 		init:_init
