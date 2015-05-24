@@ -85,7 +85,7 @@ CREATE TABLE cliente
 -- Criação da tabela "Telefone"
 CREATE TABLE fone
 (
-	fon_id			TINYINT		PRIMARY KEY,
+	fon_id			INT		PRIMARY KEY,
 	fon_cli_cod		INT,
 	fon_num			CHAR(12),
 	CONSTRAINT FK_fone_cli_cod FOREIGN KEY (fon_cli_cod)
