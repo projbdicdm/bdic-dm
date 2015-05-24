@@ -1,6 +1,6 @@
-CREATE KEYSPACE IF NOT EXISTS "BDI" WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}  AND durable_writes = true;
+CREATE KEYSPACE IF NOT EXISTS "BDICDM" WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}  AND durable_writes = true;
 
-CREATE TABLE IF NOT EXISTS "BDI"."USER" (
+CREATE TABLE IF NOT EXISTS "BDICDM"."USER" (
     usr_login text PRIMARY KEY,
     usr_password text,
     usr_token text
@@ -18,9 +18,9 @@ CREATE TABLE IF NOT EXISTS "BDI"."USER" (
     AND read_repair_chance = 0.0
     AND speculative_retry = '99.0PERCENTILE';
 
-CREATE INDEX IF NOT EXISTS idx_usr_token ON "BDI"."USER" (usr_token);
+CREATE INDEX IF NOT EXISTS idx_usr_token ON "BDICDM"."USER" (usr_token);
 
-CREATE TABLE IF NOT EXISTS "BDI"."CLIENT" (
+CREATE TABLE IF NOT EXISTS "BDICDM"."CLIENT" (
     usr_login text PRIMARY KEY,
     cli_annualincome decimal,
     cli_birthdate timestamp,
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS "BDI"."CLIENT" (
     AND read_repair_chance = 0.0
     AND speculative_retry = '99.0PERCENTILE';
 
-CREATE TABLE IF NOT EXISTS "BDI"."TRANSACTION" (
+CREATE TABLE IF NOT EXISTS "BDICDM"."TRANSACTION" (
     usr_token text,
     tra_id uuid,
     car_id int,
