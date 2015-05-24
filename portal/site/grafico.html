@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>e-Commerce</title>
+
+  <!-- CSS  -->
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  
+  <script type="text/javascript">
+      google.load('visualization', '1.0', {'packages':['corechart']});
+      google.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+          var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Dias da Semana');
+            data.addColumn('number', 'Produto 1');
+            data.addColumn('number', 'Produto 2');
+            data.addColumn('number', 'Produto 3');
+            data.addColumn('number', 'Produto 4');
+            data.addColumn('number', 'Meta de Vendas');
+            data.addRows([
+             ['Segunda-feira', 100, 85, 99, 66, 65],
+             ['Terça-feira', 100, 78, 55, 72, 62],
+             ['Quarta-feira', 100, 79, 85, 45, 88],
+             ['Quinta-feira', 100, 69, 85, 42, 77],
+             ['Sexta-feira', 100, 97, 93, 84, 74],
+			 ['Sábado', 100, 77, 93, 94, 84],
+			 ['Domingo', 100, 87, 85, 42, 74]
+          ]);
+     
+          var options = {
+            'legend': 'right',
+            'title' : 'Venda de Produtos',
+            'is3D'  : true,
+            'width' : 900,
+            'height': 500,
+            seriesType: "bars",
+            series: {4: {type: "line"}}
+          };
+             
+          var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+          chart.draw(data, options);
+      }
+	</script>
+</head>
+
+<body>
+	<nav class="light-blue lighten-1" role="navigation">
+    <div class="nav-wrapper container">
+		<a id="logo-container" href="" class="brand-logo">e-Commerce</a>
+		<ul class="right hide-on-med-and-down">
+			<li class="liLogged">
+			<a class="dropdown-button userName" href="" data-activates="dropdown1">Olá, userName
+			<i class="mdi-navigation-arrow-drop-down right"></i></a></li>
+			<ul id='dropdown1' class='dropdown-content'>
+				<li><a href="index.html">Meus Dados</a></li>
+				<li class="divider"></li>
+				<li><a href="index.html" onclick="util.logout();">Logout</a></li>
+			</ul>		
+		</ul>
+
+		<ul id="nav-mobile" class="side-nav">
+			<li><a href="index.html" class="userName">Olá, userName</a></li>
+			<li><a href="index.html">Meus Dados</a></li>
+			<li><a href="index.html" onclick="util.logout();">Logout</a></li>
+		</ul>
+		<a href="" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+    </div>
+	</nav>
+	
+	<!-- Visualização do gráfico gerado -->
+	<div id="chart_div" style="width:900px; height:500px;"></div>
+	
+	<footer class="page-footer orange">
+		<div class="container">
+			<div class="row">
+				<div class="col l6 s12">
+					<h5 class="white-text">Projeto BDIC-DM</h5>
+					<p class="grey-text text-lighten-4">Projeto Interdisciplinar BDIC-DM (Projeto de Sistema de Banco de Dados envolvendo Big Data, Internet das Coisas e Dispositivos Móveis), anteriormente denominado de BDI-C3² 2015.</p>
+				</div>
+			</div>
+		</div>
+		<div class="footer-copyright">
+			<div class="container">
+				Made by <a class="orange-text text-lighten-3" href="https://sites.google.com/site/projetobdic32/">Site Oficial do Projeto BDIC-DM ITA</a>
+			</div>
+		</div>
+	</footer>
+
+	<!--  Scripts-->
+	<script src="js/jquery-2.1.1.min.js"></script>
+	<script src="js/jquery.html5storage.min.js"></script>
+	<script src="js/materialize.js"></script>
+	<script src="js/util.js"></script>
+	<script src="js/init.js"></script>
+	<script src="js/pages/index-admin.js"></script>
+	<script>
+		$(document).ready(function(){
+		index.init();
+		});
+	</script>
+</body>
+</html>			
