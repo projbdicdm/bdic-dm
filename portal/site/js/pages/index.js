@@ -77,6 +77,7 @@
 			data: requestData
 		}).done(function(data, textStatus, jqXHR) {
 			$.sessionStorage.setItem('userName', data.userName);
+            $.sessionStorage.setItem('userType', data.userType);
 
 			if(data.userType == "adtf")
 				location.href = baseUrl + "/grafico.html";
