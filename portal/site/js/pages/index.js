@@ -1,9 +1,6 @@
-index = function(){
+﻿index = function(){
 	var _init = function (){
 	
-		//retirar essas duas linhas
-		$.sessionStorage.setItem('userName', 'Danilo Felipe');
-		$.sessionStorage.setItem('userType', 'client');
 		
 		//carrega cabeçalho
 		util.loadHeader();
@@ -80,7 +77,10 @@ index = function(){
 			data: requestData
 		}).done(function(data, textStatus, jqXHR) {
 			$.sessionStorage.setItem('userName', data.userName);
-			$.sessionStorage.setItem('userType', data.userType);
+
+			if(data.userType == "adtf")
+				location.href = baseUrl + "/grafico.html";
+			else
 			if(data.userType == "admin")
                 location.href = baseUrl + "/indexadmin.html";
 			else
