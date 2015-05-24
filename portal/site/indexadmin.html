@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-  <title>BDI-DM - eCommerce</title>
+  <title>eCommerce</title>
 
   <!-- CSS  -->
   <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
@@ -12,22 +12,20 @@
 <body>
   <nav class="light-blue lighten-1" role="navigation">
     <div class="nav-wrapper container">
-	<a id="logo-container" href="#" class="brand-logo">BDIC-DM - eCommerce</a>
+	<a id="logo-container" href="#" class="brand-logo">eCommerce</a>
       <ul class="right hide-on-med-and-down">
-		<li><a href="#">Pesquisar Pedidos</a></li>
-		<li><a class="dropdown-button userName" href="#!" data-activates="dropdown1">Olá userName<i class="mdi-navigation-arrow-drop-down right"></i></a></li>
+		<li class="liLogged"><a class="dropdown-button userName" href="#!" data-activates="dropdown1">Olá userName<i class="mdi-navigation-arrow-drop-down right"></i></a></li>
 			<ul id='dropdown1' class='dropdown-content'>
 			  <li><a href="#!">Meus Dados</a></li>
 			  <li class="divider"></li>
-			  <li><a href="#!" onclick="logout();">Logout</a></li>
-			</ul>
+			  <li><a href="#!" onclick="util.logout();">Logout</a></li>
+			</ul>		
       </ul>
-	  
+
       <ul id="nav-mobile" class="side-nav">
 		<li><a href="#!" class="userName">Olá userName</a></li>
-		<li><a href="#">Pesquisar Pedidos</a></li>
 		<li><a href="#">Meus Dados</a></li>
-		<li><a href="#!" onclick="logout();">Logout</a></li>
+		<li><a href="#!" onclick="util.logout();">Logout</a></li>
       </ul>
       <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
     </div>
@@ -85,7 +83,6 @@
   $(document).ready(function(){
     index.init();
   });
-  </script>  
-
+  </script>
   </body>
 </html>
