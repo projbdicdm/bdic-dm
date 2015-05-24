@@ -40,11 +40,12 @@ var tokenForResetPassword = "23530ddb-a566-485d-bc8f-237305b0bc3b";
 
 //adicionando o driver cassandra
 var cassandra = require('cassandra-driver');
-var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDICDM'});
-//var client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: 'BDICDM'});
-var query_login = 'SELECT * FROM "user" WHERE "usr_login" = ? ';
-var query_login_by_token = 'SELECT "usr_login" FROM "user" WHERE "usr_token" = ?';
-var query_update_token = 'UPDATE "user" SET "usr_token" = ? WHERE "usr_login" = ?';
+//var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDICDM'}); // Cassandra rodando na VM ITA
+//var client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: 'BDICDM'}); // Cassandra Instalado no Windows
+var client = new cassandra.Client({ contactPoints: ['orion2412.startdedicated.net'], keyspace: 'BDICDM'}); //Cassandra no servidor do André Lamas
+var query_login = 'SELECT * FROM "USER" WHERE "usr_login" = ? ';
+var query_login_by_token = 'SELECT "usr_login" FROM "USER" WHERE "usr_token" = ?';
+var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = ?';
 var Uuid = require('cassandra-driver').types.Uuid;
 
 // redireciona acesso aos arquivos para a pasta 'site'
@@ -194,7 +195,7 @@ app.post('/api/user/login', jsonParser, function(req, res){
         }else{
             if(result.rows.length == 1){
                 //precisamos verificar a senha 1o
-                if(result.rows[0].usr_pwd != req.body.password){
+                if(result.rows[0].usr_password != req.body.password){
                     res.statusCode = 403;
                     return res.json({status: "Auth failed"});
                 } //senha OK, continua (menus um else...)
@@ -281,6 +282,6 @@ app.post('/api/user/register', jsonParser, function(req, res){
 	return res.json({status: "ok"});
 });
 
-app.listen(process.env.PORT || 8889, '0.0.0.0');
+app.listen(process.env.PORT || 8898, '0.0.0.0');
 console.log("Running API portal");
-console.log("Access http://localhost:8889");
+console.log("Access http://localhost:8898");
