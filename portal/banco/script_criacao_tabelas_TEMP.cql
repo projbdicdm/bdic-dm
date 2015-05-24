@@ -11,12 +11,12 @@
 
 USE "BDICDM";
 
-DROP TABLE user;
+DROP TABLE "USER";
 
-CREATE TABLE user (
+CREATE TABLE "USER" (
 usr_login text,
 usr_name text,
-usr_pwd text,
+usr_password text,
 usr_token text,
 usr_type text,
 PRIMARY KEY(usr_login));
@@ -24,19 +24,19 @@ PRIMARY KEY(usr_login));
 ------------------------------
 --CRIACAO DOS BANCOS CASSANDRA
 
-INSERT INTO user ( usr_login, usr_name, usr_pwd, usr_type )
+INSERT INTO "USER" ( usr_login, usr_name, usr_password, usr_type )
 VALUES ( 'admin@email.com.br', 'Usuário Administrador', '123456', 'admin' );
 
-INSERT INTO user ( usr_login, usr_name, usr_pwd, usr_type )
+INSERT INTO "USER" ( usr_login, usr_name, usr_password, usr_type )
 VALUES ( 'adtf@email.com.br', 'Usuário AdTF', '123456', 'adtf' );
 
-INSERT INTO user ( usr_login, usr_name, usr_pwd, usr_type )
+INSERT INTO "USER" ( usr_login, usr_name, usr_password, usr_type )
 VALUES ('cliente@email.com.br', 'Usuário Cliente', '123456', 'client' );
 
 ------------------------------
 --SELECIONAR USUARIOS
-SELECT * FROM "user";
+SELECT * FROM "USER";
 
 ------------------------------
 --QUERY DE LOGIN
---SELECT "usr_pwd" FROM "user" WHERE "usr_login" = 'admin';
+--SELECT "usr_password" FROM "USER" WHERE "usr_login" = 'admin';
