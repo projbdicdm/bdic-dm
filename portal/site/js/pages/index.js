@@ -1,5 +1,14 @@
 index = function(){
 	var _init = function (){
+	
+		//retirar essas duas linhas
+		$.sessionStorage.setItem('userName', 'Danilo Felipe');
+		$.sessionStorage.setItem('userType', 'client');
+		
+		//carrega cabeçalho
+		util.loadHeader();
+		//carrega rodape
+		util.loadFooter();
 		//carrega conteudo do modal do login
 		 $.ajax({
             type: 'GET',
@@ -9,18 +18,55 @@ index = function(){
 				$("#modal-user-login").html(data);
             }
         });
-		//identifica div como modal
-		$('.modal-trigger').leanModal();
 
-		//valida se o usuário esta logado
+		//valida o tipo do usuário que logado
 		$(".liLogged").hide();
 		if($.sessionStorage.getItem('userType') == "client"){
-			setNameUser();
+			util.setNameUser();
 			$(".lnkLogin").hide();
 			$(".liLogged").show();
 			
 		}
-	}	
+		
+		//carrega produtos
+		 $.ajax({
+            type: 'GET',
+			dataType: "json",
+			async: false,
+            url: 'api/products',
+            success: function (data) {
+				var listaProdutos = "";
+				$.each(data, function(index, produtos) {
+					 $.each(produtos, function (i, item) {
+						var div  = "<div class='col s4 center'>";
+								div += "<div class='row'><img src='"+item.imagem+"' height='100px'/></div>";
+								div += "<div class='row'>"+ item.descricao.substring(0,80);
+									if (item.descricao.length > 80){
+										div +="...";
+									}
+								div += "</div>";
+								div += "<div class='row'>"+util.formatReal(item.valor)+"</div>";
+								div += "<div class='row'>"
+									div += "<button onclick='util.load_details_product(this.id);' id='"+item.id+"' class='btn'>[+] Detalhes</button>";
+								div += "</div>";
+							div += "</div>";
+						listaProdutos+=div;						
+					});
+				});
+						$("#listaProdutos").html(listaProdutos);
+			},
+			statusCode: {
+				400: function(error) {
+				  Materialize.toast(error.responseJSON.status, 4000);
+				}
+			}
+        });
+		
+		//identifica div como modal
+		$('.modal-trigger').leanModal();
+		//habilitar submenu qdo usuário está logado como cliente
+		$(".dropdown-button").dropdown();
+	}
 	var _api_user_login = function (){
 		
 		var requestData = JSON.stringify($('#formLogin').serializeObject());
