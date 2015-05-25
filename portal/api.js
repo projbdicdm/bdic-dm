@@ -11,10 +11,10 @@ var app = express();
 var mysql = require("mysql");
 
 var connection = mysql.createConnection({
-	host: "127.0.0.1",
+	host: "orion2412.startdedicated.net",
 	user: "root",
-	password: "",
-	database: "test"
+	password: "12root34",
+	database: "BDICDM"
 });
 
 //criamos instancia do servidor de email
@@ -43,16 +43,28 @@ var cassandra = require('cassandra-driver');
 //var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDICDM'}); // Cassandra rodando na VM ITA
 //var client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: 'BDICDM'}); // Cassandra Instalado no Windows
 var client = new cassandra.Client({ contactPoints: ['orion2412.startdedicated.net'], keyspace: 'BDICDM'}); //Cassandra no servidor do André Lamas
+
+// querys cassandra
 var query_login = 'SELECT * FROM "USER" WHERE "usr_login" = ? ';
 var query_login_by_token = 'SELECT "usr_login" FROM "USER" WHERE "usr_token" = ?';
 var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = ?';
 var Uuid = require('cassandra-driver').types.Uuid;
 
+// querys mysql
+var query_lista_produtos = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM BDICDM.produto;';
+var query_detalhes_produto_by_id = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM BDICDM.produto WHERE pro_id = ?';
+
 // redireciona acesso aos arquivos para a pasta 'site'
 app.use("/", express.static(__dirname + '/site'));
 
 app.get('/api/products/details/:id', jsonParser, function(req, res){
-	try {		
+    
+    //objeto de retorno
+	retorno = [];
+    
+	try {
+        //MOCK
+        /*
 		var retorno = '';
 		//colocar aqui a conexao com o banco
 		//SELECT * FROM PRODUCT WHERE ID=req.params.id
@@ -88,6 +100,18 @@ app.get('/api/products/details/:id', jsonParser, function(req, res){
 			retorno = {status: "Not Found Detail Product"};
 		}
 		res.json(retorno);
+        */
+        
+        //MySQL
+		connection.query(query_detalhes_produto_by_id, [req.params.id], function (error, rows, fields) {
+			if (error) {
+				console.log('Erro:' + error);
+			}
+			else if (rows != null) {
+                retorno = rows[0];
+			}
+			res.json(retorno);
+		});
 	}
 	catch(e){
 		// erro na conexão ou query mysql
@@ -102,7 +126,10 @@ app.get('/api/products', jsonParser, function(req, res){
 	retorno = [];
 
 	try {
+
+        // MOCK
 		//retorno (remover esta linha ao buscar diretamente da base)
+        /*
 		retorno = {"list":[
 			{
 				"id":1,
@@ -131,44 +158,29 @@ app.get('/api/products', jsonParser, function(req, res){
 		};
 
 		res.json(retorno);
+        */
 
-		//conexão com a base MySQL
-		//descomentar o bloco abaixo para buscar direto do banco MySQL
-		/*
-
-		//query que extrai os produtos da base
-		var query = 'SELECT * FROM tabela;';
-
-		connection.query(query, function (error, rows, fields) {
+        // MySQL
+		connection.query(query_lista_produtos, function (error, rows, fields) {
 
 			if (error) {
 				console.log('Erro:' + error);
 			}
 			else if (rows != null) {
-
-				if (rows.length > 0){
-
-					//loop no objeto retornado com os regitros que foram encontrados
-					for (var i = 0; i < rows.length; i++) {
-						var item = rows[i];
-
-						//objeto que reflete a modelagem da base de dados
-						//TOTO: MODELAGEM
-						retorno.push({
-							name: item.name
-						});
-					}
-				}
+                retorno = {"list":rows,
+                    "totalPages": 1,
+                    "currentPage": 1
+                };
 			}
 
-			//retorno
 			res.json(retorno);
 		});
 
+        /*
 		connection.end(function(err){
 			connection.destroy( );  
 		});
-		*/
+        */
 	}
 	catch(e){
 		// erro na conexão ou query mysql
