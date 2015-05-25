@@ -44,13 +44,60 @@ var tokenForResetPassword = "23530ddb-a566-485d-bc8f-237305b0bc3b";
 
 //adicionando o driver cassandra
 var cassandra = require('cassandra-driver');
-var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDI'});
-var query_login = 'SELECT "usr_password" FROM "USER" WHERE "usr_login" = ? ';
-var query_login_by_token = 'SELECT "usr_login" FROM "USER" WHERE "usr_token" = ?';
+//var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDI'});
+var client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: 'BDICDM'});
+var query_login = 'SELECT * FROM "user" WHERE "usr_login" = ? ';
+var query_login_by_token = 'SELECT "usr_login" FROM "user" WHERE "usr_token" = ?';
+var query_update_token = 'UPDATE "user" SET "usr_token" = ? WHERE "usr_login" = ?';
 var Uuid = require('cassandra-driver').types.Uuid;
 
 // redireciona acesso aos arquivos para a pasta 'site'
 app.use("/", express.static(__dirname + '/site'));
+
+app.get('/api/products/details/:id', jsonParser, function(req, res){
+	try {		
+		var retorno = '';
+		//colocar aqui a conexao com o banco
+		//SELECT * FROM PRODUCT WHERE ID=req.params.id
+		if (req.params.id == "1"){
+			retorno = {
+					"id":1,
+					"imagem":"img/121460290G1.jpg",
+					"descricao": "Ultrabook ASUS S46CB Intel Core i7 6GB 1TB (2GB Memória Dedicada) 24GB SSD Tela LED 14", 
+					"valor": 2599.00, 
+					"observacao":"O Ultrabook S46CB é ultrafino, leve e ainda conta com DVD-RW para oferecer grande experiência multimídia com jogos, filmes e outros conteúdos. Tem uma poderosa configuração para oferecer excelente desempenho tanto em produtividade quanto em momentos de diversão."
+				};
+		}
+		if (req.params.id == "2"){
+			retorno = {
+					"id":2,
+					"imagem":"img/120000574G1.jpg",
+					"descricao": "Tablet Samsung Galaxy Tab S T805M 16GB Wi-fi + 4G Tela Super AMOLED 10.5' Android 4.4 Processador Octa-Core", 
+					"valor": 1889.20, 
+					"observacao":"A Samsung, provando mais uma vez que inovação não tem limites, apresenta o novo Galaxy Tab S. Uma experiência visual rica em cores e detalhes que vão além do digital, tornando imagens e filmes muito mais realistas. Uma imersão completa em 10,5 em polegadas."
+				};
+		}
+		if (req.params.id == "3"){
+			retorno = {
+					"id":3,
+					"imagem":"img/122107498G1.jpg",
+					"descricao": "Monitor LED 27' Samsung S27D590CS Tela Curva", 
+					"valor": 1779.00, 
+					"observacao":"Leve sua experiência de entretenimento a um patamar totalmente novo!O raio e a profundidade da curva do Monitor LED 27'' Samsung S27D590CS criam um campo de visão mais amplo e fazem a tela parecer maior e mais envolvente do que uma tela plana do mesmo tamanho. E como as bordas da tela estão fisicamente mais perto, correspondendo às curvas naturais de seus olhos, você tem a distância visual uniforme em toda a tela."
+				};
+		}		
+		if(retorno == ''){
+			res.statusCode = 400;
+			retorno = {status: "Not Found Detail Product"};
+		}
+		res.json(retorno);
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+});
 
 app.get('/api/products', jsonParser, function(req, res){
 
@@ -58,20 +105,34 @@ app.get('/api/products', jsonParser, function(req, res){
 	retorno = [];
 
 	try {
-		
-		retorno.push({
-			descricao: 'Produto 1',
-			valor: 100,
-			observacao: ''
-		});
-
-		retorno.push({
-			descricao: 'Produto 2',
-			valor: 50,
-			observacao: ''
-		});
-
 		//retorno (remover esta linha ao buscar diretamente da base)
+		retorno = {"list":[
+			{
+				"id":1,
+				"imagem":"img/121460290G1.jpg",
+				"descricao": "Ultrabook ASUS S46CB Intel Core i7 6GB 1TB (2GB Memória Dedicada) 24GB SSD Tela LED 14", 
+				"valor": 2599.00, 
+				"observacao":"O Ultrabook S46CB é ultrafino, leve e ainda conta com DVD-RW para oferecer grande experiência multimídia com jogos, filmes e outros conteúdos. Tem uma poderosa configuração para oferecer excelente desempenho tanto em produtividade quanto em momentos de diversão."
+			},
+			{
+				"id":2,
+				"imagem":"img/120000574G1.jpg",
+				"descricao": "Tablet Samsung Galaxy Tab S T805M 16GB Wi-fi + 4G Tela Super AMOLED 10.5' Android 4.4 Processador Octa-Core", 
+				"valor": 1889.20, 
+				"observacao":"A Samsung, provando mais uma vez que inovação não tem limites, apresenta o novo Galaxy Tab S. Uma experiência visual rica em cores e detalhes que vão além do digital, tornando imagens e filmes muito mais realistas. Uma imersão completa em 10,5 em polegadas."
+			},
+			{
+				"id":3,
+				"imagem":"img/122107498G1.jpg",
+				"descricao": "Monitor LED 27' Samsung S27D590CS Tela Curva", 
+				"valor": 1779.00, 
+				"observacao":"Leve sua experiência de entretenimento a um patamar totalmente novo!O raio e a profundidade da curva do Monitor LED 27'' Samsung S27D590CS criam um campo de visão mais amplo e fazem a tela parecer maior e mais envolvente do que uma tela plana do mesmo tamanho. E como as bordas da tela estão fisicamente mais perto, correspondendo às curvas naturais de seus olhos, você tem a distância visual uniforme em toda a tela."
+			}			
+		],
+		"totalPages": 1,
+		"currentPage": 1
+		};
+
 		res.json(retorno);
 
 		//conexão com a base MySQL
@@ -148,47 +209,48 @@ app.post('/api/user/login', jsonParser, function(req, res){
 	return res.json({status: "Auth failed"});
 	*/
 
-	if(!req.body.hasOwnProperty('login') || 
-	   !req.body.hasOwnProperty('password')) {
+    if(!req.body.hasOwnProperty('login') || 
+       !req.body.hasOwnProperty('password')) {
     
-		res.statusCode = 400;
-		return res.json({status: 'Error 400: use of login with bad data.'});
-	} 
-	
-	client.execute(query_login, [req.body.login], function(err, result) {
-		if(err){
-			res.statusCode = 500;
-			return res.json({status: "query_login Failed"});
-		}else{
-			if(result.rows.length == 1){
-				//precisamos verificar a senha 1o
-				if(result.rows[0].usr_password != req.body.password){
-					res.statusCode = 403;
-					return res.json({status: "Auth failed"});
-				} //senha OK, continua (menus um else...)
-			//o ususario ja tem token?
-			if(result.rows[0].usr_token == null){
-				//o usuario logou a 1a vez e nao tem token
-				//cria o token, atualiza o usuario
-				var id = Uuid.random().toString();
-				client.execute(query_update_token, [id, req.body.login], {prepare: true}, function(err, result) {
-					if(err){
-						res.statusCode = 500;
-						return res.json({status: "Erro no query_update_token" + err});
-					}else{
-						return res.json({token: id});
-					}
-				});
-				//retorna o token
-			}else{
-				return res.json({token: result.rows[0].usr_token});
-			}
-		}else{
-			res.statusCode = 400;
-			return res.json({status: "Auth failed"});
-		}
+        res.statusCode = 400;
+        return res.json({status: 'Error 400: use of login with bad data.'});
+    } 
+    
+    client.execute(query_login, [req.body.login], function(err, result) {
+        
+        if(err){
+            res.statusCode = 500;
+            return res.json({status: "query_login Failed"});
+        }else{
+            if(result.rows.length == 1){
+                //precisamos verificar a senha 1o
+                if(result.rows[0].usr_pwd != req.body.password){
+                    res.statusCode = 403;
+                    return res.json({status: "Auth failed"});
+                } //senha OK, continua (menus um else...)
+            //o ususario ja tem token?
+            if(result.rows[0].usr_token == null){
+                //o usuario logou a 1a vez e nao tem token
+                //cria o token, atualiza o usuario
+                var id = Uuid.random().toString();
+                client.execute(query_update_token, [id, req.body.login], {prepare: true}, function(err, result_update) {
+                    if(err){
+                        res.statusCode = 500;
+                        return res.json({status: "Erro no query_update_token" + err});
+                    }else{
+                        return res.json({token:id, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name});
+                    }
+                });
+                //retorna o token
+            }else{
+                return res.json({token:result.rows[0].usr_token, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name});
+            }
+        }else{
+            res.statusCode = 400;
+            return res.json({status: "Auth failed"});
+        }
     }
-	});
+    });
 
 });
 
@@ -252,9 +314,3 @@ app.post('/api/user/register', jsonParser, function(req, res){
 app.listen(process.env.PORT || 8888, '0.0.0.0');
 console.log("Running API portal");
 console.log("Access http://localhost:8888");
-
-
-
-
-
-
