@@ -37,15 +37,31 @@ var query_transaction = 'SELECT tra_confirmationcode FROM "TRANSACTION" where us
 var query_confirm_transaction = 'UPDATE "TRANSACTION" SET tra_status = ? WHERE usr_token = ? AND tra_id = ?'
 var Uuid = require('cassandra-driver').types.Uuid;
 
+var segments = ['VAREJO', 'E-COMMERCE-VAREJO', 'E-COMMERCE-GAMES', 'E-COMMERCE-DURABLE-GOODS'];
+var segmentsWithGEO = ['VAREJO'];
+
 app.post('/api/transaction/buy', jsonParser, function(req, res){
 	if(!req.body.hasOwnProperty('token')|| 
 	   !req.body.hasOwnProperty('creditcardNumber')|| 
 	   !req.body.hasOwnProperty('value')|| 
 	   !req.body.hasOwnProperty('date')|| 
-	   !req.body.hasOwnProperty('geo')) {
+	   !req.body.hasOwnProperty('geo') ||
+	   !req.body.hasOwnProperty('segment')) {
     
 		res.statusCode = 400;
-		return res.send('Error 400: use of buy with bad data.');
+		return res.send('Error 400: use of buy with bad data (missing properties).');
+	}
+	var seguimentoEncontrado = false;
+	
+	for(var i = 0; i < segments.length; i++){
+		if (segments[i] == req.body.segment){
+			seguimentoEncontrado = true;
+		}
+	}
+	
+	if(seguimentoEncontrado){
+		res.statusCode = 400;
+		return res.send('Error 400: use of buy with bad data (invalid segment).');	
 	}
 
 	var usr_login = '';
@@ -60,6 +76,16 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 			res.statusCode = 400;
 			return res.json({status: "Buy with bad token"});
 		}
+		
+		//antes de registrar a transacao devemos
+		//verificar se é uma fraude assim
+		//mudamos o status dela na base
+		
+		//se ultrapassa o limite de crédito: nega a transação
+		//se segmento que tem GEO aplica GEO (distancia > 50km em um dia de diferenca) = FRAUDE
+		//senão aplica HMM, se for fraude
+		//aplica BoxPlot
+		//HMM(Erro) + BoxPlot(Fora) = Fraude
 		
 		usr_login = result.rows[0].usr_login;
 		
