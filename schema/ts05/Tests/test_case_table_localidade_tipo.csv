@@ -1,0 +1,5 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"Inserir, no Banco de Dados, os dados de Tipo de Localidade";"INSERT INTO localidadetipo (lot_id,lot_ds) VALUES (60,'Aeroporto');";"SELECT count(*) FROM localidadetipo WHERE  lot_id = 60;";"1"
+"Consultar, no Banco de Dados, os dados da Tipo de Localidade";"";"SELECT lot_ds FROM localidadetipo WHERE  lot_id = 60;";"Aeroporto"
+"Alterar, no Banco de Dados, os dados da Tipo de Localidade";"UPDATE localidadetipo SET Lot_ds = 'Marte' WHERE lot_id = 60;";"SELECT lot_ds FROM localidadetipo WHERE  lot_id = 60;";"Marte"
+"Deletar, no Banco de Dados, os dados da Tipo de Localidade";"DELETE FROM localidadetipo WHERE  lot_id = 60;";"SELECT count(*) FROM localidadetipo WHERE  lot_id = 60;";"0"

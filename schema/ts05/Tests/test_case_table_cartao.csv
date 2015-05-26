@@ -1,0 +1,5 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"CDT 01 - Inserir dados do Cartao";"INSERT INTO cartao (car_band,car_num,car_valid_mes,car_valid_ano,car_nm,car_cli_cod) VALUES ('Visa'	, '4106211198121309' , '9'	, '2019'	,	'Itaucard',	4001)";"SELECT count(*) FROM cartao WHERE car_num = 4106211198121309;";"1"
+"CDT 03 - Consultar dados do Cartao";"";"SELECT car_valid_ano FROM cartao WHERE car_num = 4106211198121309;";"2019"
+"CDT 04 - Alterar dados do Cartao";"UPDATE  cartao  set car_nm = 'Teste - Itaucard'  WHERE car_num = 4106211198121309;";"SELECT car_nm  FROM cartao WHERE car_num = 4106211198121309;";"Teste - Itaucard"
+"CDT 05 - Deletar dados do Cartao";"DELETE FROM cartao WHERE car_num = 4106211198121309;";"SELECT count(*) FROM cartao WHERE car_num = 4106211198121309";"0"

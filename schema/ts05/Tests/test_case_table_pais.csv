@@ -1,0 +1,5 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"Inserir, no Banco de Dados, os dados de Pais";"INSERT INTO pais (pais_id,pais_nm) VALUES (-260,'Pais das Maravilhas');";"SELECT count(*) FROM pais WHERE  pais_id = -260;";"1"
+"Consultar, no Banco de Dados, os dados da Pais";"";"SELECT pais_nm FROM pais WHERE  pais_id = -260;";"Pais das Maravilhas"
+"Alterar, no Banco de Dados, os dados da Pais";"UPDATE pais SET  pais_nm = 'Pais da Alice'  WHERE pais_id = -260;";"SELECT pais_nm FROM pais WHERE  pais_id = -260;";"Pais da Alice"
+"Deletar, no Banco de Dados, os dados da Pais";"DELETE FROM  pais WHERE   pais_id = -260;";"SELECT count(*) FROM pais WHERE  pais_id = -260;";"0"
