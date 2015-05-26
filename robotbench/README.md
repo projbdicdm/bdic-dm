@@ -11,6 +11,7 @@ Instruções para uso local:
 - Subir a VM ITA e ativar o serviço Cassandra.
 - Abir o Datastax Dev Center e executar o script schema/tablesRobotBench.sql
 - Ativar o Servidor Apache em seu painel [XAMPP][xampp] e acessar via navegador.
+Ex: http://localhost/ita/bdic-dm/robotbench/
 
 
 Contribuições feitas pela comunidade GitHub para criação do sistema:
