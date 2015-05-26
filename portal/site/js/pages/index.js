@@ -1,6 +1,5 @@
 ﻿index = function(){
 	var _init = function (){
-	
 		
 		//carrega cabeçalho
 		util.loadHeader();
