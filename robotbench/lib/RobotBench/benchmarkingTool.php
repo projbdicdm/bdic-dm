@@ -4,9 +4,9 @@
   set_time_limit(0);
   //header('Content-Type: application/json');
 
-  require       'lib/PHP-Benchmark/init.php';
+  require       'lib/PHPBenchmark/init.php';
   require_once  'lib/Faker/autoload.php';
-  require       'lib/php-cassandra/php-cassandra.php';
+  require       'lib/PHPCassandra/php-cassandra.php';
   require       'lib/RobotBench/connection.php';
   require       'lib/RobotBench/insertBenchmarking.php';
   require       'lib/RobotBench/selectBenchmarking.php';

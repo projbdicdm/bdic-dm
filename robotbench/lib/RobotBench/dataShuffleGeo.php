@@ -6,7 +6,7 @@
 
   //require       'lib/PHP-Benchmark/init.php';
   require_once  'lib/Faker/autoload.php';
-  require       'lib/php-cassandra/php-cassandra.php';
+  require       'lib/PHPCassandra/php-cassandra.php';
   require       'lib/RobotBench/connection.php';
   require       'lib/RobotBench/updateTransaction.php';
   require       'lib/RobotBench/selectShuffle.php';
