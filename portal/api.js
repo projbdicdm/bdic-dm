@@ -337,11 +337,27 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 					cli_lastname : 'Santos', 
 					cnt : 1000
 				});
+                retorno.push({
+					trans_cli_id : 2, 
+					cli_firstname : 'João', 
+					cli_lastname : 'Silva', 
+					cnt : 500
+				});
+                retorno.push({
+					trans_cli_id : 3, 
+					cli_firstname : 'Maria', 
+					cli_lastname : 'Almeida', 
+					cnt : 800
+				});
 				break;
 			case "02":
 				retorno.push({
 					trans_cli_id : 1, 
 					trans_value : 1000
+				});
+                retorno.push({
+					trans_cli_id : 2, 
+					trans_value : 800
 				});
 				break;
 			case "03":
@@ -358,6 +374,13 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 					trans_date : '',
 					trans_value : '',
 					trans_loc_id : 1
+				});
+                retorno.push({
+					cli_firstname : 'João', 
+					cli_lastname : 'Silva', 
+					trans_date : '',
+					trans_value : '',
+					trans_loc_id : 2
 				});
 				break;
 			case "05":
@@ -382,11 +405,11 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 					cli_firstname : 'Pedro',
 					cli_lastname : 'Santos',
 					trans_date : '', 
-					trans_value : 1000, 
 					trans_loc_id : 1, 
 					loc_city : 'Campinas', 
 					loc_region : 'SP', 
-					loc_country : 'Brasil'
+					loc_country : 'Brasil',
+					trans_value : 1000
 				});
 				break;
 			case "08":
@@ -493,6 +516,18 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 					prd_name : 'Produto 1' , 
 					count : 1000
 				});
+                retorno.push({
+					prd_name : 'Produto 2' , 
+					count : 500
+				});
+                retorno.push({
+					prd_name : 'Produto 3' , 
+					count : 750
+				});
+                retorno.push({
+					prd_name : 'Produto 4' , 
+					count : 1200
+				});
 				break;
 			case "02":
 				retorno.push({
@@ -586,6 +621,18 @@ app.get('/api/adtf/clinprod/:queryId', jsonParser, function(req, res){
 					cat_name : 'Informática', 
 					cli_lastname : 'Pereira', 
 					total_sale: 1000
+				});
+                retorno.push({
+					cli_id : 2, 
+					cat_name : 'House', 
+					cli_lastname : 'Computadores', 
+					total_sale: 2300
+				});
+                retorno.push({
+					cli_id : 3, 
+					cat_name : 'Magazine', 
+					cli_lastname : 'da Informática', 
+					total_sale: 1125
 				});
 				break;
 			default:

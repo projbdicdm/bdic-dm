@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-  <title>e-Commerce</title>
+  <title>eCommerce</title>
 
   <!-- CSS  -->
   <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
@@ -16,37 +16,90 @@
       google.load('visualization', '1.0', {'packages':['corechart']});
       //google.setOnLoadCallback(drawChart);
 
-      function drawChart(data, title) {
+      function drawChart(jsonData) {
+      
+            //NOTA - Como a tabela é dinamica, o eixo x é o primeiro campo e o eixo y é o ultimo campo da tabela/json
 
-          var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Dias da Semana');
-            data.addColumn('number', 'Produto 1');
-            data.addColumn('number', 'Produto 2');
-            data.addColumn('number', 'Produto 3');
-            data.addColumn('number', 'Produto 4');
-            data.addColumn('number', 'Meta de Vendas');
-            data.addRows([
-             ['Segunda-feira', 100, 85, 99, 66, 65],
-             ['Terça-feira', 100, 78, 55, 72, 62],
-             ['Quarta-feira', 100, 79, 85, 45, 88],
-             ['Quinta-feira', 100, 69, 85, 42, 77],
-             ['Sexta-feira', 100, 97, 93, 84, 74],
-			 ['Sábado', 100, 77, 93, 94, 84],
-			 ['Domingo', 100, 87, 85, 42, 74]
-          ]);
+            var googleDataTable = new google.visualization.DataTable();
+            
+            // MOCK DATA
+            /*
+            var googleDataTable = new google.visualization.DataTable();
+            googleDataTable.addColumn('string', 'Dias da Semana');
+            googleDataTable.addColumn('number', 'Produto 1');
+            googleDataTable.addColumn('number', 'Produto 2');
+            googleDataTable.addColumn('number', 'Produto 3');
+            googleDataTable.addColumn('number', 'Produto 4');
+            googleDataTable.addColumn('number', 'Meta de Vendas');
+            googleDataTable.addRows([
+                ['Segunda-feira', 100, 85, 99, 66, 65],
+                ['Terça-feira', 100, 78, 55, 72, 62],
+                ['Quarta-feira', 100, 79, 85, 45, 88],
+                ['Quinta-feira', 100, 69, 85, 42, 77],
+                ['Sexta-feira', 100, 97, 93, 84, 74],
+                ['Sábado', 100, 77, 93, 94, 84],
+                ['Domingo', 100, 87, 85, 42, 74]
+            ]);
+            */
+            
+            // API DATA
+            // Get columns
+            jsonDataItems = jsonData[0];
+            
+            counter = 0
+            Object.keys(jsonData[0]).forEach(function(key) {
+                var columnType = isNaN(jsonData[0][key]) ? 'string' : 'number';
+                if(counter == 0)
+                    googleDataTable.addColumn('string', key);
+                    
+                else if(counter > 0 && columnType == 'number')
+                    googleDataTable.addColumn(columnType, key);
+                    
+                counter++;
+            });
+            
+            // Get values
+            for (i = 0; i < jsonData.length; i++)
+            {
+                jsonDataItem = jsonData[i];
+                
+                var currentRow = [];
+                
+                for(var key in jsonDataItem)
+                {
+                    for (j = 0; j < googleDataTable.getNumberOfColumns(); j++)
+                    {
+                        if(key == googleDataTable.getColumnLabel(j))
+                        {
+                            if(j == 0)
+                                currentRow.push(String(jsonDataItem[key]));
+                                
+                            else
+                                currentRow.push(Number(jsonDataItem[key]));
+                        }
+                    }
+                }
+                
+                googleDataTable.addRow(currentRow);
+            }
      
-          var options = {
-            'legend': 'right',
-            //'title' : title,
-            'is3D'  : true,
-            //'width' : 900,
-            'height': 300,
-            seriesType: "bars",
-            series: {4: {type: "line"}}
-          };
-             
-          var chart = new google.visualization.ComboChart(document.getElementById('grafico'));
-          chart.draw(data, options);
+            // Set options
+            var options = {
+                'legend': 'right',
+                //'title' : title,
+                'is3D'  : true,
+                //'width' : 900,
+                'height': 300,
+                seriesType: "bars",
+                //vAxis: {title: vAxis},
+                //hAxis: {title: hAxis},
+                series: {4: {type: "line"}}
+            };
+
+            
+            // Generate chart
+            var chart = new google.visualization.ComboChart(document.getElementById('grafico'));
+            chart.draw(googleDataTable, options);
       }
 	</script>
 </head>
@@ -54,7 +107,7 @@
 <body>
 	<nav class="light-blue lighten-1" role="navigation">
     <div class="nav-wrapper container">
-		<a id="logo-container" href="" class="brand-logo">e-Commerce</a>
+		<a id="logo-container" href="" class="brand-logo">eCommerce</a>
 		<ul class="right hide-on-med-and-down">
 			<li class="liLogged">
 			<a class="dropdown-button userName" href="" data-activates="dropdown1">Olá, userName
@@ -143,16 +196,16 @@
                 async: false,
                 url: '/api/adtf/' + parameterType + '/' + parameterId,
                 success: function(jdata){
-                    var mydata = eval(jdata);
+                    var jsonData = eval(jdata);
                     
                     // Create table
-                    var table = $.makeTable(mydata);
+                    var table = $.makeTable(jsonData);
                     $("#tabela-de-resultados-titulo").html("<h4>" + parameterTitle + "</h4>");
                     $("#tabela-de-resultados-subtitulo").html("<blockquote>" + parameterSubTitle + "</blockquote>");
                     $("#tabela-de-resultados").html(table);
                     
                     // Create chart
-                    drawChart(mydata, parameterTitle);
+                    drawChart(jsonData);
                     
                     // Collapse accordion
                     $(".collapsible-body").each(function() {
