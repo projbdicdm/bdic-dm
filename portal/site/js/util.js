@@ -24,7 +24,8 @@ util = function(){
 	}
 	var _logout = function(){
 		$.sessionStorage.clear();
-		window.location = "/";	
+        var baseUrl = location.protocol + "//" + location.host;
+        location.href = baseUrl;
 	}
 	var _formatReal = function(int){
         var tmp = int+'';
@@ -146,3 +147,20 @@ util = function(){
 		loadFooter: _loadFooter
 	}
 }();
+
+$.makeTable = function (mydata) {
+    var table = $('<table border=1>');
+    var tblHeader = "<tr>";
+    for (var k in mydata[0]) tblHeader += "<th>" + k + "</th>";
+    tblHeader += "</tr>";
+    $(tblHeader).appendTo(table);
+    $.each(mydata, function (index, value) {
+        var TableRow = "<tr>";
+        $.each(value, function (key, val) {
+            TableRow += "<td>" + val + "</td>";
+        });
+        TableRow += "</tr>";
+        $(table).append(TableRow);
+    });
+    return ($(table));
+};

@@ -20,14 +20,14 @@
 			<ul id='dropdown1' class='dropdown-content'>
 				<li><a href="">Meus Dados</a></li>
 				<li class="divider"></li>
-				<li><a href="" onclick="util.logout();">Logout</a></li>
+				<li><a href="" onclick="util.logout(); return false;">Logout</a></li>
 			</ul>		
 		</ul>
 
 		<ul id="nav-mobile" class="side-nav">
 			<li><a href="" class="userName">Olá, userName</a></li>
 			<li><a href="">Meus Dados</a></li>
-			<li><a href="" onclick="util.logout();">Logout</a></li>
+			<li><a href="" onclick="util.logout(); return false;">Logout</a></li>
 		</ul>
 		<a href="" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
     </div>
@@ -51,7 +51,7 @@
 			</div>
 		</div>
 		<br><br>
-		<div class="section"><a href="grafico.html">Gerar Gráfico</a></div>
+        <!-- <div class="section"><a href="grafico.html">Gerar Gráfico</a></div> -->
 	</div>
  
 	<footer class="page-footer orange">

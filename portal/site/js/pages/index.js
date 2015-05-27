@@ -79,10 +79,10 @@
             $.sessionStorage.setItem('userType', data.userType);
 
 			if(data.userType == "adtf")
-				location.href = baseUrl + "/grafico.html";
+				location.href = baseUrl + "/index-adtf.html";
 			else
 			if(data.userType == "admin")
-                location.href = baseUrl + "/indexadmin.html";
+                location.href = baseUrl + "/index-admin.html";
 			else
                 location.href = baseUrl + "/index.html";
 		}).fail(function(jqXHR, textStatus, errorThrown) {
