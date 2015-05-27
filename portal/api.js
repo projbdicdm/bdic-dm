@@ -294,6 +294,338 @@ app.post('/api/user/register', jsonParser, function(req, res){
 	return res.json({status: "ok"});
 });
 
+
+app.get('/api/products', jsonParser, function(req, res){
+
+	//objeto de retorno
+	retorno = [];
+
+	try {
+
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+});
+
+//Integração time03
+app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
+
+
+	var queryId = req.params.queryId;
+
+	//validação do parametro
+	if (queryId == 'undefined'){
+		res.json({
+			status: 'Identificador nao encontrado'
+		});
+		return;
+	}
+
+	//objeto de retorno
+	retorno = [];
+
+	try {
+		
+		switch(queryId) {
+			case "01":
+				retorno.push({
+					trans_cli_id : 1, 
+					cli_firstname : 'Pedro', 
+					cli_lastname : 'Santos', 
+					cnt : 1000
+				});
+				break;
+			case "02":
+				retorno.push({
+					trans_cli_id : 1, 
+					trans_value : 1000
+				});
+				break;
+			case "03":
+				retorno.push({
+					cli_firstname : 'Pedro', 
+					cli_lastname : 'Santos', 
+					dados_transacao : []
+				});
+				break;
+			case "04":
+				retorno.push({
+					cli_firstname : 'Pedro', 
+					cli_lastname : 'Santos', 
+					trans_date : '',
+					trans_value : '',
+					trans_loc_id : 1
+				});
+				break;
+			case "05":
+				retorno.push({
+					cli_firstname : 'Pedro',
+					cli_lastname : 'Santos',
+					trans_date : '',
+					trans_value: 1000
+				});
+				break;
+			case "06":
+				retorno.push({
+					cli_firstname : 'Pedro',
+					cli_lastname : 'Santos',
+					trans_date : '',
+					trans_value : '',
+					trans_loc_id : 1
+				});
+				break;
+			case "07":
+				retorno.push({
+					cli_firstname : 'Pedro',
+					cli_lastname : 'Santos',
+					trans_date : '', 
+					trans_value : 1000, 
+					trans_loc_id : 1, 
+					loc_city : 'Campinas', 
+					loc_region : 'SP', 
+					loc_country : 'Brasil'
+				});
+				break;
+			case "08":
+				retorno.push({
+					trans_cli_id : 1, 
+					cli_firstname : 'Pedro', 
+					cli_lastname : 'Santos', 
+					loc_city : 'Campinas', 
+					loc_country : 'Brasil',
+					trans_total : 2000
+				});
+				break;
+			case "09":
+				retorno.push({
+					trans_cli_id : 1, 
+					cli_firstname : 'Pedro', 
+					cli_lastname : 'Santos', 
+					loc_city : 'Campinas', 
+					loc_country : 'Brasil',
+					trans_total : 3000
+				});
+				break;
+			case "10":
+				retorno.push({
+					trans_cli_id : 1, 
+					cli_firstname : 'Pedro', 
+					cli_lastname : 'Santos', 
+					month: 5, 
+					total_month : 1000
+				});
+				break;
+			case "11":
+				retorno.push({
+					trans_loc_id : 1, 
+					loc_country : 'Brasil', 
+					month: 5, 
+					total_month : 3000
+				});
+				break;
+			default:
+				break;
+		}
+
+		res.json(retorno);
+
+
+		/*
+		//codigo para realizar chamada na api principal TODO
+		var options = {
+		  host: 'endereco_api_principal',
+		  path: '/rotas/?parametros='
+		};
+
+		http.request(options, function(response) {
+			var str = '';
+
+			
+			response.on('data', function (chunk) {
+				str += chunk;
+			});
+
+			
+			response.on('end', function () {
+				console.log(str);
+			});
+		}).end();
+		*/
+
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+});
+
+app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
+
+
+	var queryId = req.body.queryId;
+
+	//objeto de retorno
+	retorno = [];
+
+	try {
+		var queryId = req.params.queryId;
+
+	//validação do parametro
+	if (queryId == 'undefined'){
+		res.json({
+			status: 'Identificador nao encontrado'
+		});
+		return;
+	}
+
+	//objeto de retorno
+	retorno = [];
+
+	try {
+		
+		switch(queryId) {
+			case "01":
+				retorno.push({
+					prd_name : 'Produto 1' , 
+					count : 1000
+				});
+				break;
+			case "02":
+				retorno.push({
+					prd_name : 'Produto 1', 
+					sales_total : 10000
+				});
+				break;
+			case "03":
+				retorno.push({
+					prd_name : 'Produto 1', 
+					count: 4000
+				});
+				break;
+			case "04":
+				retorno.push({
+					prd_category_id : 1, 
+					cat_name : 'Informática', 
+					count : 1000
+				});
+				break;
+			case "05":
+				retorno.push({
+					prd_name : 'Produto 1', 
+					sales_total : 5000
+				});
+				break;
+			default:
+				break;
+		}
+
+		res.json(retorno);
+
+
+		/*
+		//codigo para realizar chamada na api principal TODO
+		var options = {
+		  host: 'endereco_api_principal',
+		  path: '/rotas/?parametros='
+		};
+
+		http.request(options, function(response) {
+			var str = '';
+
+			
+			response.on('data', function (chunk) {
+				str += chunk;
+			});
+
+			
+			response.on('end', function () {
+				console.log(str);
+			});
+		}).end();
+		*/
+
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+});
+
+app.get('/api/adtf/clinprod/:queryId', jsonParser, function(req, res){
+	
+	var queryId = req.params.queryId;
+
+	//validação do parametro
+	if (queryId == 'undefined') {
+		res.json({
+			status: 'Identificador nao encontrado'
+		});
+		return;
+	}
+
+	//objeto de retorno
+	retorno = [];
+
+	try {
+		
+		switch(queryId) {
+			case "01":
+				retorno.push({
+					cli_id : 1, 
+					cat_name : 'Informática', 
+					cli_lastname : 'Pereira', 
+					total_sale: 1000
+				});
+				break;
+			default:
+				break;
+		}
+
+		res.json(retorno);
+
+		/*
+		//codigo para realizar chamada na api principal TODO
+		var options = {
+		  host: 'endereco_api_principal',
+		  path: '/rotas/?parametros='
+		};
+
+		http.request(options, function(response) {
+			var str = '';
+
+			
+			response.on('data', function (chunk) {
+				str += chunk;
+			});
+
+			
+			response.on('end', function () {
+				console.log(str);
+			});
+		}).end();
+		*/
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+
+});
+//Integração time03
+
 app.listen(process.env.PORT || 8898, '0.0.0.0');
 console.log("Running API portal");
 console.log("Access http://localhost:8898");
+
