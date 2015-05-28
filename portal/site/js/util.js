@@ -53,10 +53,16 @@ util = function(){
             success: function (data) {
 				$("#modal1 #descricaoProduto").html(data.descricao);
 				$("#modal1 #imagemProduto").attr('src',data.imagem);
+				$("#modal1 #quantity").val("1");				
 				$("#modal1 #observacaoProduto").html(data.observacao);
 				$("#modal1 #precoProduto").html('R$ '+util.formatReal(data.valor));
 				$("#modal1 #btnComprar").attr('onclick','util.addProductCart('+id+');');
 				$("#modal1").openModal();
+				
+				//bloqueia a digitação de letras
+				$('#modal1 #quantity').keypress(function(key) {
+					if(key.charCode < 48 || key.charCode > 57) return false;
+				});				
             },
 			statusCode: {
 				400: function(error) {
