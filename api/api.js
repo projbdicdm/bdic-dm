@@ -7,6 +7,17 @@ var express = require('express');
 //criamos a instancia do App
 var app = express();
 
+//usamos o await para esperar os callbacks no BUY
+var await = require('await');
+
+var ordenaArrayDeDatas = function sortByKey(array, key) {
+    return array.sort(function(a, b) {
+        var x = a[key];
+        var y = b[key];
+        return x - y;
+    });
+};
+
 //criamos instancia do servidor de email
 var email   = require("emailjs");
 var server  = email.server.connect({
@@ -28,17 +39,23 @@ var tokenFake = "ASKDJHQWOEY98172354123";
 
 //adicionando o driver cassandra
 var cassandra = require('cassandra-driver');
-var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDI'});
+var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDICDM'});
 var query_login = 'SELECT "usr_password", "usr_token" FROM "USER" WHERE "usr_login" = ? ';
 var query_login_by_token = 'SELECT "usr_login" FROM "USER" WHERE "usr_token" = ?';
 var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = ?';
-var query_add_buy = 'INSERT INTO "TRANSACTION" (tra_id, usr_token, car_id, loc_id, tra_date, tra_value, tra_lat, tra_lon, tra_confirmationcode, tra_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+var query_add_buy = 'INSERT INTO "TRANSACTION" (tra_id, usr_token, car_id, loc_id, tra_date, tra_value, tra_lat, tra_lon, tra_confirmationcode, tra_status, tra_segment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 var query_transaction = 'SELECT tra_confirmationcode FROM "TRANSACTION" where usr_token = ? AND tra_id = ?'; 
+var query_last_geo_transaction = 'select unixTimestampOf(tra_id) as date, tra_lat, tra_lon from "TRANSACTION" where usr_token = ? AND tra_segment = ?;';
 var query_confirm_transaction = 'UPDATE "TRANSACTION" SET tra_status = ? WHERE usr_token = ? AND tra_id = ?'
 var Uuid = require('cassandra-driver').types.Uuid;
+var TimeUuid = require('cassandra-driver').types.TimeUuid;
 
 var segments = ['VAREJO', 'E-COMMERCE-VAREJO', 'E-COMMERCE-GAMES', 'E-COMMERCE-DURABLE-GOODS'];
 var segmentsWithGEO = ['VAREJO'];
+
+var CREDIT_LIMIT = 2500.00; //TODO: alterar modelagem para incluir no cassndra o Limite de crédito (Sprint #03)
+var THRESHOLD_GEO = 5000; //TODO: parametrizar isso via sistema (distancia em metros!)
+
 
 app.post('/api/transaction/buy', jsonParser, function(req, res){
 	if(!req.body.hasOwnProperty('token')|| 
@@ -47,11 +64,13 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	   !req.body.hasOwnProperty('date')|| 
 	   !req.body.hasOwnProperty('geo') ||
 	   !req.body.hasOwnProperty('segment')) {
-    
+
 		res.statusCode = 400;
-		return res.send('Error 400: use of buy with bad data (missing properties).');
+		return res.json({status: 'Error 400', message: 'Use of buy with bad data (missing properties).'});
 	}
 	var seguimentoEncontrado = false;
+	var segmentUsesGEO = false;
+	var trans_status = 'PENDING';
 	
 	for(var i = 0; i < segments.length; i++){
 		if (segments[i] == req.body.segment){
@@ -59,74 +78,160 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 		}
 	}
 	
-	if(seguimentoEncontrado){
+	for(var i = 0; i < segmentsWithGEO.length; i++){
+		if (segmentsWithGEO[i] == req.body.segment){
+			segmentUsesGEO = true;
+		}
+	}
+	
+	if(!seguimentoEncontrado){
 		res.statusCode = 400;
-		return res.send('Error 400: use of buy with bad data (invalid segment).');	
+		return res.json({status: 'Error 400', message: 'Use of buy with bad data (invalid segment).'});
 	}
 
+	//antes de registrar a transacao devemos
+	//verificar se é uma fraude assim
+	//mudamos o status dela na base
+	var GEOFraud = false;
+	var HMMFraud = false;
+	var BoxPlotFraud = false;
+	
 	var usr_login = '';
+
+	var calbacks = await('login', 'geo');
 	
 	client.execute(query_login_by_token, [req.body.token], {prepare: true}, function(err, result) {
 		if(err){
 			res.statusCode = 500;
-			return res.json({status: "Error on query_login: " + err});
+			calbacks.fail(err);
+			return res.json({status: "Error on query_login", message: err});
 		}
 	
 		if(result.rows.length != 1){
 			res.statusCode = 400;
+			calbacks.fail(err);
 			return res.json({status: "Buy with bad token"});
 		}
-		
-		//antes de registrar a transacao devemos
-		//verificar se é uma fraude assim
-		//mudamos o status dela na base
-		
-		//se ultrapassa o limite de crédito: nega a transação
-		//se segmento que tem GEO aplica GEO (distancia > 50km em um dia de diferenca) = FRAUDE
-		//senão aplica HMM, se for fraude
-		//aplica BoxPlot
-		//HMM(Erro) + BoxPlot(Fora) = Fraude
-		
-		usr_login = result.rows[0].usr_login;
-		
-		var confirmationCode = Math.round(Math.random() * 10000);
+		console.log('acabou login');
+		calbacks.keep('login', result);
+	});	
 	
+	if(req.body.value > CREDIT_LIMIT){
+		trans_status = 'DENIED_DUE_TO_CREDIT_LIMIT_EXCEEDED';
+	}
+	
+	//se ultrapassa o limite de crédito: nega a transação
+	if(segmentUsesGEO && trans_status == 'PENDING'){
+
+		//se houver mais de um segmento com GEO, precisa atualizar isso aqui
+		client.execute(query_last_geo_transaction, 
+						[req.body.token, segmentsWithGEO[0]], 
+						{prepare: true}, 
+			function(err, result) {
+				if(err){
+					res.statusCode = 500;
+					calbacks.fail(err);
+					return res.json({status: "Error on query_last_geo_transaction", message: err});
+				}
+				if(result.rows.length == 0){
+					//não dá pra fazer nenhuma verificacao
+					//se nao temos outra transacao para
+					//comparar...
+					GEOFraud = false;
+					console.log('acabou geo1');
+					calbacks.keep('geo');
+				}else{
+					result.rows = ordenaArrayDeDatas(result.rows, 'date');
+					console.log('acabou geo2');
+					calbacks.keep('geo', result.rows);
+				}
+			}
+		);
+	}else{
+		calbacks.keep('geo');
+	}
+	
+	// todos os callbacks voltaram
+	calbacks.then(function(got){
+	
+	usr_login = got.login.rows[0].usr_login;
 		
-		var transID = Uuid.random().toString();
-		var paramns = [transID,
+	if(got.geo != null){
+		console.log(got.geo);
+		var dLat = Math.sqrt(Math.pow((req.body.geo.lat - got.geo[0].tra_lat), 2));
+		var dLon = Math.sqrt(Math.pow((req.body.geo.lon - got.geo[0].tra_lon), 2))
+		var hipo = Math.sqrt(Math.pow(dLat, 2) + Math.pow(dLon, 2));
+		var distanciaEmMN = hipo * 60;
+		var distanciaEmKm = distanciaEmMN * 1.852;
+		var distanciaEmM = distanciaEmKm * 1000;
+	
+		if(distanciaEmM > THRESHOLD_GEO){
+			GEOFraud = true;
+			trans_status = 'DENIED_DUE_TO_GEO_FRAUD';
+		}
+	}
+	
+	if(!GEOFraud){ //se não teve fraude no GEO (se precisou calcular)
+	// aplica HMM, se for fraude
+	//aplica BoxPlot
+	//HMM(Erro) + BoxPlot(Fora) = Fraude
+	}
+	
+	var confirmationCode = Math.round(Math.random() * 10000);
+	var transID = TimeUuid.now();
+	var paramns = [transID,
 		req.body.token, 
 		-1, 
 		-1, 
 		moment().unix(), 
 		req.body.value,
 		req.body.geo.lat,
-		req.body.geo.long,
+		req.body.geo.lon,
 		confirmationCode.toString(),
-		'PENDING'
-		]
+		trans_status,
+		req.body.segment];
+		
 		client.execute(query_add_buy, paramns, {prepare: true}, function(err, result) {
 			if(err){
 				res.statusCode = 500;
-				return res.json({status: "Buy internal error: " + err});
+				return res.json({status: "Buy internal error", message: err});
 			}
 
-			//enviamos o email com o código de confirmação para o usuário
-			var message = {
-				text:    "Your confirmation code is: " + confirmationCode.toString() + "\nTransactionID: "+ transID, 
-				from:    "projbdic32@gmail.com",
-				to:      usr_login,
-				subject: "Confirmation code"
-			};
-			server.send(message, function(err, message) { 
-				if(err){
-					console.log("Error: " + err);
+			if(trans_status == 'PENDING'){
+				//enviamos o email com o código de confirmação para o usuário
+				var message = {
+					text:    "Your confirmation code is: " + confirmationCode.toString() + "\nTransactionID: "+ transID, 
+					from:    "projbdic32@gmail.com",
+					to:      usr_login,
+					subject: "Confirmation code"
 				};
-				console.log(message);
-				return res.json({status: "ok", transactionid: transID, token: req.body.token});
-			});
-
+				server.send(message, function(err, message) { 
+					if(err){
+						console.log("Error: " + err);
+					};
+					return res.json({status: "OK", transactionid: transID, token: req.body.token});
+				});
+			}else{
+				var message = {
+					text:    "Your TransactionID: "+ transID + "\n was denied with status: " + trans_status, 
+					from:    "projbdic32@gmail.com",
+					to:      usr_login,
+					subject: "Transaction denied"
+				};
+				server.send(message, function(err, message) { 
+					if(err){
+						console.log("Error: " + err);
+					};
+					return res.json({status: trans_status, transactionid: transID, token: req.body.token});
+				});
+			}
 		});
-	});	
+	
+	},function(err){
+		res.statusCode = 500;
+		return res.json({status: "Error 500", message: err});
+	});
+
 });
 
 app.post('/api/transaction/confirm', jsonParser, function(req, res){
@@ -134,7 +239,7 @@ app.post('/api/transaction/confirm', jsonParser, function(req, res){
 	   !req.body.hasOwnProperty('id') ||
 	   !req.body.hasOwnProperty('confirmationCode')) {    
 		res.statusCode = 400;
-		return res.send('Error 400: use of buy with confirm data.');
+		return res.json({status: 'Error 400', message: 'Use of buy with confirm data.'});
 	}
 
 	var usr_login = '';
@@ -155,7 +260,7 @@ app.post('/api/transaction/confirm', jsonParser, function(req, res){
 		client.execute(query_transaction, [req.body.token, req.body.id], {prepare: true}, function(err, result) {
 			if(err){
 				res.statusCode = 500;
-				return res.json({status: "Error on query_transaction: " + err});			
+				return res.json({status: "Error on query_transaction", message: err});			
 			}
 			
 			if(result.rows.length != 1){
@@ -168,7 +273,7 @@ app.post('/api/transaction/confirm', jsonParser, function(req, res){
 				client.execute(query_confirm_transaction, ['CONFIRMED', req.body.token, req.body.id], {prepare: true}, function(err, result) {
 					if(err){
 						res.statusCode = 500;
-						return res.json({status: "Error on query_confirm_transaction: " + err});			
+						return res.json({status: "Error on query_confirm_transaction", message: err});			
 					}
 				});
 				//enviamos o email com o código de confirmação para o usuário
