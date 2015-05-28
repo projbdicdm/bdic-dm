@@ -36,6 +36,7 @@ cart_buy = function(){
 	var _remove_item = function(id){
 		cartNow = $.sessionStorage.getItem('cartProducts');
 		var newCart = [];
+		var qtdItens = 0;
 		$.each(JSON.parse(cartNow), function(index, item) {
 			if(item.id !=id){
 				newCart.push({"id":item.id,
@@ -44,9 +45,10 @@ cart_buy = function(){
 							  "quantidade":item.quantidade,
 							  "valor":item.valor
 							});
+				qtdItens++;
 			}
 		});
-		if(newCart){
+		if(qtdItens == 0){
 			$.sessionStorage.setItem('cartProducts','');
 		}else{
 			$.sessionStorage.setItem('cartProducts', JSON.stringify(newCart));
