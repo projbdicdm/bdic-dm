@@ -60,7 +60,7 @@ cart_buy = function(){
 		cart = $.sessionStorage.getItem('cartProducts');
 		if(!cart){
 			tr = $('<tr/>');
-			tr.append("<td colspan='6' class='center'>O carrinho está vazinho!</td>");
+			tr.append("<td colspan='6' class='center'>O carrinho está vazio!</td>");
 			$('table').append(tr);
 			$('.pagamentofinalizacao').hide();
 			return false;
