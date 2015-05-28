@@ -59,13 +59,26 @@
 			</div>
 		</div>
 		<div class="row right pagamentofinalizacao">
-			<a class="waves-effect waves-light btn"><i class="mdi-editor-attach-money left"></i>Efetuar Pagamento</a>
+			<a href="javascript:void(0);" onclick="cart_buy.pagamento();" class="waves-effect waves-light btn"><i class="mdi-editor-attach-money left"></i>Efetuar Pagamento</a>
 		</div>
     </div>
     </div>
-    <br><br>
-
+	<!-- Msg de Pedido Finalizado -->
+	<div id="modal-finish-buy" class="modal modal-fixed-footer">
+		<div class="container">
+			<div class="row">
+			<br><br><br><br>
+			<h4 class="medium center green-text">
+			<i class="large mdi-action-done"></i>
+			Pedido finalizado com sucesso!</h4>
+			<br><br><br>
+			<div id="textRedirect" >Em 10 segundos você será redirecionado para página principal.</div>
+			</div>
+		</div>  
+	</div>
+	
   </div>
+  <br>
     
 
   <footer class="page-footer orange"></footer>

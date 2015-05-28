@@ -52,8 +52,55 @@ cart_buy = function(){
 			tr.append("<td class='right2'>" + util.formatReal(total) + "</td>");
 			$('table').append(tr);
 			$('.pagamentofinalizacao').show();
+			
+		//bloqueia a digitação de letras
+		$('#numeroCartao, #codigoSegurancaCartao').keypress(function(key) {
+			if(key.charCode < 48 || key.charCode > 57) return false;
+		});
+		
+		//identifica div como modal
+		$('.modal-trigger').leanModal();		
+			
 	}
+	var _pagamento = function(){
+		//valida o preenchimento do cartão
+		validaCartao = true;
+		if(!$('#numeroCartao').val()){
+			$('#numeroCartao').addClass("invalid");
+			validaCartao = false;
+		}
+		if(!$('#mesAnoValidadeCartao').val()){
+			$('#mesAnoValidadeCartao').addClass("invalid");
+			validaCartao = false;
+		}
+		if(!$('#codigoSegurancaCartao').val()){
+			$('#codigoSegurancaCartao').addClass("invalid");
+			validaCartao = false;
+		}
+		if(!validaCartao){
+			Materialize.toast('Existem dados de pagamento inválidos!', 4000);
+			return false;
+		}
+		_finalizar_pedido();
+	}
+	var _finalizar_pedido = function(){
+		$.sessionStorage.setItem('cartProducts','');
+		$('#modal-finish-buy').openModal();
+		_contagem_redirecionar();
+	}
+	var _contagem_redirecionar = function(){
+		var count = 10;
+		countdown = setInterval(function(){
+			$('#textRedirect').html('Em '+ count + ' segundos você será redirecionado para página principal.');
+			if(count == 0){
+				window.location = '/';
+			}
+			count--;
+		}, 1000);
+	}	
 	return {
-		init:_init
+		init:_init,
+		pagamento: _pagamento,
+		finalizar_pedido: _finalizar_pedido
 	}
 }();

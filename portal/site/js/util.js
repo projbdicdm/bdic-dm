@@ -71,7 +71,7 @@ util = function(){
 			return false;
 		}
 		cartNow = $.sessionStorage.getItem('cartProducts');
-		if(cartNow == null){		
+		if(cartNow == null || cartNow == ''){		
 			var cart = [
 				{
 					"id": id,
