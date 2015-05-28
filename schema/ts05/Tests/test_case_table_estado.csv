@@ -1,0 +1,6 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"Inserir, no Banco de Dados, os dados de Estado";"INSERT INTO estado (est_id,est_ab,est_nm,est_pais_cod) VALUES 
+(30,'BE', 'ESTADO TESTE',36);";"SELECT count(*) FROM estado WHERE est_id = 30;";"1"
+"Consultar, no Banco de Dados, os dados da Estado";"";"SELECT est_nm FROM estado WHERE est_id = 30;";"ESTADO TESTE"
+"Alterar, no Banco de Dados, os dados da Estado";"UPDATE  estado  SET est_nm = 'Teste - São Paulo' WHERE est_id = 30 ;";" SELECT est_nm FROM estado WHERE est_id = 30;";"Teste - São Paulo"
+"Deletar, no Banco de Dados, os dados da Estado";"DELETE FROM estado WHERE est_id = 30";"SELECT count(*) FROM estado WHERE est_id = 30;";"0"

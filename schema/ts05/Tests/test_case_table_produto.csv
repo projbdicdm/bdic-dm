@@ -1,0 +1,5 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"CDT 01 - Inserir dados da Produto";"INSERT INTO produto (pro_id, pro_nm,pro_vl,pro_cat_cod) VALUES (5001,'Artefatos Bélicos Nucleares',16.25,1);";"SELECT count(*) FROM produto WHERE pro_id = 5001;";"1"
+"CDT 02 - Consultar dados da Produto";"";"SELECT pro_nm FROM produto WHERE pro_id = 5001;";"Artefatos Bélicos Nucleares"
+"CDT 04 - Alterar dados da Produto";"UPDATE  produto  SET  pro_nm = 'Produtos da Paz'  WHERE pro_id = 5001;";"SELECT pro_nm FROM produto WHERE pro_id = 5001;";"Produtos da Paz"
+"CDT 05 - Deletar dados da Produto";"DELETE FROM produto  WHERE pro_id = 5001;";"SELECT count(*) FROM produto WHERE pro_id = 5001;";"0"

@@ -18,6 +18,9 @@ CREATE TABLE IF NOT EXISTS "BDICDM"."USER" (
     AND read_repair_chance = 0.0
     AND speculative_retry = '99.0PERCENTILE';
 
+INSERT INTO "BDICDM"."USER" (usr_login, usr_password, usr_token) VALUES ('lamas3000@gmail.com','123456','a4a70900-24e1-11df-8924-001ff3591711')
+	
+	
 CREATE INDEX IF NOT EXISTS idx_usr_token ON "BDICDM"."USER" (usr_token);
 
 CREATE TABLE IF NOT EXISTS "BDICDM"."CLIENT" (
@@ -47,9 +50,41 @@ CREATE TABLE IF NOT EXISTS "BDICDM"."CLIENT" (
     AND read_repair_chance = 0.0
     AND speculative_retry = '99.0PERCENTILE';
 
+INSERT INTO "BDICDM"."TRANSACTION" (usr_token, tra_id, car_id, loc_id, tra_confirmationcode, tra_date, tra_lat, tra_lon, tra_status, tra_value) 
+VALUES ('a4a70900-24e1-11df-8924-001ff3591711', now(), -1, -1, '9999', dateof(now()), 0, 0, 'PENDING', 999);
+
+INSERT INTO "BDICDM"."TRANSACTION" (usr_token, tra_id, car_id, loc_id, tra_confirmationcode, tra_date, tra_lat, tra_lon, tra_status, tra_value) 
+VALUES ('a4a70900-24e1-11df-8924-001ff3591711', now(), -1, -1, '9999', dateof(now()), 0, 0, 'PENDING', 999);
+
+INSERT INTO "BDICDM"."TRANSACTION" (usr_token, tra_id, car_id, loc_id, tra_confirmationcode, tra_date, tra_lat, tra_lon, tra_status, tra_value) 
+VALUES ('a4a70900-24e1-11df-8924-001ff3591711', now(), -1, -1, '9999', dateof(now()), 0, 0, 'PENDING', 999);
+
+INSERT INTO "BDICDM"."TRANSACTION" (usr_token, tra_id, car_id, loc_id, tra_confirmationcode, tra_date, tra_lat, tra_lon, tra_status, tra_value) 
+VALUES ('a4a70900-24e1-11df-8924-001ff3591711', now(), -1, -1, '9999', dateof(now()), 0, 0, 'PENDING', 999);
+
+INSERT INTO "BDICDM"."TRANSACTION" (usr_token, tra_id, car_id, loc_id, tra_confirmationcode, tra_date, tra_lat, tra_lon, tra_status, tra_value) 
+VALUES ('a4a70900-24e1-11df-8924-001ff3591711', now(), -1, -1, '9999', dateof(now()), 0, 0, 'PENDING', 999);
+
+INSERT INTO "BDICDM"."TRANSACTION" (usr_token, tra_id, car_id, loc_id, tra_confirmationcode, tra_date, tra_lat, tra_lon, tra_status, tra_value) 
+VALUES ('a4a70900-24e1-11df-8924-001ff3591711', now(), -1, -1, '9999', dateof(now()), 0, 0, 'PENDING', 999);
+
+INSERT INTO "BDICDM"."TRANSACTION" (usr_token, tra_id, car_id, loc_id, tra_confirmationcode, tra_date, tra_lat, tra_lon, tra_status, tra_value) 
+VALUES ('a4a70900-24e1-11df-8924-001ff3591711', now(), -1, -1, '9999', dateof(now()), 0, 0, 'PENDING', 999);
+
+
+--MATOS CORDEIRO
+INSERT INTO "BDICDM"."TRANSACTION" (usr_token, tra_id, car_id, loc_id, tra_confirmationcode, tra_date, tra_lat, tra_lon, tra_status, tra_value, tra_segment) 
+VALUES ('a4a70900-24e1-11df-8924-001ff3591711', now(), -1, -1, '9999', dateof(now()), -23.493596, -46.651210, 'PENDING', 999, 'VAREJO');
+
+
+--METRO LIBERDADE
+
+INSERT INTO "BDICDM"."TRANSACTION" (usr_token, tra_id, car_id, loc_id, tra_confirmationcode, tra_date, tra_lat, tra_lon, tra_status, tra_value, tra_segment) 
+VALUES ('a4a70900-24e1-11df-8924-001ff3591711', now(), -1, -1, '9999', dateof(now()), -23.555085, -46.635834, 'PENDING', 999, 'VAREJO');
+
 CREATE TABLE IF NOT EXISTS "BDICDM"."TRANSACTION" (
     usr_token text,
-    tra_id uuid,
+    tra_id timeuuid,
     car_id int,
     loc_id int,
     tra_confirmationcode text,
@@ -57,7 +92,8 @@ CREATE TABLE IF NOT EXISTS "BDICDM"."TRANSACTION" (
     tra_lat float,
     tra_lon float,
     tra_status text,
-    tra_value decimal,
+    tra_value double,
+	tra_segment text,
     PRIMARY KEY (usr_token, tra_id)
 ) WITH CLUSTERING ORDER BY (tra_id ASC)
     AND bloom_filter_fp_chance = 0.01
@@ -74,3 +110,5 @@ CREATE TABLE IF NOT EXISTS "BDICDM"."TRANSACTION" (
     AND read_repair_chance = 0.0
     AND speculative_retry = '99.0PERCENTILE';
 
+CREATE INDEX IF NOT EXISTS idx_tra_segment ON "BDICDM"."TRANSACTION" (tra_segment);
+CREATE INDEX IF NOT EXISTS idx_tra_status ON "BDICDM"."TRANSACTION" (tra_status);
