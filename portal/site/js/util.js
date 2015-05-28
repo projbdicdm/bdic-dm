@@ -76,6 +76,11 @@ util = function(){
 			Materialize.toast('Faça o login para comprar produtos!', 4000);
 			return false;
 		}
+		if($("#modal1 #quantity").val() == "0"){
+			$("#modal1 #quantity").addClass("invalid");
+			Materialize.toast('A quantidade do item deve ser maior que 0!', 4000);
+			return false;		
+		}
 		cartNow = $.sessionStorage.getItem('cartProducts');
 		if(cartNow == null || cartNow == ''){		
 			var cart = [

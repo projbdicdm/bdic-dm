@@ -22,11 +22,45 @@ cart_buy = function(){
 		//identifica div como modal
 		$('.modal-trigger').leanModal();
 		
+		_carregar_itens_carrinho();
+			
+		//bloqueia a digitação de letras
+		$('#numeroCartao, #codigoSegurancaCartao').keypress(function(key) {
+			if(key.charCode < 48 || key.charCode > 57) return false;
+		});
+		
+		//identifica div como modal
+		$('.modal-trigger').leanModal();		
+			
+	}
+	var _remove_item = function(id){
+		cartNow = $.sessionStorage.getItem('cartProducts');
+		var newCart = [];
+		$.each(JSON.parse(cartNow), function(index, item) {
+			if(item.id !=id){
+				newCart.push({"id":item.id,
+							  "imagem":item.imagem,
+							  "descricao":item.descricao,
+							  "quantidade":item.quantidade,
+							  "valor":item.valor
+							});
+			}
+		});
+		if(newCart){
+			$.sessionStorage.setItem('cartProducts','');
+		}else{
+			$.sessionStorage.setItem('cartProducts', JSON.stringify(newCart));
+		}
+		_carregar_itens_carrinho();
+		Materialize.toast('Item removido do carrinho!', 4000);
+	}	
+	var _carregar_itens_carrinho = function(){
 		//preenche os produtos na tabela
+		$('table tbody').html('');
 		cart = $.sessionStorage.getItem('cartProducts');
 		if(!cart){
 			tr = $('<tr/>');
-			tr.append("<td colspan='5' class='center'>O carrinho está vazinho!</td>");
+			tr.append("<td colspan='6' class='center'>O carrinho está vazinho!</td>");
 			$('table').append(tr);
 			$('.pagamentofinalizacao').hide();
 			return false;
@@ -34,10 +68,10 @@ cart_buy = function(){
 		var total = 0;
 		$.each(JSON.parse(cart), function(index, item) {
 			tr = $('<tr/>');
+			tr.append("<td class='top'><i class='mdi-action-delete small' onclick=cart_buy.remove_item('"+item.id+"');></i></td>");
 			tr.append("<td><img height='100px' src='"+item.imagem+"'/></td>");
 			tr.append("<td>" + item.descricao + "</td>");
 			tr.append("<td class='center'>" + item.quantidade + "</td>");
-			//tr.append("<td><input type='number' class='center' min='1' max='100' value='"+item.quantidade+"'></td>");
 			tr.append("<td class='right2'>" + item.valor + "</td>");
 			valorCalc = item.valor;
 			valorCalc = valorCalc.replace(".","");
@@ -48,19 +82,10 @@ cart_buy = function(){
 			$('table tbody').append(tr);
 		});
 			tr = $('<tr/>');
-			tr.append("<td colspan='4' class='right2'><b>Total</b></td>");
+			tr.append("<td colspan='5' class='right2'><b>Total</b></td>");
 			tr.append("<td class='right2'>" + util.formatReal(total) + "</td>");
 			$('table').append(tr);
-			$('.pagamentofinalizacao').show();
-			
-		//bloqueia a digitação de letras
-		$('#numeroCartao, #codigoSegurancaCartao').keypress(function(key) {
-			if(key.charCode < 48 || key.charCode > 57) return false;
-		});
-		
-		//identifica div como modal
-		$('.modal-trigger').leanModal();		
-			
+			$('.pagamentofinalizacao').show();			
 	}
 	var _pagamento = function(){
 		//valida o preenchimento do cartão
@@ -101,6 +126,7 @@ cart_buy = function(){
 	return {
 		init:_init,
 		pagamento: _pagamento,
-		finalizar_pedido: _finalizar_pedido
+		finalizar_pedido: _finalizar_pedido,
+		remove_item: _remove_item
 	}
 }();
