@@ -1,0 +1,5 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"Inserir, no Banco de Dados, os dados de Categoria";"INSERT INTO categoria (cat_id,cat_nm) VALUES (10000,'Teste - Alimentos e Bebidas');";"SELECT count(*) FROM categoria WHERE cat_id = 10000;";"1"
+"Consultar, no Banco de Dados, os dados da Categoria";"";"SELECT cat_nm FROM categoria WHERE cat_id = 10000;";"Teste - Alimentos e Bebidas"
+"Alterar, no Banco de Dados, os dados da Categoria";"UPDATE  categoria   SET cat_nm = 'Teste - Alimentos sem Bebidas'  WHERE  cat_id = 10000;";"SELECT cat_nm FROM categoria WHERE cat_id = 10000;";"Teste - Alimentos sem Bebidas"
+"Deletar, no Banco de Dados, os dados da Categoria";"DELETE FROM  categoria WHERE  cat_id = 10000;";"SELECT count(*) FROM categoria WHERE cat_id = 10000;";"0"

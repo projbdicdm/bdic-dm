@@ -1,0 +1,5 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"CDT 01 - Inserir dados da Localidade";"INSERT INTO localidade (loc_id,loc_end,loc_num,loc_cid_cod,loc_cep,loc_lot_cod) VALUES (10000,'38055 Haiti Ct.',774,1292,'29315670',2);";"SELECT count(*) FROM localidade WHERE loc_id = 10000;";"1"
+"CDT 02 – Consultar dados da Localidade";"";"SELECT loc_end FROM localidade WHERE loc_id = 10000;";"38055 Haiti Ct."
+"CDT 04 - Alterar dados da Localidade";"UPDATE  localidade   SET loc_end = 'Teste'  WHERE loc_id = 10000;";"SELECT loc_end FROM localidade WHERE loc_id = 10000;";"Teste"
+"CDT 05 - Deletar dados da Localidade";"DELETE FROM  localidade WHERE  loc_id = 10000;";"SELECT count(*) FROM localidade WHERE loc_id = 10000;";"0"

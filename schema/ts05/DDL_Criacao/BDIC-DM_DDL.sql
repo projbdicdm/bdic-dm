@@ -212,7 +212,8 @@ CREATE TABLE `venda` (
   `ven_cli_cod` int(11) DEFAULT NULL,
   `ven_dt` datetime NOT NULL,
   `ven_tip_cod` int(11) DEFAULT NULL,
-  `ven_car_cod` int(11) DEFAULT NULL
+  `ven_car_cod` int(11) DEFAULT NULL,
+  `ven_tra_cod` char(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

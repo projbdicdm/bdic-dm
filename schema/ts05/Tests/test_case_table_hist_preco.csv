@@ -1,0 +1,7 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"CDT 01 - Inserir dados da Produto";"INSERT INTO produto (pro_id, pro_nm,pro_vl,pro_cat_cod) VALUES (-5001,'Artefatos Bélicos Nucleares',16.25,1);";"SELECT count(*) FROM produto WHERE pro_id = -5001;";"1"
+"Inserir, no Banco de Dados, os dados de Histórico de Preço";"INSERT INTO histpreco (his_pro_cod,his_dt,his_vl) VALUES
+(-5001,'2015-2-11',21.35);";"SELECT count(*) FROM histpreco WHERE his_pro_cod = -5001;";"1"
+"Consultar, no Banco de Dados, os dados de Histórico de Preço";"";"SELECT his_vl FROM histpreco WHERE his_pro_cod = -5001;";"21.35"
+"Alterar, no Banco de Dados, os dados de Histórico de Preço";"UPDATE  histpreco SET his_vl =  24.70 Where  his_pro_cod = -5001;";"SELECT his_vl FROM histpreco WHERE his_pro_cod = -5001;";"24.70"
+"Deletar, no Banco de Dados, os dados de Histórico de Preço";"DELETE FROM histpreco  Where  his_pro_cod = -5001;";"SELECT count(*) FROM histpreco WHERE his_pro_cod = -5001;";"0"
