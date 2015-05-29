@@ -294,6 +294,16 @@ app.post('/api/user/register', jsonParser, function(req, res){
 	return res.json({status: "ok"});
 });
 
+app.post('/api/transaction/buy', jsonParser, function(req, res){
+ 	if(!req.body.hasOwnProperty('token')) {
+	
+		res.statusCode = 400;
+		//return res.send('Error 400: use of register with bad data.');
+		return res.send(req.body.hasOwnProperty('token'));
+	} 
+	
+	return res.json({status: "ok"});
+});
 
 app.get('/api/products', jsonParser, function(req, res){
 
