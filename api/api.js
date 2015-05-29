@@ -10,6 +10,9 @@ var app = express();
 //usamos o await para esperar os callbacks no BUY
 var await = require('await');
 
+//lib para conectar no R
+var r = require('rserve-client');
+
 var ordenaArrayDeDatas = function sortByKey(array, key) {
     return array.sort(function(a, b) {
         var x = a[key];
@@ -45,7 +48,7 @@ var query_login_by_token = 'SELECT "usr_login" FROM "USER" WHERE "usr_token" = ?
 var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = ?';
 var query_add_buy = 'INSERT INTO "TRANSACTION" (tra_id, usr_token, car_id, loc_id, tra_date, tra_value, tra_lat, tra_lon, tra_confirmationcode, tra_status, tra_segment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 var query_transaction = 'SELECT tra_confirmationcode FROM "TRANSACTION" where usr_token = ? AND tra_id = ?'; 
-var query_last_geo_transaction = 'select unixTimestampOf(tra_id) as date, tra_lat, tra_lon from "TRANSACTION" where usr_token = ? AND tra_segment = ?;';
+var query_last_geo_transaction = 'select unixTimestampOf(tra_id) as date, tra_lat, tra_lon, tra_status from "TRANSACTION" where usr_token = ? AND tra_segment = ?;';
 var query_confirm_transaction = 'UPDATE "TRANSACTION" SET tra_status = ? WHERE usr_token = ? AND tra_id = ?'
 var Uuid = require('cassandra-driver').types.Uuid;
 var TimeUuid = require('cassandra-driver').types.TimeUuid;
@@ -99,6 +102,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	var usr_login = '';
 
 	var calbacks = await('login', 'geo');
+	var calbacksProcessoR = await('resultadoDoR');
 	
 	client.execute(query_login_by_token, [req.body.token], {prepare: true}, function(err, result) {
 		if(err){
@@ -109,10 +113,8 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	
 		if(result.rows.length != 1){
 			res.statusCode = 400;
-			calbacks.fail(err);
 			return res.json({status: "Buy with bad token"});
 		}
-		console.log('acabou login');
 		calbacks.keep('login', result);
 	});	
 	
@@ -138,11 +140,9 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 					//se nao temos outra transacao para
 					//comparar...
 					GEOFraud = false;
-					console.log('acabou geo1');
 					calbacks.keep('geo');
 				}else{
 					result.rows = ordenaArrayDeDatas(result.rows, 'date');
-					console.log('acabou geo2');
 					calbacks.keep('geo', result.rows);
 				}
 			}
@@ -154,78 +154,123 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	// todos os callbacks voltaram
 	calbacks.then(function(got){
 	
-	usr_login = got.login.rows[0].usr_login;
+		usr_login = got.login.rows[0].usr_login;
 		
-	if(got.geo != null){
-		console.log(got.geo);
-		var dLat = Math.sqrt(Math.pow((req.body.geo.lat - got.geo[0].tra_lat), 2));
-		var dLon = Math.sqrt(Math.pow((req.body.geo.lon - got.geo[0].tra_lon), 2))
-		var hipo = Math.sqrt(Math.pow(dLat, 2) + Math.pow(dLon, 2));
-		var distanciaEmMN = hipo * 60;
-		var distanciaEmKm = distanciaEmMN * 1.852;
-		var distanciaEmM = distanciaEmKm * 1000;
-	
-		if(distanciaEmM > THRESHOLD_GEO){
-			GEOFraud = true;
-			trans_status = 'DENIED_DUE_TO_GEO_FRAUD';
-		}
-	}
-	
-	if(!GEOFraud){ //se não teve fraude no GEO (se precisou calcular)
-	// aplica HMM, se for fraude
-	//aplica BoxPlot
-	//HMM(Erro) + BoxPlot(Fora) = Fraude
-	}
-	
-	var confirmationCode = Math.round(Math.random() * 10000);
-	var transID = TimeUuid.now();
-	var paramns = [transID,
-		req.body.token, 
-		-1, 
-		-1, 
-		moment().unix(), 
-		req.body.value,
-		req.body.geo.lat,
-		req.body.geo.lon,
-		confirmationCode.toString(),
-		trans_status,
-		req.body.segment];
+			
+		if(got.geo != null){
 		
-		client.execute(query_add_buy, paramns, {prepare: true}, function(err, result) {
-			if(err){
-				res.statusCode = 500;
-				return res.json({status: "Buy internal error", message: err});
+			var transacao;
+			
+			for(var i = 0; i < got.geo.length; i++){
+				if(got.geo[i].tra_status == 'PENDING' ||
+				   got.geo[i].tra_status == 'CONFIRMED'){
+					transacao = got.geo[i];
+					break;
+				}
 			}
+			
+			if(transacao){		
+				var dLat = Math.sqrt(Math.pow((req.body.geo.lat - transacao.tra_lat), 2));
+				var dLon = Math.sqrt(Math.pow((req.body.geo.lon - transacao.tra_lon), 2))
+				var hipo = Math.sqrt(Math.pow(dLat, 2) + Math.pow(dLon, 2));
+				var distanciaEmMN = hipo * 60;
+				var distanciaEmKm = distanciaEmMN * 1.852;
+				var distanciaEmM = distanciaEmKm * 1000;
 
-			if(trans_status == 'PENDING'){
-				//enviamos o email com o código de confirmação para o usuário
-				var message = {
-					text:    "Your confirmation code is: " + confirmationCode.toString() + "\nTransactionID: "+ transID, 
-					from:    "projbdic32@gmail.com",
-					to:      usr_login,
-					subject: "Confirmation code"
-				};
-				server.send(message, function(err, message) { 
-					if(err){
-						console.log("Error: " + err);
-					};
-					return res.json({status: "OK", transactionid: transID, token: req.body.token});
-				});
-			}else{
-				var message = {
-					text:    "Your TransactionID: "+ transID + "\n was denied with status: " + trans_status, 
-					from:    "projbdic32@gmail.com",
-					to:      usr_login,
-					subject: "Transaction denied"
-				};
-				server.send(message, function(err, message) { 
-					if(err){
-						console.log("Error: " + err);
-					};
-					return res.json({status: trans_status, transactionid: transID, token: req.body.token});
-				});
+				if(distanciaEmM > THRESHOLD_GEO){
+					GEOFraud = true;
+					trans_status = 'DENIED_DUE_TO_GEO_FRAUD';
+				}
 			}
-		});
+		}
+	
+		if(trans_status == 'PENDING'){ //se não teve fraude no GEO (ou se segmento não usa)
+		
+		//connecta no Rserve
+		r.connect("192.168.56.101", 6311, function(err, client) {
+			if(err){
+				calbacksProcessoR.fail(err);
+			}else{
+				var codigoR = 'resposta <- c(classificaHMM("'+req.body.token+'",'+req.body.value+'), classificaBoxPlot("'+req.body.token+'",'+req.body.value+'))';	
+				client.evaluate(codigoR, function(err, ans) {
+
+					if(err){
+						console.log("err:" + err);
+						calbacksProcessoR.fail(err);
+					}
+
+					client.end();
+					calbacksProcessoR.keep('resultadoDoR', ans);
+				});
+		}})
+	}else{
+		calbacksProcessoR.keep('resultadoDoR');
+	}
+	
+	
+	//HMM(Erro) + BoxPlot(Fora) = Fraude
+	calbacksProcessoR.then(function(got){
+	
+		if(got.resultadoDoR){
+			if(!got.resultadoDoR[0] && !got.resultadoDoR[1]){
+				trans_status = 'DENIED_DUE_TO_FRAUD';
+			}
+		}
+			var confirmationCode = Math.round(Math.random() * 10000);
+			var transID = TimeUuid.now();
+			var paramns = [transID,
+				req.body.token, 
+				-1, 
+				-1, 
+				moment().unix(), 
+				req.body.value,
+				req.body.geo.lat,
+				req.body.geo.lon,
+				confirmationCode.toString(),
+				trans_status,
+				req.body.segment];
+				
+				client.execute(query_add_buy, paramns, {prepare: true}, function(err, result) {
+					if(err){
+						res.statusCode = 500;
+						return res.json({status: "Buy internal error", message: err});
+					}
+
+					if(trans_status == 'PENDING'){
+						//enviamos o email com o código de confirmação para o usuário
+						var message = {
+							text:    "Your confirmation code is: " + confirmationCode.toString() + "\nTransactionID: "+ transID, 
+							from:    "projbdic32@gmail.com",
+							to:      usr_login,
+							subject: "Confirmation code"
+						};
+						server.send(message, function(err, message) { 
+							if(err){
+								console.log("Error: " + err);
+							};
+							return res.json({status: "OK", transactionid: transID, token: req.body.token});
+						});
+					}else{
+						var message = {
+							text:    "Your TransactionID: "+ transID + "\n was denied with status: " + trans_status, 
+							from:    "projbdic32@gmail.com",
+							to:      usr_login,
+							subject: "Transaction denied"
+						};
+						server.send(message, function(err, message) { 
+							if(err){
+								console.log("Error: " + err);
+							};
+							return res.json({status: trans_status, transactionid: transID, token: req.body.token});
+						});
+					}
+				});
+	},function(err){
+		res.statusCode = 500;
+		return res.json({status: "Error 500", message: err});
+	});	
+
+	
 	
 	},function(err){
 		res.statusCode = 500;
