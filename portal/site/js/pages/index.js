@@ -60,8 +60,6 @@
 		
 		//identifica div como modal
 		$('.modal-trigger').leanModal();
-		//habilitar submenu qdo usuário está logado como cliente
-		$(".dropdown-button").dropdown();
 	}
 	var _api_user_login = function (){
 		

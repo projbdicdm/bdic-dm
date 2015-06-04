@@ -134,6 +134,8 @@ util = function(){
 			url:'header.html',
 			success: function(data){
 				$(".headerPage").html(data);
+				//habilitar submenu qdo usuário está logado como cliente
+				$(".dropdown-button").dropdown();
 			}
 		});
 	}
