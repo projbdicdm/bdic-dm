@@ -1,0 +1,6 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"Inserir, no Banco de Dados, os dados de Cidade";"INSERT INTO cidade (cid_id,cid_nm,cid_est_cod) VALUES 
+(6000, 'Acrelândia',1);";"SELECT count(*) FROM cidade WHERE cid_id = 6000;";"1"
+"Consultar, no Banco de Dados, os dados da Cidade";"";"SELECT cid_nm FROM cidade WHERE cid_id = 6000;";"Acrelândia"
+"Alterar, no Banco de Dados, os dados da Cidade";"UPDATE  cidade  SET cid_nm = 'Teste - Acrelandia'  WHERE cid_id = 6000 ;";"SELECT cid_nm FROM cidade WHERE cid_id = 6000;";"Teste - Acrelandia"
+"Deletar, no Banco de Dados, os dados da Cidade";"DELETE FROM cidade WHERE cid_id = 6000;";"SELECT count(*) FROM cidade WHERE cid_id = 6000;";"0"

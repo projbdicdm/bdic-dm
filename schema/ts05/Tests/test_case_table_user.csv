@@ -1,0 +1,6 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"CDT 01 - Inserir dados da Usuário";"INSERT INTO user (usr_login,usr_pwd,usr_token) VALUES
+('shafiracameron2','rTNYpjCH','832013')";"SELECT count(*) FROM user WHERE usr_login  = 'shafiracameron2';";"1"
+"CDT 03 -  Consultar dados da Usuário";"";"SELECT usr_login FROM user WHERE usr_login  = 'shafiracameron2';";"shafiracameron2"
+"CDT 04 - Alterar dados da Usuário";"UPDATE  user  SET usr_login  = 'shafiracameron3'  WHERE  usr_login  = 'shafiracameron2';";"SELECT usr_login FROM user WHERE usr_login  = 'shafiracameron3';";"shafiracameron3"
+"CDT 05 - Deletar dados da Usuário";"DELETE FROM  user  WHERE  usr_login  = 'shafiracameron3';";"SELECT count(*) FROM user WHERE usr_login  = 'shafiracameron3';";"0"

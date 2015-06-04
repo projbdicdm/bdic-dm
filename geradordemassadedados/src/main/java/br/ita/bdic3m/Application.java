@@ -100,7 +100,7 @@ public class Application {
 		try {
 			PrintWriter out = new PrintWriter(new BufferedWriter(
 					new FileWriter(nomeDoArquivoDeSaida, true)));
-
+			out.println("Id;Date;FullName;NationalIdentificationNumber;CompanyEmail;Valor");
 			int id = 1;
 
 			for (int dia = 0; dia < quantidadeDeDatas; dia++) {

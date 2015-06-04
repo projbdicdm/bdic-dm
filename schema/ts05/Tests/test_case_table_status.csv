@@ -1,0 +1,5 @@
+"description";"commandChanger";"commandVerifier";"expectedResult"
+"CDT 01 - Inserir dados da Status";"INSERT INTO status (sta_id,sta_ds) VALUES (8,'Aguardando...');";"SELECT count(*) FROM status WHERE sta_id = 8;";"1"
+"CDT 03 -  Consultar dados da Status";"";"SELECT sta_ds FROM status WHERE sta_id = 8;";"Aguardando..."
+"CDT 04 - Alterar dados da Status";"UPDATE  status  SET sta_ds = 'Aguardando 2...'  WHERE sta_id = 8;";"SELECT sta_ds FROM status WHERE sta_id = 8;";"Aguardando 2..."
+"CDT 05 - Deletar dados da Status";"DELETE FROM status  WHERE sta_id = 8;";"SELECT count(*) FROM status WHERE sta_id = 8;";"0"
