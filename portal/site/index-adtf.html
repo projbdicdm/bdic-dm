@@ -16,31 +16,11 @@
       google.load('visualization', '1.0', {'packages':['corechart']});
       //google.setOnLoadCallback(drawChart);
 
-      function drawChart(jsonData) {
-      
+      function drawChart(jsonData)
+      {
             //NOTA - Como a tabela é dinamica, o eixo x é o primeiro campo e o eixo y é o ultimo campo da tabela/json
 
             var googleDataTable = new google.visualization.DataTable();
-            
-            // MOCK DATA
-            /*
-            var googleDataTable = new google.visualization.DataTable();
-            googleDataTable.addColumn('string', 'Dias da Semana');
-            googleDataTable.addColumn('number', 'Produto 1');
-            googleDataTable.addColumn('number', 'Produto 2');
-            googleDataTable.addColumn('number', 'Produto 3');
-            googleDataTable.addColumn('number', 'Produto 4');
-            googleDataTable.addColumn('number', 'Meta de Vendas');
-            googleDataTable.addRows([
-                ['Segunda-feira', 100, 85, 99, 66, 65],
-                ['Terça-feira', 100, 78, 55, 72, 62],
-                ['Quarta-feira', 100, 79, 85, 45, 88],
-                ['Quinta-feira', 100, 69, 85, 42, 77],
-                ['Sexta-feira', 100, 97, 93, 84, 74],
-                ['Sábado', 100, 77, 93, 94, 84],
-                ['Domingo', 100, 87, 85, 42, 74]
-            ]);
-            */
             
             // API DATA
             // Get columns
@@ -178,6 +158,7 @@
                 
                 <!-- Tabela de resultados -->
                 <br>
+                <a href="#!" class="modal-action waves-effect waves-green btn" id="btnExportarPDF" onclick="exportarPDF()">Exportar para PDF</a>
                 <div id="tabela-de-resultados-titulo"></div>
                 <div id="tabela-de-resultados-subtitulo"></div>
                 <div id="grafico"></div>
@@ -218,6 +199,129 @@
             });
         }
     
+        function exportarPDF()
+        {
+            // Config
+            //var source = $('#tabela-de-resultados');
+            var source = $('#grafico');
+            var divElement = source,
+                cache_width = divElement.width(),
+                a4 = [ 595.28,  841.89];  // for a4 size paper width and height
+
+            // Create PDF
+            createPDF();
+            
+            // Main PDF event
+            function createPDF(){
+                console.log("createPDF");
+                
+                getCanvas().then(function(canvas){
+                    
+                    try
+                    {
+                        console.log("getCanvasResult");
+                        
+                        console.log("calculateImageWidth");
+                        
+                        var k = 72/25.4 // Scale factor mm to pt
+                        
+                        var pageWidth = 210 * k;
+                        var pageHeight = 297 * k;
+                        var pageMargin = 10 * k;
+                        var imageResizeFactor = canvas.width / (pageWidth - (pageMargin * 2));
+                        
+                        var imageWidth = canvas.width / imageResizeFactor;
+                        var imageHeight = canvas.height / imageResizeFactor;
+                        var imageCompress = 'none';
+                        
+                        console.log("imageResizeFactor", imageResizeFactor);
+                        console.log("pageMargin", pageMargin);
+                        console.log("imageWidth", imageWidth);
+                        console.log("imageHeight", imageHeight);
+                        console.log("imageCompress", imageCompress);
+                        
+                        var img = canvas.toDataURL("image/png");
+                        console.log(img);
+                        
+                        console.log("creating pdf...");
+                        
+                        var doc = new jsPDF('p', 'pt', 'a4', true);
+                                
+                        //doc.setDrawColor(0);
+                        //doc.setFillColor(238, 238, 238);
+                        //doc.rect(0, 0, pageWidth,  pageHeight, 'F');
+                                
+                        console.log("adding texts...");
+                        
+                        var verticalShift = pageMargin;
+                        
+                        // Title
+                        verticalShift = verticalShift + (20 * k);
+                        doc.setFontSize(40);    
+                        doc.text(pageMargin, verticalShift, 'Titulo');
+                        
+                        // Subtitle
+                        verticalShift = verticalShift + (8 * k);
+                        doc.setFontSize(20);
+                        doc.text(pageMargin, verticalShift, 'Subtitulo');
+                        
+                        // Description
+                        verticalShift = verticalShift + (6 * k);
+                        doc.setFontSize(10);
+                        doc.text(pageMargin, verticalShift, 'Descricao');
+                        
+                        // Chart
+                        verticalShift = verticalShift + (6 * k);
+                        doc.addImage(img, 'png', pageMargin, verticalShift, imageWidth, imageHeight, undefined, imageCompress);
+                        
+                        // Table
+                        verticalShift = verticalShift + imageHeight;
+                        var data = [], fontSize = 12;
+                        doc.setFont("times", "normal");
+                        doc.setFontSize(fontSize);
+                        data = [];
+                        for (var insert = 0; insert <= 30; insert++) {
+                            data.push({
+                                "name" : "jspdf plugin",
+                                "version" : insert,
+                                "author" : "Prashanth Nelli",
+                                "Designation" : "jspdf table plugin"
+                            });
+                        }
+                        height = doc.drawTable(data, {
+                            xstart : pageMargin,
+                            ystart : pageMargin,
+                            tablestart : verticalShift,
+                            marginright : pageMargin,
+                            xOffset : 10,
+                            yOffset : 20
+                        });
+                        
+                        // Output
+                        console.log("saving output...");
+                        //doc.output("dataurlnewwindow");
+                        doc.save('RelatorioAdTF.pdf');
+                        
+                        console.log("done!");
+                    }
+                    catch(err)
+                    {
+                        console.log(err);
+                    }
+                });
+            }
+
+            // create canvas object
+            function getCanvas(){
+                console.log("getCanvas");
+                return html2canvas(divElement,{
+                    imageTimeout:2000,
+                    removeContainer:true,
+                    taintTest:false,
+                    allowTaint:true
+                });	
+            }
+        }
     </script>
 	
 	<footer class="page-footer orange">
@@ -236,7 +340,7 @@
 		</div>
 	</footer>
 
-	<!--  Scripts-->
+	<!-- Scripts-->
 	<script src="js/jquery-2.1.1.min.js"></script>
 	<script src="js/jquery.html5storage.min.js"></script>
 	<script src="js/materialize.js"></script>
@@ -248,5 +352,16 @@
 		index.init();
 		});
 	</script>
+    
+	<!-- PDF Scripts-->
+	<script src="js/pdf/jspdf.js"></script>
+	<script src='js/pdf/libs/FileSaver.js/FileSaver.min.js' type='text/javascript'></script>
+    <script src='js/pdf/libs/Html2Canvas/html2canvas.min.js' type='text/javascript'></script>
+	<script src='js/pdf/libs/png_support/png.js' type='text/javascript'></script>
+    <script src='js/pdf/libs/png_support/zlib.js' type='text/javascript'></script>
+    <script src='js/pdf/plugins/addimage.js' type='text/javascript'></script>
+    <script src='js/pdf/plugins/png_support.js' type='text/javascript'></script>
+    <script src='js/pdf/plugins/table.js' type='text/javascript'></script>
+    
 </body>
 </html>			
