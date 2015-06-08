@@ -3,6 +3,7 @@ index = function(){
 	var _init = function (){
 		//valida se o usuário esta logado
 		$(".liLogged").hide();
+		$("#btnExportarPDF").hide();
         
 		if($.sessionStorage.getItem('userType') == "admin" || $.sessionStorage.getItem('userType') == "adtf"){
 			util.setNameUser();
@@ -24,9 +25,6 @@ index = function(){
                 
                 currentQueryResult = jsonData;
                 
-                // Store the result data
-                //$.sessionStorage.setItem('adtfResult', jsonData);
-                
                 // Create table
                 var table = _makeTable(currentQueryResult.dados);
                 $("#tabela-de-resultados-titulo").html("<h4>" + currentQueryResult.titulo + "</h4>");
@@ -44,6 +42,8 @@ index = function(){
                 $(".active").each(function() {
                     $( this ).removeClass( "active" );
                 });
+                
+                $("#btnExportarPDF").show();
             }
         });
     }
@@ -130,7 +130,8 @@ index = function(){
         // Variables
         var title = currentQueryResult.titulo;
         var subtitle = currentQueryResult.subtitulo;
-        var description = currentQueryResult.descricao;
+        //var description = currentQueryResult.descricao;
+        var description = "";
         var jsonData = currentQueryResult.dados;
         var charDiv = $('#grafico');
         
