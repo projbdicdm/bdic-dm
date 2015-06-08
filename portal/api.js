@@ -334,7 +334,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 		switch(queryId) {
 			case "01":
                 retorno.subtitulo = '01 - Classificar clientes que mais compraram em ordem decrescente';
-                retorno.descricao = 'Descrição aqui';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					trans_cli_id : 1, 
 					cli_firstname : 'Pedro', 
@@ -356,7 +356,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				break;
 			case "02":
                 retorno.subtitulo = '02 - Classificar, em ordem decrescente, os clientes por valor das transacoes';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					trans_cli_id : 1, 
 					trans_value : 1000
@@ -368,7 +368,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				break;
 			case "03":
                 retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					cli_firstname : 'Pedro', 
 					cli_lastname : 'Santos', 
@@ -377,7 +377,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				break;
 			case "04":
                 retorno.subtitulo = '04 - Ordenar as transacoes em ordem decrescente por valor';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					cli_firstname : 'Pedro', 
 					cli_lastname : 'Santos', 
@@ -395,7 +395,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				break;
 			case "05":
                 retorno.subtitulo = '05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					cli_firstname : 'Pedro',
 					cli_lastname : 'Santos',
@@ -405,7 +405,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				break;
 			case "06":
                 retorno.subtitulo = '06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					cli_firstname : 'Pedro',
 					cli_lastname : 'Santos',
@@ -416,7 +416,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				break;
 			case "07":
                 retorno.subtitulo = '07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					cli_firstname : 'Pedro',
 					cli_lastname : 'Santos',
@@ -430,7 +430,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				break;
 			case "08":
                 retorno.subtitulo = '08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					trans_cli_id : 1, 
 					cli_firstname : 'Pedro', 
@@ -442,7 +442,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				break;
 			case "09":
                 retorno.subtitulo = '09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					trans_cli_id : 1, 
 					cli_firstname : 'Pedro', 
@@ -454,7 +454,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				break;
 			case "10":
                 retorno.subtitulo = '10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					trans_cli_id : 1, 
 					cli_firstname : 'Pedro', 
@@ -465,7 +465,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				break;
 			case "11":
                 retorno.subtitulo = '11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					trans_loc_id : 1, 
 					loc_country : 'Brasil', 
@@ -534,7 +534,7 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 		switch(queryId) {
 			case "01":
                 retorno.subtitulo = '01 - Classificar os produtos mais vendidos no último ano por quantidade';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					prd_name : 'Produto 1' , 
 					count : 1000
@@ -554,7 +554,7 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 				break;
 			case "02":
                 retorno.subtitulo = '02 - Classificar os total de vendas por produto no último ano';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					prd_name : 'Produto 1', 
 					sales_total : 10000
@@ -562,7 +562,7 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 				break;
 			case "03":
                 retorno.subtitulo = '03 - Classificar os produtos mais vendidos nos últimos 7 dias';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					prd_name : 'Produto 1', 
 					count: 4000
@@ -570,7 +570,7 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 				break;
 			case "04":
                 retorno.subtitulo = '04 - Classificar as categorias mais vendidas nos últimos 365 dias';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					prd_category_id : 1, 
 					cat_name : 'Informática', 
@@ -579,7 +579,7 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 				break;
 			case "05":
                 retorno.subtitulo = '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					prd_name : 'Produto 1', 
 					sales_total : 5000
@@ -587,7 +587,7 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 				break;
             case "06":
                 retorno.subtitulo = '06 - Total de venda por produtos em dias específicos da semana';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					prd_name : 'Produto 1', 
 					sales_total : 5000
@@ -595,7 +595,7 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 				break;
             case "07":
                 retorno.subtitulo = '07 - Total de venda por produtos e categorias em dias específicos';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					prd_name : 'Produto 1', 
 					sales_total : 5000
@@ -664,7 +664,7 @@ app.get('/api/adtf/clinprod/:queryId', jsonParser, function(req, res){
 		switch(queryId) {
 			case "01":
                 retorno.subtitulo = '01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria';
-                retorno.descricao = 'descrição';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					cli_id : 1, 
 					cat_name : 'Informática', 

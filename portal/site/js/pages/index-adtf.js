@@ -140,16 +140,10 @@ index = function(){
         // Main PDF event
         function createPDF() {
             
-            console.log("createPDF");
-            
             getCanvas().then(function(canvas){
                 
                 try
                 {
-                    console.log("getCanvasResult");
-                    
-                    console.log("calculateImageWidth");
-                    
                     var k = 72/25.4 // Scale factor mm to pt
                     
                     var pageWidth = 210 * k;
@@ -161,16 +155,8 @@ index = function(){
                     var imageHeight = canvas.height / imageResizeFactor;
                     var imageCompress = 'none';
                     
-                    console.log("imageResizeFactor", imageResizeFactor);
-                    console.log("pageMargin", pageMargin);
-                    console.log("imageWidth", imageWidth);
-                    console.log("imageHeight", imageHeight);
-                    console.log("imageCompress", imageCompress);
-                    
                     var img = canvas.toDataURL("image/png");
-                    console.log(img);
-                    
-                    console.log("creating pdf...");
+                    //console.log(img);
                     
                     var doc = new jsPDF('p', 'pt', 'a4', true);
                             
@@ -178,8 +164,6 @@ index = function(){
                     //doc.setFillColor(238, 238, 238);
                     //doc.rect(0, 0, pageWidth,  pageHeight, 'F');
                             
-                    console.log("adding texts...");
-                    
                     var verticalShift = pageMargin;
                     
                     // Title
@@ -194,7 +178,7 @@ index = function(){
                     
                     // Description
                     verticalShift = verticalShift + (6 * k);
-                    doc.setFontSize(9);
+                    doc.setFontSize(10);
                     doc.text(pageMargin, verticalShift, description);
                     
                     // Chart
@@ -204,7 +188,7 @@ index = function(){
                     // Table
                     verticalShift = verticalShift + imageHeight;
                     //doc.setFont("times", "normal");
-                    doc.setFontSize(9);
+                    doc.setFontSize(10);
                     height = doc.drawTable(jsonData, {
                         xstart : pageMargin,
                         ystart : pageMargin,
@@ -215,11 +199,8 @@ index = function(){
                     });
                     
                     // Output
-                    console.log("saving output...");
                     //doc.output("dataurlnewwindow");
                     doc.save('Relatorio AdTF.pdf');
-                    
-                    console.log("done!");
                 }
                 catch(err)
                 {
@@ -230,12 +211,9 @@ index = function(){
 
         // create canvas object
         function getCanvas(){
-            console.log("getCanvas");
             return html2canvas(charDiv,{
-                imageTimeout:2000,
-                removeContainer:true,
-                taintTest:false,
-                allowTaint:true
+                //imageTimeout:2000,
+                //removeContainer:true
             });	
         }
     }
