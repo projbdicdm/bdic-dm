@@ -161,6 +161,7 @@ util = function(){
 	}
 }();
 
+/*
 $.makeTable = function (mydata) {
     var table = $('<table border=1>');
     var tblHeader = "<tr>";
@@ -177,3 +178,4 @@ $.makeTable = function (mydata) {
     });
     return ($(table));
 };
+*/
