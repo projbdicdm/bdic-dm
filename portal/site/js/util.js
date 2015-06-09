@@ -71,6 +71,76 @@ util = function(){
 			}
         });
 	}
+	var _load_category_product = function(id){
+		var $selectDropdown = 
+		$("#dwCategoria")
+        .empty()
+        .html(' ');
+		
+		$.ajax({
+            type: 'GET',
+			dataType: "json",
+			async: false,
+            url: '/api/categories',
+            success: function (data) {
+				$.each(data, function(index, categoria) {
+					 $.each(categoria, function (i, item) {
+					$selectDropdown.append(
+					$("<option></option>")
+					.attr("value",item.cat_id)
+					.text(item.cat_nm)
+					);
+				
+					});
+				});
+						//$("#listaProdutos").html(listaProdutos);
+
+			},
+			statusCode: {
+				400: function(error) {
+				  Materialize.toast(error.responseJSON.status, 4000);
+				}
+			}
+        });
+
+
+
+	}
+	var _filter_category_product = function(id){
+		 $.ajax({
+            type: 'GET',
+			dataType: "json",
+			async: false,
+            url: 'api/products/' + id,
+            success: function (data) {
+				var listaProdutos = "";
+				$.each(data, function(index, produtos) {
+					 $.each(produtos, function (i, item) {
+						var div  = "<div class='col s4 center'>";
+								div += "<div class='row'><img src='"+item.imagem+"' height='100px'/></div>";
+								div += "<div class='row'>"+ item.descricao.substring(0,80);
+									if (item.descricao.length > 80){
+										div +="...";
+									}
+								div += "</div>";
+								div += "<div class='row'>"+util.formatReal(item.valor)+"</div>";
+								div += "<div class='row'>"
+									div += "<button onclick='util.load_details_product(this.id);' id='"+item.id+"' class='btn'>[+] Detalhes</button>";
+								div += "</div>";
+							div += "</div>";
+						listaProdutos+=div;						
+					});
+				});
+						$("#listaProdutos").html(listaProdutos);
+			},
+			statusCode: {
+				400: function(error) {
+				  Materialize.toast(error.responseJSON.status, 4000);
+				}
+			}
+        });
+		
+	}
 	var _addProductCart = function(id){
 		if(!sessionStorage.getItem('userName')){
 			Materialize.toast('Faça o login para comprar produtos!', 4000);
@@ -157,7 +227,9 @@ util = function(){
 		load_details_product: _load_details_product,
 		addProductCart: _addProductCart,
 		loadHeader: _loadHeader,
-		loadFooter: _loadFooter
+		loadFooter: _loadFooter,
+		load_category_product: _load_category_product,
+		filter_category_product: _filter_category_product
 	}
 }();
 

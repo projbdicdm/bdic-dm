@@ -5,6 +5,9 @@
 		util.loadHeader();
 		//carrega rodape
 		util.loadFooter();
+		// Inicia Combo Categoria
+		$('select').material_select();
+		
 		//carrega conteudo do modal do login
 		 $.ajax({
             type: 'GET',
@@ -61,6 +64,15 @@
 		//identifica div como modal
 		$('.modal-trigger').leanModal();
 	}
+	
+	//Carrega as categorias dos produtos
+	util.load_category_product();
+
+	// Filtra os produtos por categoria
+	$('select').change(function() {
+		 util.filter_category_product (this.value);
+ 		 });
+	
 	var _api_user_login = function (){
 		
 		var requestData = JSON.stringify($('#formLogin').serializeObject());
