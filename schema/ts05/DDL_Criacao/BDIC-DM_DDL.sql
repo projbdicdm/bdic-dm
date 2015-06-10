@@ -164,7 +164,8 @@ CREATE TABLE `produto` (
   `pro_nm` char(120) NOT NULL,
   `pro_ds` char(35) DEFAULT NULL,
   `pro_vl` decimal(9,2) NOT NULL,
-  `pro_cat_cod` int(11) DEFAULT NULL
+  `pro_cat_cod` int(11) DEFAULT NULL,
+  `pro_img` varchar(150) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

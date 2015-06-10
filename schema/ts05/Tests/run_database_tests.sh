@@ -9,6 +9,9 @@ user="benutzertest"
 passw="bdicdm2015!"  
 database="bdicdm" 
 
+echo "INSTALLING python-mysqldb"
+sudo apt-get install python-mysqldb -y
+
 echo "RUNNING ALL TEST CASES"
 
 python -u database_test_case_runner.py ${host} ${user} ${passw} ${database} "test_case_table_cartao.csv"
