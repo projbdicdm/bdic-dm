@@ -62,6 +62,7 @@ index = function(){
             TableRow += "</tr>";
             $(table).append(TableRow);
         });
+        $(table).addClass("striped");
         return ($(table));
     };
     
