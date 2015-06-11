@@ -3,7 +3,7 @@ var await = require('await');
 
 var calbacksProcessoR = await('resultadoDoR');
 
-r.connect("192.168.56.101", 6311, function(err, client) {
+r.connect("85.25.92.122", 6311, function(err, client) {
 
 	if(err){
 		console.log(err);
@@ -16,6 +16,7 @@ r.connect("192.168.56.101", 6311, function(err, client) {
 				console.log("err:" + err);
 				calbacksProcessoR.fail(err);
 			}
+console.log("resultadoDoR(HMM): "+ans);
 			console.log("resultadoDoR(HMM): "+ans[0]);
 			console.log("resultadoDoR(BoxPlot): "+ans[1]);
 			client.end();

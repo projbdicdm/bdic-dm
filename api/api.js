@@ -1,3 +1,9 @@
+var CASSANDRA_IP = "orion2412.startdedicated.net"; //192.168.56.101
+var RSERVE_IP = "orion2412.startdedicated.net";
+var ACTIVEMQ_IP = "orion2412.startdedicated.net";
+var HIVE_IP = "orion2412.startdedicated.net";
+var HIVE_PORT = "10000";
+
 //criamos o obj que renderiza HTML na saida
 var jade = require('jade');
 
@@ -21,13 +27,11 @@ var ordenaArrayDeDatas = function sortByKey(array, key) {
     });
 };
 
-//criamos instancia do servidor de email
-var email   = require("emailjs");
-var server  = email.server.connect({
-	user:     "projbdic32@gmail.com", 
-	password: "projbdic322015", 
-	host:     "smtp.gmail.com",
-	ssl: true
+//criamos instancia do servidor MQTT para enviar as notificacoes
+var mqtt    = require('mqtt');
+var clientMQTT  = mqtt.connect('mqtt://' + ACTIVEMQ_IP);
+clientMQTT.on('connect', function () {
+  //console.log("Conectado no MQTT");
 });
 
 //criamos instancia do body-parser, usado nos handlers
@@ -42,9 +46,9 @@ var tokenFake = "ASKDJHQWOEY98172354123";
 
 //adicionando o driver cassandra
 var cassandra = require('cassandra-driver');
-var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDICDM'});
+var client = new cassandra.Client({ contactPoints: [CASSANDRA_IP], keyspace: 'BDICDM'});
 var query_login = 'SELECT "usr_password", "usr_token" FROM "USER" WHERE "usr_login" = ? ';
-var query_login_by_token = 'SELECT "usr_login" FROM "USER" WHERE "usr_token" = ?';
+var query_login_by_token = 'SELECT "usr_login", "usr_token" FROM "USER" WHERE "usr_token" = ?';
 var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = ?';
 var query_add_buy = 'INSERT INTO "TRANSACTION" (tra_id, usr_token, car_id, loc_id, tra_date, tra_value, tra_lat, tra_lon, tra_confirmationcode, tra_status, tra_segment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 var query_transaction = 'SELECT tra_confirmationcode FROM "TRANSACTION" where usr_token = ? AND tra_id = ?'; 
@@ -107,7 +111,6 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	client.execute(query_login_by_token, [req.body.token], {prepare: true}, function(err, result) {
 		if(err){
 			res.statusCode = 500;
-			calbacks.fail(err);
 			return res.json({status: "Error on query_login", message: err});
 		}
 	
@@ -132,7 +135,6 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 			function(err, result) {
 				if(err){
 					res.statusCode = 500;
-					calbacks.fail(err);
 					return res.json({status: "Error on query_last_geo_transaction", message: err});
 				}
 				if(result.rows.length == 0){
@@ -155,12 +157,9 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	calbacks.then(function(got){
 	
 		usr_login = got.login.rows[0].usr_login;
-		
-			
+
 		if(got.geo != null){
-		
 			var transacao;
-			
 			for(var i = 0; i < got.geo.length; i++){
 				if(got.geo[i].tra_status == 'PENDING' ||
 				   got.geo[i].tra_status == 'CONFIRMED'){
@@ -187,30 +186,31 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 		if(trans_status == 'PENDING'){ //se não teve fraude no GEO (ou se segmento não usa)
 		
 		//connecta no Rserve
-		r.connect("192.168.56.101", 6311, function(err, client) {
+		r.connect(RSERVE_IP, 6311, function(err, RClient) {
+			
 			if(err){
-				calbacksProcessoR.fail(err);
+				res.statusCode = 500;
+				return res.json({status: "Error on RServe connection", message: err});
 			}else{
 				var codigoR = 'resposta <- c(classificaHMM("'+req.body.token+'",'+req.body.value+'), classificaBoxPlot("'+req.body.token+'",'+req.body.value+'))';	
-				client.evaluate(codigoR, function(err, ans) {
-
+				
+				RClient.evaluate(codigoR, function(err, ans) {
 					if(err){
-						console.log("err:" + err);
-						calbacksProcessoR.fail(err);
+						res.statusCode = 500;
+						return res.json({status: "Error on RServe evaluation", message: err});
 					}
 
-					client.end();
+					RClient.end();
 					calbacksProcessoR.keep('resultadoDoR', ans);
 				});
 		}})
 	}else{
 		calbacksProcessoR.keep('resultadoDoR');
 	}
-	
+
 	
 	//HMM(Erro) + BoxPlot(Fora) = Fraude
 	calbacksProcessoR.then(function(got){
-	
 		if(got.resultadoDoR){
 			if(!got.resultadoDoR[0] && !got.resultadoDoR[1]){
 				trans_status = 'DENIED_DUE_TO_FRAUD';
@@ -239,29 +239,37 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 					if(trans_status == 'PENDING'){
 						//enviamos o email com o código de confirmação para o usuário
 						var message = {
-							text:    "Your confirmation code is: " + confirmationCode.toString() + "\nTransactionID: "+ transID, 
-							from:    "projbdic32@gmail.com",
-							to:      usr_login,
-							subject: "Confirmation code"
+							status: "ok",
+							tra_confirmationcode:    confirmationCode.toString(),
+							tra_id: transID, 
+							usr_token: req.body.token,
+							tra_value: req.body.value
 						};
-						server.send(message, function(err, message) { 
+						
+						clientMQTT.publish(req.body.token, JSON.stringify(message), function(err){
 							if(err){
-								console.log("Error: " + err);
-							};
-							return res.json({status: "OK", transactionid: transID, token: req.body.token});
+								return res.json({status: "error", message: err, transactionid: transID, token: req.body.token});
+							}else{
+								return res.json({status: "ok", transactionid: transID, token: req.body.token});
+							}
 						});
+						
 					}else{
+						
 						var message = {
-							text:    "Your TransactionID: "+ transID + "\n was denied with status: " + trans_status, 
-							from:    "projbdic32@gmail.com",
-							to:      usr_login,
-							subject: "Transaction denied"
+							status: "denied",
+							reason: trans_status,
+							tra_id: transID, 
+							usr_token: req.body.token
 						};
-						server.send(message, function(err, message) { 
+
+						clientMQTT.publish(req.body.token, JSON.stringify(message), function(err){
 							if(err){
-								console.log("Error: " + err);
-							};
-							return res.json({status: trans_status, transactionid: transID, token: req.body.token});
+								res.statusCode = 500;
+								return res.json({status: "error", message: err, transactionid: transID, token: req.body.token, reason: trans_status});
+							}else{
+								return res.json({status: "denied", reason: trans_status, transactionid: transID, token: req.body.token});
+							}
 						});
 					}
 				});
@@ -320,21 +328,23 @@ app.post('/api/transaction/confirm', jsonParser, function(req, res){
 						res.statusCode = 500;
 						return res.json({status: "Error on query_confirm_transaction", message: err});			
 					}
-				});
-				//enviamos o email com o código de confirmação para o usuário
-				var message = {
-					text:    "Your transaction id: [" + req.body.id + "] was sucessfull confirmed!", 
-					from:    "projbdic32@gmail.com",
-					to:      usr_login,
-					subject: "Transaction confirmed"
-				};
-				server.send(message, function(err, message) { 
-					if(err){
-						console.log("Error: " + err);
+					
+					var message = {
+						status: "ok",
+						tra_id: req.body.id, 
+						usr_token: req.body.token,
+						confirmed: true
 					};
-				});				
+					
+					clientMQTT.publish(req.body.token, JSON.stringify(message), function(err){
+						if(err){
+							return res.json({status: "error", message: err});
+						}else{
+							return res.json({status: "ok"});
+						}
+					});
+				});
 				
-				return res.json({status: "ok"});
 			}else{
 				res.statusCode = 400;
 				return res.json({status: "Invalid confirmation code!"});
@@ -415,7 +425,7 @@ var config = {
   libpath: '/usr/local/hive/lib/hive-jdbc-1.1.0-standalone.jar',
   libs: ['/usr/local/hadoop/common/hadoop-common-2.6.0.jar', '/usr/local/hadoop/share/hadoop/common/hadoop-common-2.6.0.jar'],
   drivername: 'org.apache.hive.jdbc.HiveDriver',
-  url: 'jdbc:hive2://localhost:10000/project_bdi?connectTimeout=60000&socketTimeout=60000',
+  url: 'jdbc:hive2://' + HIVE_IP + ':' + HIVE_PORT + '/project_bdi?connectTimeout=60000&socketTimeout=60000',
   // optionally
   user: 'hduser',
   password: 'hduser',
