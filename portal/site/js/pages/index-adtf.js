@@ -2,8 +2,11 @@ index = function(){
     
 	var _init = function (){
 		//valida se o usuário esta logado
+        $("#div-carregamento").hide();
+        $("#div-resultados").hide();
+        $("#div-erro").hide();
+        
 		$(".liLogged").hide();
-		$("#btnExportarPDF").hide();
         
 		if($.sessionStorage.getItem('userType') == "admin" || $.sessionStorage.getItem('userType') == "adtf"){
 			util.setNameUser();
@@ -15,9 +18,28 @@ index = function(){
     var currentQueryResult;
     
     var _getQueryResult = function (parameterType, parameterId) {
+        
+        // Collapse accordion
+        $(".collapsible-body").each(function() {
+            $( this ).hide(400);
+        });
+        $(".active").each(function() {
+            $( this ).removeClass( "active" );
+        });
+        
+        // Load div active
+        $(".preloader-wrapper").each(function() {
+            $( this ).addClass( "active" );
+        });
+        
+        // Control divs
+        $("#div-carregamento").show();
+        $("#div-resultados").hide();
+        $("#div-erro").hide();
+        
         $.ajax({
             type: 'GET',
-            async: false,
+            async: true,
             url: '/api/adtf/' + parameterType + '/' + parameterId,
             success: function(jdata){
                 
@@ -32,18 +54,29 @@ index = function(){
                 $("#tabela-de-resultados-descricao").html("<blockquote>" + currentQueryResult.descricao + "</blockquote>");
                 $("#tabela-de-resultados").html(table);
                 
+                // Control divs
+                $("#div-resultados").show();
+                $("#div-carregamento").hide();
+                $("#div-erro").hide();
+                
                 // Create chart
                 _drawChart(currentQueryResult.dados);
+            },
+            error: function(jdata){
                 
-                // Collapse accordion
-                $(".collapsible-body").each(function() {
-                    $( this ).hide(400);
-                });
-                $(".active").each(function() {
-                    $( this ).removeClass( "active" );
-                });
+                var jsonData = eval(jdata);
                 
-                $("#btnExportarPDF").show();
+                var detailedResponse = JSON.parse(jsonData.responseText)
+                console.log(detailedResponse);
+                
+                // Create table
+                $("#erro-titulo").html("<h4>" + "Erro" + "</h4>");
+                $("#erro-subtitulo").html("<blockquote>" + "Não foi possível realizar a consulta." + "</blockquote>");
+                $("#erro-detalhes").html("<blockquote>" + "Detalhes: " + detailedResponse.status + "</blockquote>");
+                
+                $("#div-erro").show();
+                $("#div-resultados").hide();
+                $("#div-carregamento").hide();
             }
         });
     }

@@ -89,12 +89,37 @@
                 
                 <!-- Tabela de resultados -->
                 <br>
-                <a href="#!" class="modal-action waves-effect waves-green btn" id="btnExportarPDF" onclick="index.pdfExport()">Exportar para PDF</a>
-                <div id="tabela-de-resultados-titulo"></div>
-                <div id="tabela-de-resultados-subtitulo"></div>
-                <!-- <div id="tabela-de-resultados-descricao"></div> -->
-                <div id="grafico"></div>
-                <div id="tabela-de-resultados"> </div>
+                
+                <div id="div-carregamento">
+                    <div class="row center" id="listaProdutos">
+                      <div class="preloader-wrapper big active">
+                        <div class="spinner-layer spinner-blue-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                
+                <div id="div-resultados" style="display: none;">
+                    <a href="#!" class="modal-action waves-effect waves-green btn" id="btnExportarPDF" onclick="index.pdfExport()">Exportar para PDF</a>
+                    <div id="tabela-de-resultados-titulo"></div>
+                    <div id="tabela-de-resultados-subtitulo"></div>
+                    <!-- <div id="tabela-de-resultados-descricao"></div> -->
+                    <div id="grafico"></div>
+                    <div id="tabela-de-resultados"> </div>
+                </div>
+                
+                <div id="div-erro" style="display: none;">
+                    <div id="erro-titulo"></div>
+                    <div id="erro-subtitulo"></div>
+                    <div id="erro-detalhes"></div>
+                </div>
                 
 			</div>
 		</div>
