@@ -219,6 +219,27 @@ util = function(){
 				$(".page-footer").html(data);
 			}
 		});
+	}
+	//validacao para formularios
+	var _valida_form = function (form){
+        
+        var isValid = true;
+        
+		$(form+" .validate" ).each(function( index ) {
+			if($(this).val() == ""){
+				Materialize.toast('Os campos devem estar preenchidos!', 4000);
+                isValid = false;
+				$(this).addClass('invalid');
+				return false;
+			}
+			if($(this).attr('class').search("invalid") != -1 && $(this).attr('type') == "email"){
+				Materialize.toast('O email informado não é valido!', 4000);
+                isValid = false;
+				$(this).addClass('invalid');
+				return false;
+			}
+		});
+		return isValid;		
 	}	
 	return {
 		setNameUser: _setNameUser,
@@ -229,7 +250,8 @@ util = function(){
 		loadHeader: _loadHeader,
 		loadFooter: _loadFooter,
 		load_category_product: _load_category_product,
-		filter_category_product: _filter_category_product
+		filter_category_product: _filter_category_product,
+		valida_form: _valida_form
 	}
 }();
 
