@@ -89,7 +89,16 @@
 		}).done(function(data, textStatus, jqXHR) {
 			$.sessionStorage.setItem('userName', data.userName);
             $.sessionStorage.setItem('userType', data.userType);
-
+			
+			//busca id do cliente no mysql
+			$.ajax({
+				url: '/api/user/getIDClient/'+ data.userEmail,
+				contentType: 'application/json; charset=utf-8',
+				dataType: 'json',
+				success: function(cli_mysql){
+					$.sessionStorage.setItem('userIDMySQL', cli_mysql.list[0].cli_id);					
+				}
+			});
 			if(data.userType == "adtf")
 				location.href = baseUrl + "/index-adtf.html";
 			else

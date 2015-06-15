@@ -52,10 +52,53 @@ var Uuid = require('cassandra-driver').types.Uuid;
 var query_categorias = 'SELECT cat_id, cat_nm FROM categoria;'
 var query_lista_produtos = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM produto';
 var query_detalhes_produto_by_id = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM produto WHERE pro_id = ?';
+var query_cartoes_cliente = 'SELECT * FROM cartao WHERE car_cli_cod=?';
+var query_buscar_id_cliente = 'SELECT * FROM cliente where cli_mail = ? Limit 1';
 
 // redireciona acesso aos arquivos para a pasta 'site'
 app.use("/", express.static(__dirname + '/site'));
 
+//buscar id de cliente por email mysql
+app.get('/api/user/getIDClient/:email', jsonParser, function(req, res){
+	objRetorno = [];
+	try{
+		connection.query(query_buscar_id_cliente, [req.params.email], function(error, rows, fields){
+			
+			if(error)
+				console.log('Erro:'+error);
+			else if(rows != null)
+				objRetorno = {'list':rows};
+				
+			res.json(objRetorno);
+		});
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+});
+
+//lista os cartoes por cliente
+app.get('/api/card/client/:id', jsonParser, function(req, res){
+	objRetorno = [];
+	try{
+		connection.query(query_cartoes_cliente, [req.params.id], function(error, rows, fields){
+			
+			if(error)
+				console.log('Erro:'+error);
+			else if(rows != null)
+				objRetorno = {'list':rows};
+				
+			res.json(objRetorno);
+		});
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+});
 
 app.get('/api/categories', jsonParser, function(req, res){
     
@@ -213,12 +256,12 @@ app.post('/api/user/login', jsonParser, function(req, res){
                         res.statusCode = 500;
                         return res.json({status: "Erro no query_update_token" + err});
                     }else{
-                        return res.json({token:id, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name});
+                        return res.json({token:id, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
                     }
                 });
                 //retorna o token
             }else{
-                return res.json({token:result.rows[0].usr_token, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name});
+                return res.json({token:result.rows[0].usr_token, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
             }
         }else{
             res.statusCode = 400;
