@@ -1,0 +1,728 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title>DBdoc</title> 
+</head> 
+<style type="text/css"> 
+	table {width: 100%; border-collapse: collapse;} 
+	table, td, th {border: 1px solid black;} 
+</style> 
+<body> 
+<h1>mydb</h1> 
+<ol> 
+</ol> 
+<ol> 
+<h1>BDIC-DM</h1> 
+<ol> 
+<li><a href="#cartao">cartao</a> (7 campos)</li><li><a href="#categoria">categoria</a> (3 campos)</li><li><a href="#cidade">cidade</a> (3 campos)</li><li><a href="#cliente">cliente</a> (12 campos)</li><li><a href="#estado">estado</a> (4 campos)</li><li><a href="#fone">fone</a> (3 campos)</li><li><a href="#histpreco">histpreco</a> (4 campos)</li><li><a href="#localidade">localidade</a> (7 campos)</li><li><a href="#localidadetipo">localidadetipo</a> (2 campos)</li><li><a href="#pais">pais</a> (2 campos)</li><li><a href="#produto">produto</a> (6 campos)</li><li><a href="#status">status</a> (2 campos)</li><li><a href="#tipovenda">tipovenda</a> (2 campos)</li><li><a href="#user">user</a> (3 campos)</li><li><a href="#venda">venda</a> (6 campos)</li><li><a href="#vendaproduto">vendaproduto</a> (5 campos)</li></ol> 
+<ol> 
+<li id="cartao"> 
+<h2>cartao</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>car_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>car_band</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>car_num</td> 
+   <td>CHAR(16)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>car_valid_mes</td> 
+   <td>CHAR(2)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>car_valid_ano</td> 
+   <td>CHAR(4)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>car_nm</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>car_cli_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="categoria"> 
+<h2>categoria</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>cat_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cat_nm</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cat_ds</td> 
+   <td>CHAR(35)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="cidade"> 
+<h2>cidade</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>cid_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cid_nm</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cid_est_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="cliente"> 
+<h2>cliente</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>cli_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td>AUTO_INCREMENT</td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_loc_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_first</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_middle</td> 
+   <td>CHAR(35)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_last</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_cpf</td> 
+   <td>CHAR(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_gender</td> 
+   <td>ENUM('M','F')</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_mail</td> 
+   <td>CHAR(50)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_dt_nasc</td> 
+   <td>DATE</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_rg</td> 
+   <td>CHAR(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_renda</td> 
+   <td>DECIMAL(9,2)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>cli_usr_login</td> 
+   <td>CHAR(35)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="estado"> 
+<h2>estado</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>est_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>est_nm</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>est_ab</td> 
+   <td>CHAR(2)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>est_pais_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="fone"> 
+<h2>fone</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>fon_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>fon_cli_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>fon_num</td> 
+   <td>CHAR(12)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="histpreco"> 
+<h2>histpreco</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>his_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td>AUTO_INCREMENT</td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>his_pro_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>his_dt</td> 
+   <td>DATETIME</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>his_vl</td> 
+   <td>DECIMAL(9,2)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="localidade"> 
+<h2>localidade</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>loc_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>loc_end</td> 
+   <td>CHAR(50)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>loc_num</td> 
+   <td>CHAR(10)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>loc_cid_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>loc_com</td> 
+   <td>CHAR(35)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>loc_cep</td> 
+   <td>CHAR(8)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>loc_lot_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="localidadetipo"> 
+<h2>localidadetipo</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>lot_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>lot_ds</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="pais"> 
+<h2>pais</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>pais_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>pais_nm</td> 
+   <td>CHAR(40)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="produto"> 
+<h2>produto</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>pro_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>pro_nm</td> 
+   <td>CHAR(120)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>pro_ds</td> 
+   <td>CHAR(35)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>pro_vl</td> 
+   <td>DECIMAL(9,2)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>pro_cat_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>pro_img</td> 
+   <td>VARCHAR(150)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="status"> 
+<h2>status</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>sta_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td>AUTO_INCREMENT</td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>sta_ds</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="tipovenda"> 
+<h2>tipovenda</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>tip_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>tip_ven</td> 
+   <td>CHAR(10)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="user"> 
+<h2>user</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>usr_login</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>usr_pwd</td> 
+   <td>CHAR(8)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>usr_token</td> 
+   <td>CHAR(6)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="venda"> 
+<h2>venda</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>ven_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>ven_cli_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>ven_dt</td> 
+   <td>DATETIME</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>ven_tip_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>ven_car_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>ven_tra_cod</td> 
+   <td>CHAR(50)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+<li id="vendaproduto"> 
+<h2>vendaproduto</h2> 
+<p></p> 
+<table> 
+<tr> 
+<th>CAMPO</th> 
+<th>TIPO</th> 
+<th>NULO</th> 
+<th>EXTRA</th> 
+<th>COMENTARIOS</th> 
+</tr> 
+<tr> 
+   <td>vpr_id</td> 
+   <td>INT(11)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>vpr_ven_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>vpr_pro_cod</td> 
+   <td>INT(11)</td> 
+    <td>SI</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>vpr_vl</td> 
+   <td>DECIMAL(9,2)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+<tr> 
+   <td>vpr_qt</td> 
+   <td>CHAR(35)</td> 
+    <td>NO</td> 
+    <td> - </td> 
+    <td></td> 
+</tr> 
+</table> 
+</li> 
+</ol> 
+</ol>
+</body> 
+</html>
