@@ -2,12 +2,12 @@
 
 # Any subsequent commands which fail will cause the shell script to exit immediately
 set -e
+   
 
-
-host="db4free.net" 
-user="benutzertest" 
-passw="bdicdm2015!"  
-database="bdicdm" 
+host="orion2412.startdedicated.net" 
+user="root" 
+passw="12root34!"  
+database="BDIC-DM" 
 
 echo "INSTALLING python-mysqldb"
 sudo apt-get install python-mysqldb -y

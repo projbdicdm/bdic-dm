@@ -80,10 +80,8 @@ if __name__ == "__main__":
 
 '''
 Command line example:
-python database_test_case_runner.py db4free.net benutzertest bdicdm2015! bdicdm "test_case_table_cartao.csv"
+python database_test_case_runner.py orion2412.startdedicated.net root 12root34 BDIC-DM "test_case_table_cartao.csv"
 '''
-
-    
 
 
 
