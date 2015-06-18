@@ -1,107 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-  <title>eCommerce</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+    <title>BDICDM</title>
 
-  <!-- CSS  -->
-  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  
-  <script type="text/javascript">
-  
-      google.load('visualization', '1.0', {'packages':['corechart']});
-      //google.setOnLoadCallback(drawChart);
+    <!-- CSS  -->
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 
-      function drawChart(jsonData) {
-      
-            //NOTA - Como a tabela é dinamica, o eixo x é o primeiro campo e o eixo y é o ultimo campo da tabela/json
-
-            var googleDataTable = new google.visualization.DataTable();
-            
-            // MOCK DATA
-            /*
-            var googleDataTable = new google.visualization.DataTable();
-            googleDataTable.addColumn('string', 'Dias da Semana');
-            googleDataTable.addColumn('number', 'Produto 1');
-            googleDataTable.addColumn('number', 'Produto 2');
-            googleDataTable.addColumn('number', 'Produto 3');
-            googleDataTable.addColumn('number', 'Produto 4');
-            googleDataTable.addColumn('number', 'Meta de Vendas');
-            googleDataTable.addRows([
-                ['Segunda-feira', 100, 85, 99, 66, 65],
-                ['Terça-feira', 100, 78, 55, 72, 62],
-                ['Quarta-feira', 100, 79, 85, 45, 88],
-                ['Quinta-feira', 100, 69, 85, 42, 77],
-                ['Sexta-feira', 100, 97, 93, 84, 74],
-                ['Sábado', 100, 77, 93, 94, 84],
-                ['Domingo', 100, 87, 85, 42, 74]
-            ]);
-            */
-            
-            // API DATA
-            // Get columns
-            jsonDataItems = jsonData[0];
-            
-            counter = 0
-            Object.keys(jsonData[0]).forEach(function(key) {
-                var columnType = isNaN(jsonData[0][key]) ? 'string' : 'number';
-                if(counter == 0)
-                    googleDataTable.addColumn('string', key);
-                    
-                else if(counter > 0 && columnType == 'number')
-                    googleDataTable.addColumn(columnType, key);
-                    
-                counter++;
-            });
-            
-            // Get values
-            for (i = 0; i < jsonData.length; i++)
-            {
-                jsonDataItem = jsonData[i];
-                
-                var currentRow = [];
-                
-                for(var key in jsonDataItem)
-                {
-                    for (j = 0; j < googleDataTable.getNumberOfColumns(); j++)
-                    {
-                        if(key == googleDataTable.getColumnLabel(j))
-                        {
-                            if(j == 0)
-                                currentRow.push(String(jsonDataItem[key]));
-                                
-                            else
-                                currentRow.push(Number(jsonDataItem[key]));
-                        }
-                    }
-                }
-                
-                googleDataTable.addRow(currentRow);
-            }
-     
-            // Set options
-            var options = {
-                'legend': 'right',
-                //'title' : title,
-                'is3D'  : true,
-                //'width' : 900,
-                'height': 300,
-                seriesType: "bars",
-                //vAxis: {title: vAxis},
-                //hAxis: {title: hAxis},
-                series: {4: {type: "line"}}
-            };
-
-            
-            // Generate chart
-            var chart = new google.visualization.ComboChart(document.getElementById('grafico'));
-            chart.draw(googleDataTable, options);
-      }
-	</script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load('visualization', '1.0', {'packages':['corechart']});
+    </script>
 </head>
 
 <body>
@@ -115,14 +26,14 @@
 			<ul id='dropdown1' class='dropdown-content'>
                 <li><a href="">Meus Dados</a></li>
 				<li class="divider"></li>
-				<li><a href="" onclick="util.logout(); return false;">Logout</a></li>
+				<li><a href="" onclick="util.logout(); return false;">Sair</a></li>
 			</ul>		
 		</ul>
 
 		<ul id="nav-mobile" class="side-nav">
 			<li><a href="" class="userName">Olá, userName</a></li>
             <li><a href="">Meus Dados</a></li>
-			<li><a href="" onclick="util.logout(); return false;">Logout</a></li>
+			<li><a href="" onclick="util.logout(); return false;">Sair</a></li>
 		</ul>
 		<a href="" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
     </div>
@@ -138,17 +49,17 @@
                       <div class="collapsible-header"><i class="mdi-action-account-child"></i>Clientes ou Transações</div>
                       <div class="collapsible-body">
                           <div class="collection" style="border:0px;">
-                            <a href="#!" onclick="onSelectOption('custntrans', '01', 'Clientes ou Transações', '01 - Classificar clientes que mais compraram em ordem decrescente')"  class="collection-item">01 - Classificar clientes que mais compraram em ordem decrescente</a>
-                            <a href="#!" onclick="onSelectOption('custntrans', '02', 'Clientes ou Transações', '02 - Classificar, em ordem decrescente, os clientes por valor das transacoes')"  class="collection-item">02 - Classificar, em ordem decrescente, os clientes por valor das transacoes</a>
-                            <a href="#!" onclick="onSelectOption('custntrans', '03', 'Clientes ou Transações', '03 - Selecionar todos os campos de Transacoes e nome do cliente')"  class="collection-item">03 - Selecionar todos os campos de Transacoes e nome do cliente</a>
-                            <a href="#!" onclick="onSelectOption('custntrans', '04', 'Clientes ou Transações', '04 - Ordenar as transacoes em ordem decrescente por valor')"  class="collection-item">04 - Ordenar as transacoes em ordem decrescente por valor</a>
-                            <a href="#!" onclick="onSelectOption('custntrans', '05', 'Clientes ou Transações', '05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica')"  class="collection-item">05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica</a>
-                            <a href="#!" onclick="onSelectOption('custntrans', '06', 'Clientes ou Transações', '06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor')"  class="collection-item">06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor</a>
-                            <a href="#!" onclick="onSelectOption('custntrans', '07', 'Clientes ou Transações', '07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc')"  class="collection-item">07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc</a>
-                            <a href="#!" onclick="onSelectOption('custntrans', '08', 'Clientes ou Transações', '08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor')"  class="collection-item">08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor</a>
-                            <a href="#!" onclick="onSelectOption('custntrans', '09', 'Clientes ou Transações', '09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor')"  class="collection-item">09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor</a>
-                            <a href="#!" onclick="onSelectOption('custntrans', '10', 'Clientes ou Transações', '10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente')" class="collection-item">10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente</a>
-                            <a href="#!" onclick="onSelectOption('custntrans', '11', 'Clientes ou Transações', '11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses')" class="collection-item">11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '01')" class="collection-item">01 - Classificar clientes que mais compraram em ordem decrescente</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '02')" class="collection-item">02 - Classificar, em ordem decrescente, os clientes por valor das transacoes</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '03')" class="collection-item">03 - Selecionar todos os campos de Transacoes e nome do cliente</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '04')" class="collection-item">04 - Ordenar as transacoes em ordem decrescente por valor</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '05')" class="collection-item">05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '06')" class="collection-item">06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '07')" class="collection-item">07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '08')" class="collection-item">08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '09')" class="collection-item">09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '10')" class="collection-item">10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '11')" class="collection-item">11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses</a>
                           </div>
                       </div>
                     </li>
@@ -156,13 +67,13 @@
                       <div class="collapsible-header"><i class="mdi-editor-insert-chart"></i>Produtos ou Categorias</div>
                       <div class="collapsible-body">
                           <div class="collection" style="border:0px;">
-                            <a href="#!" onclick="onSelectOption('prodncate', '01', 'Produtos ou Categorias', '01 - Classificar os produtos mais vendidos no último ano por quantidade')" class="collection-item">01 - Classificar os produtos mais vendidos no último ano por quantidade</a>
-                            <a href="#!" onclick="onSelectOption('prodncate', '02', 'Produtos ou Categorias', '02 - Classificar os total de vendas por produto no último ano')" class="collection-item">02 - Classificar os total de vendas por produto no último ano</a>
-                            <a href="#!" onclick="onSelectOption('prodncate', '03', 'Produtos ou Categorias', '03 - Classificar os produtos mais vendidos nos últimos 7 dias')" class="collection-item">03 - Classificar os produtos mais vendidos nos últimos 7 dias</a>
-                            <a href="#!" onclick="onSelectOption('prodncate', '04', 'Produtos ou Categorias', '04 - Classificar as categorias mais vendidas nos últimos 365 dias')" class="collection-item">04 - Classificar as categorias mais vendidas nos últimos 365 dias</a>
-                            <a href="#!" onclick="onSelectOption('prodncate', '05', 'Produtos ou Categorias', '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final')" class="collection-item">05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final</a>
-                            <a href="#!" onclick="onSelectOption('prodncate', '06', 'Produtos ou Categorias', '06 - Total de venda por produtos em dias específicos da semana')" class="collection-item">06 - Total de venda por produtos em dias específicos da semana</a>
-                            <a href="#!" onclick="onSelectOption('prodncate', '07', 'Produtos ou Categorias', '07 - Total de venda por produtos e categorias em dias específicos')" class="collection-item">07 - Total de venda por produtos e categorias em dias específicos</a>
+                            <a href="#!" onclick="index.getQueryResult('prodncate', '01')" class="collection-item">01 - Classificar os produtos mais vendidos no último ano por quantidade</a>
+                            <a href="#!" onclick="index.getQueryResult('prodncate', '02')" class="collection-item">02 - Classificar os total de vendas por produto no último ano</a>
+                            <a href="#!" onclick="index.getQueryResult('prodncate', '03')" class="collection-item">03 - Classificar os produtos mais vendidos nos últimos 7 dias</a>
+                            <a href="#!" onclick="index.getQueryResult('prodncate', '04')" class="collection-item">04 - Classificar as categorias mais vendidas nos últimos 365 dias</a>
+                            <a href="#!" onclick="index.getQueryResult('prodncate', '05')" class="collection-item">05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final</a>
+                            <a href="#!" onclick="index.getQueryResult('prodncate', '06')" class="collection-item">06 - Total de venda por produtos em dias específicos da semana</a>
+                            <a href="#!" onclick="index.getQueryResult('prodncate', '07')" class="collection-item">07 - Total de venda por produtos e categorias em dias específicos</a>
                           </div>
                       </div>
                     </li>
@@ -170,7 +81,7 @@
                       <div class="collapsible-header"><i class="mdi-action-shopping-cart"></i>Clientes e Produtos</div>
                       <div class="collapsible-body">
                           <div class="collection" style="border:0px;">
-                            <a href="#!" onclick="onSelectOption('clinprod', '01', 'Clientes e produtos', '01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria')" class="collection-item">01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria</a>
+                            <a href="#!" onclick="index.getQueryResult('clinprod', '01')" class="collection-item">01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria</a>
                           </div>
                       </div>
                     </li>
@@ -178,47 +89,41 @@
                 
                 <!-- Tabela de resultados -->
                 <br>
-                <div id="tabela-de-resultados-titulo"></div>
-                <div id="tabela-de-resultados-subtitulo"></div>
-                <div id="grafico"></div>
-                <div id="tabela-de-resultados"> </div>
+                
+                <div id="div-carregamento">
+                    <div class="row center" id="listaProdutos">
+                      <div class="preloader-wrapper big active">
+                        <div class="spinner-layer spinner-blue-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                
+                <div id="div-resultados" style="display: none;">
+                    <a href="#!" class="modal-action waves-effect waves-green btn" id="btnExportarPDF" onclick="index.pdfExport()">Exportar para PDF</a>
+                    <div id="tabela-de-resultados-titulo"></div>
+                    <div id="tabela-de-resultados-subtitulo"></div>
+                    <!-- <div id="tabela-de-resultados-descricao"></div> -->
+                    <div id="grafico"></div>
+                    <div id="tabela-de-resultados"> </div>
+                </div>
+                
+                <div id="div-erro" style="display: none;">
+                    <div id="erro-titulo"></div>
+                    <div id="erro-subtitulo"></div>
+                    <div id="erro-detalhes"></div>
+                </div>
                 
 			</div>
 		</div>
     </div>
-    
-    <script>
-    
-        function onSelectOption(parameterType, parameterId, parameterTitle, parameterSubTitle)
-        {
-            $.ajax({
-                type: 'GET',
-                async: false,
-                url: '/api/adtf/' + parameterType + '/' + parameterId,
-                success: function(jdata){
-                    var jsonData = eval(jdata);
-                    
-                    // Create table
-                    var table = $.makeTable(jsonData);
-                    $("#tabela-de-resultados-titulo").html("<h4>" + parameterTitle + "</h4>");
-                    $("#tabela-de-resultados-subtitulo").html("<blockquote>" + parameterSubTitle + "</blockquote>");
-                    $("#tabela-de-resultados").html(table);
-                    
-                    // Create chart
-                    drawChart(jsonData);
-                    
-                    // Collapse accordion
-                    $(".collapsible-body").each(function() {
-                        $( this ).hide(400);
-                    });
-                    $(".active").each(function() {
-                        $( this ).removeClass( "active" );
-                    });
-                }
-            });
-        }
-    
-    </script>
 	
 	<footer class="page-footer orange">
 		<div class="container">
@@ -236,17 +141,28 @@
 		</div>
 	</footer>
 
-	<!--  Scripts-->
+	<!-- Scripts-->
 	<script src="js/jquery-2.1.1.min.js"></script>
 	<script src="js/jquery.html5storage.min.js"></script>
 	<script src="js/materialize.js"></script>
 	<script src="js/util.js"></script>
 	<script src="js/init.js"></script>
-	<script src="js/pages/index-admin.js"></script>
+	<script src="js/pages/index-adtf.js"></script>
 	<script>
 		$(document).ready(function(){
 		index.init();
 		});
 	</script>
+    
+	<!-- PDF Scripts-->
+	<script src="js/pdf/jspdf.js"></script>
+	<script src='js/pdf/libs/FileSaver.js/FileSaver.min.js' type='text/javascript'></script>
+    <script src='js/pdf/plugins/addimage.js' type='text/javascript'></script>
+    <script src='js/pdf/plugins/png_support.js' type='text/javascript'></script>
+    <script src='js/pdf/libs/png_support/zlib.js' type='text/javascript'></script>
+	<script src='js/pdf/libs/png_support/png.js' type='text/javascript'></script>
+    <script src='js/pdf/plugins/table.js' type='text/javascript'></script>
+    <script src='js/pdf/plugins/standard_fonts_metrics.js' type='text/javascript'></script>
+    
 </body>
-</html>			
+</html>

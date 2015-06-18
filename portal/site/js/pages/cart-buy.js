@@ -1,15 +1,16 @@
 cart_buy = function(){
 	var _init = function (){
-	
+
 		if(!sessionStorage.getItem('userName')){
 			window.location = '/';
 			return false;
 		}	
+
 		//carrega cabeçalho
 		util.loadHeader();
 		//carrega rodape
 		util.loadFooter();
-
+	
 		//valida o tipo do usuário que logado
 		$(".liLogged").hide();
 		if($.sessionStorage.getItem('userType') == "client"){
@@ -30,8 +31,38 @@ cart_buy = function(){
 		});
 		
 		//identifica div como modal
-		$('.modal-trigger').leanModal();		
+		$('.modal-trigger').leanModal();	
+
+		//carrega os cartões
+		_carrega_cartoes();
 			
+	}
+	var _carrega_cartoes = function(){
+		var id = sessionStorage.getItem('userIDMySQL');
+		$.ajax({
+			url: '/api/card/client/' + id,
+			type: 'GET',
+			contentType: 'application/json; charset=utf-8',
+			dataType: 'json',
+			success: function(data){
+				if(data.list.length){
+					$('.pagamentofinalizacao label').addClass('active');
+					$('#bandeiraCartao').val(data.list[0].car_band);
+					$('#numeroCartao').val(data.list[0].car_num);
+					$('#mesAnoValidadeCartao').val(data.list[0].car_valid_mes + '/'+ data.list[0].car_valid_ano);
+					$('#nomeClienteCartao').val(data.list[0].car_nm);
+					$('.pagamentofinalizacao input').attr('disabled','true');
+										
+					$('#codigoSegurancaCartao').attr('disabled',false).next().removeClass('active');
+				}
+				console.log(data);
+			},
+			statusCode: {
+				400: function(error) {
+				  Materialize.toast(error.responseJSON.status, 4000);
+				}
+			}
+		});
 	}
 	var _remove_item = function(id){
 		cartNow = $.sessionStorage.getItem('cartProducts');
@@ -118,27 +149,7 @@ cart_buy = function(){
 				$.sessionStorage.setItem('cartProducts','');
 				$('#modal-finish-buy').openModal();
 				_contagem_redirecionar();		
-
-/* 		var requestPedido = [];
-		requestPedido.push({"token":1});
-	
-		$.ajax({
-			url: '/api/transaction/buy',
-			type: 'POST',
-			contentType: 'application/json; charset=utf-8',
-			dataType: 'json',
-			data: JSON.stringify(requestPedido)
-		}).done(function(data, textStatus, jqXHR) {
-			if(data == "ok"){
-				$.sessionStorage.setItem('cartProducts','');
-				$('#modal-finish-buy').openModal();
-				_contagem_redirecionar();		
-			}
-		}).fail(function(jqXHR, textStatus, errorThrown) {
-			Materialize.toast('Erro: '+errorThrown, 4000);
-			return false;
-		});		
- */	
+				
 	}
 	var _contagem_redirecionar = function(){
 		var count = 10;
@@ -154,6 +165,7 @@ cart_buy = function(){
 		init:_init,
 		pagamento: _pagamento,
 		finalizar_pedido: _finalizar_pedido,
-		remove_item: _remove_item
+		remove_item: _remove_item,
+		carrega_cartoes: _carrega_cartoes
 	}
 }();

@@ -5,6 +5,9 @@
 		util.loadHeader();
 		//carrega rodape
 		util.loadFooter();
+		// Inicia Combo Categoria
+		$('select').material_select();
+		
 		//carrega conteudo do modal do login
 		 $.ajax({
             type: 'GET',
@@ -60,10 +63,19 @@
 		
 		//identifica div como modal
 		$('.modal-trigger').leanModal();
-		//habilitar submenu qdo usuário está logado como cliente
-		$(".dropdown-button").dropdown();
 	}
+	
+	//Carrega as categorias dos produtos
+	util.load_category_product();
+
+	// Filtra os produtos por categoria
+	$('select').change(function() {
+		 util.filter_category_product (this.value);
+ 		 });
 	var _api_user_login = function (){
+	
+		if(!util.valida_form('#formLogin'))
+			return false;
 		
 		var requestData = JSON.stringify($('#formLogin').serializeObject());
         var baseUrl = location.protocol + "//" + location.host;
@@ -77,7 +89,16 @@
 		}).done(function(data, textStatus, jqXHR) {
 			$.sessionStorage.setItem('userName', data.userName);
             $.sessionStorage.setItem('userType', data.userType);
-
+			
+			//busca id do cliente no mysql
+			$.ajax({
+				url: '/api/user/getIDClient/'+ data.userEmail,
+				contentType: 'application/json; charset=utf-8',
+				dataType: 'json',
+				success: function(cli_mysql){
+					$.sessionStorage.setItem('userIDMySQL', cli_mysql.list[0].cli_id);					
+				}
+			});
 			if(data.userType == "adtf")
 				location.href = baseUrl + "/index-adtf.html";
 			else
@@ -89,30 +110,11 @@
 			$('#modal-user-login-fail').openModal();
 		});
 	}
-	var _valida_form = function (form){
-        
-        var isValid = true;
-        
-		$("#formLogin .validate" ).each(function( index ) {
-			if($(this).val() == ""){
-				Materialize.toast('Os campos devem estar preenchidos!', 4000);
-                isValid = false;
-				return false;
-			}
-			if($(this).attr('class').search("invalid") != -1 && $(this).attr('type') == "email"){
-				Materialize.toast('O email informado não é valido!', 4000);
-                isValid = false;
-				return false;
-			}
-		});
-        
-        if(isValid)
-            _api_user_login();
-        else
-            return false;
-	}	
-	var _api_user_resetpassword = function(form){
+	var _api_user_resetpassword = function(){
 
+		if(!util.valida_form('#formResetPWS'))
+			return false;
+	
 		var requestData = JSON.stringify($('#formResetPWS').serializeObject());
 
 		$.ajax({
@@ -143,6 +145,6 @@
 		init:_init,
 		api_user_resetpassword: _api_user_resetpassword,
 		api_user_changepassword: _api_user_changepassword,
-		valida_form: _valida_form
+		api_user_login: _api_user_login
 	}
 }();

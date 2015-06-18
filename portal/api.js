@@ -14,7 +14,7 @@ var connection = mysql.createConnection({
 	host: "orion2412.startdedicated.net",
 	user: "root",
 	password: "12root34",
-	database: "BDICDM"
+	database: "BDIC-DM"
 });
 
 //criamos instancia do servidor de email
@@ -40,8 +40,6 @@ var tokenForResetPassword = "23530ddb-a566-485d-bc8f-237305b0bc3b";
 
 //adicionando o driver cassandra
 var cassandra = require('cassandra-driver');
-//var client = new cassandra.Client({ contactPoints: ['192.168.56.101'], keyspace: 'BDICDM'}); // Cassandra rodando na VM ITA
-//var client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: 'BDICDM'}); // Cassandra Instalado no Windows
 var client = new cassandra.Client({ contactPoints: ['orion2412.startdedicated.net'], keyspace: 'BDICDM'}); //Cassandra no servidor do André Lamas
 
 // querys cassandra
@@ -51,11 +49,83 @@ var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = 
 var Uuid = require('cassandra-driver').types.Uuid;
 
 // querys mysql
-var query_lista_produtos = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM BDICDM.produto;';
-var query_detalhes_produto_by_id = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM BDICDM.produto WHERE pro_id = ?';
+var query_categorias = 'SELECT cat_id, cat_nm FROM categoria;'
+var query_lista_produtos = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM produto';
+var query_detalhes_produto_by_id = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM produto WHERE pro_id = ?';
+var query_cartoes_cliente = 'SELECT * FROM cartao WHERE car_cli_cod=?';
+var query_buscar_id_cliente = 'SELECT * FROM cliente where cli_mail = ? Limit 1';
 
 // redireciona acesso aos arquivos para a pasta 'site'
 app.use("/", express.static(__dirname + '/site'));
+
+//buscar id de cliente por email mysql
+app.get('/api/user/getIDClient/:email', jsonParser, function(req, res){
+	objRetorno = [];
+	try{
+		connection.query(query_buscar_id_cliente, [req.params.email], function(error, rows, fields){
+			
+			if(error)
+				console.log('Erro:'+error);
+			else if(rows != null)
+				objRetorno = {'list':rows};
+				
+			res.json(objRetorno);
+		});
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+});
+
+//lista os cartoes por cliente
+app.get('/api/card/client/:id', jsonParser, function(req, res){
+	objRetorno = [];
+	try{
+		connection.query(query_cartoes_cliente, [req.params.id], function(error, rows, fields){
+			
+			if(error)
+				console.log('Erro:'+error);
+			else if(rows != null)
+				objRetorno = {'list':rows};
+				
+			res.json(objRetorno);
+		});
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+});
+
+app.get('/api/categories', jsonParser, function(req, res){
+    
+    //objeto de retorno
+	retorno = [];
+    
+	try {
+        
+        //MySQL
+		connection.query(query_categorias, function (error, rows, fields) {
+			if (error) {
+				console.log('Erro:' + error);
+			}
+			else if (rows != null) {
+                retorno = {"list":rows};
+			}
+
+			res.json(retorno);
+		});
+
+	}
+	catch(e){
+		// erro na conexão ou query mysql
+		res.statusCode = 400;
+		return res.json({status: "Conexão falhou." + e});
+	}
+});
 
 app.get('/api/products/details/:id', jsonParser, function(req, res){
     
@@ -63,44 +133,7 @@ app.get('/api/products/details/:id', jsonParser, function(req, res){
 	retorno = [];
     
 	try {
-        //MOCK
-        /*
-		var retorno = '';
-		//colocar aqui a conexao com o banco
-		//SELECT * FROM PRODUCT WHERE ID=req.params.id
-		if (req.params.id == "1"){
-			retorno = {
-					"id":1,
-					"imagem":"img/121460290G1.jpg",
-					"descricao": "Ultrabook ASUS S46CB Intel Core i7 6GB 1TB (2GB Memória Dedicada) 24GB SSD Tela LED 14", 
-					"valor": 2599.00, 
-					"observacao":"O Ultrabook S46CB é ultrafino, leve e ainda conta com DVD-RW para oferecer grande experiência multimídia com jogos, filmes e outros conteúdos. Tem uma poderosa configuração para oferecer excelente desempenho tanto em produtividade quanto em momentos de diversão."
-				};
-		}
-		if (req.params.id == "2"){
-			retorno = {
-					"id":2,
-					"imagem":"img/120000574G1.jpg",
-					"descricao": "Tablet Samsung Galaxy Tab S T805M 16GB Wi-fi + 4G Tela Super AMOLED 10.5' Android 4.4 Processador Octa-Core", 
-					"valor": 1889.20, 
-					"observacao":"A Samsung, provando mais uma vez que inovação não tem limites, apresenta o novo Galaxy Tab S. Uma experiência visual rica em cores e detalhes que vão além do digital, tornando imagens e filmes muito mais realistas. Uma imersão completa em 10,5 em polegadas."
-				};
-		}
-		if (req.params.id == "3"){
-			retorno = {
-					"id":3,
-					"imagem":"img/122107498G1.jpg",
-					"descricao": "Monitor LED 27' Samsung S27D590CS Tela Curva", 
-					"valor": 1779.00, 
-					"observacao":"Leve sua experiência de entretenimento a um patamar totalmente novo!O raio e a profundidade da curva do Monitor LED 27'' Samsung S27D590CS criam um campo de visão mais amplo e fazem a tela parecer maior e mais envolvente do que uma tela plana do mesmo tamanho. E como as bordas da tela estão fisicamente mais perto, correspondendo às curvas naturais de seus olhos, você tem a distância visual uniforme em toda a tela."
-				};
-		}		
-		if(retorno == ''){
-			res.statusCode = 400;
-			retorno = {status: "Not Found Detail Product"};
-		}
-		res.json(retorno);
-        */
+        
         
         //MySQL
 		connection.query(query_detalhes_produto_by_id, [req.params.id], function (error, rows, fields) {
@@ -120,48 +153,31 @@ app.get('/api/products/details/:id', jsonParser, function(req, res){
 	}
 });
 
-app.get('/api/products', jsonParser, function(req, res){
+app.get('/api/products/:id_category*?', jsonParser, function(req, res){
 
-	//objeto de retorno
-	retorno = [];
 
 	try {
 
-        // MOCK
-		//retorno (remover esta linha ao buscar diretamente da base)
-        /*
-		retorno = {"list":[
-			{
-				"id":1,
-				"imagem":"img/121460290G1.jpg",
-				"descricao": "Ultrabook ASUS S46CB Intel Core i7 6GB 1TB (2GB Memória Dedicada) 24GB SSD Tela LED 14", 
-				"valor": 2599.00, 
-				"observacao":"O Ultrabook S46CB é ultrafino, leve e ainda conta com DVD-RW para oferecer grande experiência multimídia com jogos, filmes e outros conteúdos. Tem uma poderosa configuração para oferecer excelente desempenho tanto em produtividade quanto em momentos de diversão."
-			},
-			{
-				"id":2,
-				"imagem":"img/120000574G1.jpg",
-				"descricao": "Tablet Samsung Galaxy Tab S T805M 16GB Wi-fi + 4G Tela Super AMOLED 10.5' Android 4.4 Processador Octa-Core", 
-				"valor": 1889.20, 
-				"observacao":"A Samsung, provando mais uma vez que inovação não tem limites, apresenta o novo Galaxy Tab S. Uma experiência visual rica em cores e detalhes que vão além do digital, tornando imagens e filmes muito mais realistas. Uma imersão completa em 10,5 em polegadas."
-			},
-			{
-				"id":3,
-				"imagem":"img/122107498G1.jpg",
-				"descricao": "Monitor LED 27' Samsung S27D590CS Tela Curva", 
-				"valor": 1779.00, 
-				"observacao":"Leve sua experiência de entretenimento a um patamar totalmente novo!O raio e a profundidade da curva do Monitor LED 27'' Samsung S27D590CS criam um campo de visão mais amplo e fazem a tela parecer maior e mais envolvente do que uma tela plana do mesmo tamanho. E como as bordas da tela estão fisicamente mais perto, correspondendo às curvas naturais de seus olhos, você tem a distância visual uniforme em toda a tela."
-			}			
-		],
-		"totalPages": 1,
-		"currentPage": 1
-		};
+		//parametro opcional
+		var id_category = req.params.id_category; 
 
-		res.json(retorno);
-        */
+		//objeto de retorno
+		retorno = [];
+
+		 var condicao = '';
+		 var limite = ' limit 9;'
+
+		if (id_category != undefined){
+			condicao = ' WHERE pro_cat_cod = ' + req.params.id_category;
+			limite = ';';
+		}
+
+		var query = query_lista_produtos + condicao + limite;
+
+		//console.log(query);
 
         // MySQL
-		connection.query(query_lista_produtos, function (error, rows, fields) {
+		connection.query(query, function (error, rows, fields) {
 
 			if (error) {
 				console.log('Erro:' + error);
@@ -175,22 +191,41 @@ app.get('/api/products', jsonParser, function(req, res){
 
 			res.json(retorno);
 		});
+		// MySQL
 
-        /*
-		connection.end(function(err){
-			connection.destroy( );  
-		});
-        */
 	}
 	catch(e){
+		console.log(e);
 		// erro na conexão ou query mysql
 		res.statusCode = 400;
-		return res.json({status: "Conexão falhou." + e});
+		res.json({status: "Conexão falhou." + e});
 	}
 });
 
 app.post('/api/user/login', jsonParser, function(req, res){
 	
+
+	/*
+		//codigo para realizar chamada na api principal TODO
+		var options = {
+		  host: 'endereco_api_principal',
+		  path: '/rotas/?parametros='
+		};
+
+		http.request(options, function(response) {
+			var str = '';
+
+			
+			response.on('data', function (chunk) {
+				str += chunk;
+			});
+
+			
+			response.on('end', function () {
+				console.log(str);
+			});
+		}).end();
+		*/
 
     if(!req.body.hasOwnProperty('login') || 
        !req.body.hasOwnProperty('password')) {
@@ -221,12 +256,12 @@ app.post('/api/user/login', jsonParser, function(req, res){
                         res.statusCode = 500;
                         return res.json({status: "Erro no query_update_token" + err});
                     }else{
-                        return res.json({token:id, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name});
+                        return res.json({token:id, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
                     }
                 });
                 //retorna o token
             }else{
-                return res.json({token:result.rows[0].usr_token, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name});
+                return res.json({token:result.rows[0].usr_token, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
             }
         }else{
             res.statusCode = 400;
@@ -335,128 +370,150 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 	}
 
 	//objeto de retorno
-	retorno = [];
+    retorno = { titulo: 'Clientes ou Transações', dados: [] };
 
 	try {
 		
 		switch(queryId) {
 			case "01":
-				retorno.push({
-					trans_cli_id : 1, 
-					cli_firstname : 'Pedro', 
-					cli_lastname : 'Santos', 
-					cnt : 1000
+                retorno.subtitulo = '01 - Classificar clientes que mais compraram em ordem decrescente';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"ID da Transação" : 1, 
+					"Nome" : 'Pedro', 
+					"Sobrenome" : 'Santos', 
+					"Contagem" : 1000
 				});
-                retorno.push({
-					trans_cli_id : 2, 
-					cli_firstname : 'João', 
-					cli_lastname : 'Silva', 
-					cnt : 500
+                retorno.dados.push({
+					"ID da Transação" : 2, 
+					"Nome" : 'João', 
+					"Sobrenome" : 'Silva', 
+					"Contagem" : 500
 				});
-                retorno.push({
-					trans_cli_id : 3, 
-					cli_firstname : 'Maria', 
-					cli_lastname : 'Almeida', 
-					cnt : 800
+                retorno.dados.push({
+					"ID da Transação" : 3, 
+					"Nome" : 'Maria', 
+					"Sobrenome" : 'Almeida', 
+					"Contagem" : 800
 				});
 				break;
 			case "02":
-				retorno.push({
-					trans_cli_id : 1, 
-					trans_value : 1000
+                retorno.subtitulo = '02 - Classificar, em ordem decrescente, os clientes por valor das transacoes';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"ID da Transação" : 1, 
+					"Valor da Transação" : 1000
 				});
-                retorno.push({
-					trans_cli_id : 2, 
-					trans_value : 800
+                retorno.dados.push({
+					"ID da Transação" : 2, 
+					"Valor da Transação" : 800
 				});
 				break;
 			case "03":
-				retorno.push({
-					cli_firstname : 'Pedro', 
-					cli_lastname : 'Santos', 
-					dados_transacao : []
+                retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome" : 'Pedro', 
+					"Sobrenome" : 'Santos', 
+					"Dados da Transação" : []
 				});
 				break;
 			case "04":
-				retorno.push({
-					cli_firstname : 'Pedro', 
-					cli_lastname : 'Santos', 
-					trans_date : '',
-					trans_value : '',
-					trans_loc_id : 1
+                retorno.subtitulo = '04 - Ordenar as transacoes em ordem decrescente por valor';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome" : 'Pedro', 
+					"Sobrenome" : 'Santos', 
+					"Data da Transação" : '',
+					"Valor da Transação" : '',
+					"ID da Transação" : 1
 				});
-                retorno.push({
-					cli_firstname : 'João', 
-					cli_lastname : 'Silva', 
-					trans_date : '',
-					trans_value : '',
-					trans_loc_id : 2
+                retorno.dados.push({
+					"Nome" : 'João', 
+					"Sobrenome" : 'Silva', 
+					"Data da Transação" : '',
+					"Valor da Transação" : '',
+					"ID da Transação" : 2
 				});
 				break;
 			case "05":
-				retorno.push({
-					cli_firstname : 'Pedro',
-					cli_lastname : 'Santos',
-					trans_date : '',
-					trans_value: 1000
+                retorno.subtitulo = '05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome" : 'Pedro',
+					"Sobrenome" : 'Santos',
+					"Data da Transação" : '',
+					"Valor da Transação": 1000
 				});
 				break;
 			case "06":
-				retorno.push({
-					cli_firstname : 'Pedro',
-					cli_lastname : 'Santos',
-					trans_date : '',
-					trans_value : '',
-					trans_loc_id : 1
+                retorno.subtitulo = '06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome" : 'Pedro',
+					"Sobrenome" : 'Santos',
+					"Data da Transação" : '',
+					"Valor da Transação" : '',
+					"ID da Transação" : 1
 				});
 				break;
 			case "07":
-				retorno.push({
-					cli_firstname : 'Pedro',
-					cli_lastname : 'Santos',
-					trans_date : '', 
-					trans_loc_id : 1, 
-					loc_city : 'Campinas', 
-					loc_region : 'SP', 
-					loc_country : 'Brasil',
-					trans_value : 1000
+                retorno.subtitulo = '07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome" : 'Pedro',
+					"Sobrenome" : 'Santos',
+					"Data da Transação" : '', 
+					"ID da Transação" : 1, 
+					"Cidade" : 'Campinas', 
+					"Região" : 'SP', 
+					"País" : 'Brasil',
+					"Valor da Transação" : 1000
 				});
 				break;
 			case "08":
-				retorno.push({
-					trans_cli_id : 1, 
-					cli_firstname : 'Pedro', 
-					cli_lastname : 'Santos', 
-					loc_city : 'Campinas', 
-					loc_country : 'Brasil',
-					trans_total : 2000
+                retorno.subtitulo = '08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"ID da Transação" : 1, 
+					"Nome" : 'Pedro', 
+					"Sobrenome" : 'Santos', 
+					"Cidade" : 'Campinas', 
+					"País" : 'Brasil',
+					"Valor" : 2000
 				});
 				break;
 			case "09":
-				retorno.push({
-					trans_cli_id : 1, 
-					cli_firstname : 'Pedro', 
-					cli_lastname : 'Santos', 
-					loc_city : 'Campinas', 
-					loc_country : 'Brasil',
-					trans_total : 3000
+                retorno.subtitulo = '09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"ID da Transação" : 1, 
+					"Nome" : 'Pedro', 
+					"Sobrenome" : 'Santos', 
+					"Cidade" : 'Campinas', 
+					"País" : 'Brasil',
+					"Valor" : 3000
 				});
 				break;
 			case "10":
-				retorno.push({
-					trans_cli_id : 1, 
-					cli_firstname : 'Pedro', 
-					cli_lastname : 'Santos', 
-					month: 5, 
-					total_month : 1000
+                retorno.subtitulo = '10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"ID da Transação" : 1, 
+					"Nome" : 'Pedro', 
+					"Sobrenome" : 'Santos', 
+					"Mês": 5, 
+					"Total do Mês" : 1000
 				});
 				break;
 			case "11":
-				retorno.push({
-					trans_loc_id : 1, 
-					loc_country : 'Brasil', 
-					month: 5, 
-					total_month : 3000
+                retorno.subtitulo = '11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"ID da Transação" : 1, 
+					"País" : 'Brasil', 
+					"Mês": 5, 
+					"Total do Mês" : 3000
 				});
 				break;
 			default:
@@ -501,9 +558,6 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 
 	var queryId = req.body.queryId;
 
-	//objeto de retorno
-	retorno = [];
-
 	try {
 		var queryId = req.params.queryId;
 
@@ -516,52 +570,78 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 	}
 
 	//objeto de retorno
-	retorno = [];
+	retorno = { titulo: 'Produtos ou Categorias', dados: [] };
 
 	try {
 		
 		switch(queryId) {
 			case "01":
-				retorno.push({
-					prd_name : 'Produto 1' , 
-					count : 1000
+                retorno.subtitulo = '01 - Classificar os produtos mais vendidos no último ano por quantidade';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome do Produto" : 'Produto 1' , 
+					"Quantidade" : 1000
 				});
-                retorno.push({
-					prd_name : 'Produto 2' , 
-					count : 500
+                retorno.dados.push({
+					"Nome do Produto" : 'Produto 2' , 
+					"Quantidade" : 500
 				});
-                retorno.push({
-					prd_name : 'Produto 3' , 
-					count : 750
+                retorno.dados.push({
+					"Nome do Produto" : 'Produto 3' , 
+					"Quantidade" : 750
 				});
-                retorno.push({
-					prd_name : 'Produto 4' , 
-					count : 1200
+                retorno.dados.push({
+					"Nome do Produto" : 'Produto 4' , 
+					"Quantidade" : 1200
 				});
 				break;
 			case "02":
-				retorno.push({
-					prd_name : 'Produto 1', 
-					sales_total : 10000
+                retorno.subtitulo = '02 - Classificar os total de vendas por produto no último ano';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome do Produto" : 'Produto 1', 
+					"Total por Vendas" : 10000
 				});
 				break;
 			case "03":
-				retorno.push({
-					prd_name : 'Produto 1', 
-					count: 4000
+                retorno.subtitulo = '03 - Classificar os produtos mais vendidos nos últimos 7 dias';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome do Produto" : 'Produto 1', 
+					"Quantidade": 4000
 				});
 				break;
 			case "04":
-				retorno.push({
-					prd_category_id : 1, 
-					cat_name : 'Informática', 
-					count : 1000
+                retorno.subtitulo = '04 - Classificar as categorias mais vendidas nos últimos 365 dias';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"ID da Categoria" : 1, 
+					"Nome da Categoria" : 'Informática', 
+					"Quantidade" : 1000
 				});
 				break;
 			case "05":
-				retorno.push({
-					prd_name : 'Produto 1', 
-					sales_total : 5000
+                retorno.subtitulo = '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome do Produto" : 'Produto 1', 
+					"Total por Vendas" : 5000
+				});
+				break;
+            case "06":
+                retorno.subtitulo = '06 - Total de venda por produtos em dias específicos da semana';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome do Produto" : 'Produto 1', 
+					"Total por Vendas" : 5000
+				});
+				break;
+            case "07":
+                retorno.subtitulo = '07 - Total de venda por produtos e categorias em dias específicos';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"Nome do Produto" : 'Produto 1', 
+					"Total por Vendas" : 5000
 				});
 				break;
 			default:
@@ -620,29 +700,31 @@ app.get('/api/adtf/clinprod/:queryId', jsonParser, function(req, res){
 	}
 
 	//objeto de retorno
-	retorno = [];
+	retorno = { titulo: 'Clientes e produtos', dados: [] };
 
 	try {
 		
 		switch(queryId) {
 			case "01":
-				retorno.push({
-					cli_id : 1, 
-					cat_name : 'Informática', 
-					cli_lastname : 'Pereira', 
-					total_sale: 1000
+                retorno.subtitulo = '01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria';
+                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.dados.push({
+					"ID" : 1, 
+					"Nome da Categoria" : 'Informática', 
+					"Sobrenome" : 'Pereira', 
+					"Total da Venda": 1000
 				});
-                retorno.push({
-					cli_id : 2, 
-					cat_name : 'House', 
-					cli_lastname : 'Computadores', 
-					total_sale: 2300
+                retorno.dados.push({
+					"ID" : 2, 
+					"Nome da Categoria" : 'House', 
+					"Sobrenome" : 'Computadores', 
+					"Total da Venda": 2300
 				});
-                retorno.push({
-					cli_id : 3, 
-					cat_name : 'Magazine', 
-					cli_lastname : 'da Informática', 
-					total_sale: 1125
+                retorno.dados.push({
+					"ID" : 3, 
+					"Nome da Categoria" : 'Magazine', 
+					"Sobrenome" : 'da Informática', 
+					"Total da Venda": 1125
 				});
 				break;
 			default:

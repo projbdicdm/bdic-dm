@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-  <title>eCommerce</title>
+  <title>BDICDM</title>
 
   <!-- CSS  -->
   <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
@@ -22,7 +22,8 @@
   </style>
 </head>
 <body>
-  <nav class="light-blue lighten-1 headerPage" role="navigation"></nav>
+  <nav class="light-blue lighten-1 headerPage" role="navigation">
+  </nav>
 
   <div class="container">
     <div class="section">
@@ -46,6 +47,12 @@
 		<div class="row pagamentofinalizacao">
 			<div class="col s3"><img src="img/credit_card.png" width="200px" /></div>
 			<div class="col s9">
+				<div class="row">
+					<div class="input-field col s12">
+						<input id="bandeiraCartao" type="text" class="validate" maxlength="16">
+						<label>Bandeira do Cartão</label>
+					</div>
+				</div>
 				<div class="row">
 					<div class="input-field col s12">
 						<input id="numeroCartao" type="text" class="validate" maxlength="16">
@@ -72,7 +79,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="row right pagamentofinalizacao">
+		<div class="row right">
+			<a href="/" class="waves-effect waves-light btn">Voltar</a>
 			<a href="javascript:void(0);" onclick="cart_buy.pagamento();" class="waves-effect waves-light btn"><i class="mdi-editor-attach-money left"></i>Efetuar Pagamento</a>
 		</div>
     </div>
@@ -109,5 +117,6 @@
     cart_buy.init();
   });
   </script>
+  
   </body>
 </html>
