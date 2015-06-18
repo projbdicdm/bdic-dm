@@ -3,27 +3,26 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-  <title>BDICDM</title>
+  <title>BDIC-DM</title>
 
   <!-- CSS  -->
   <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <style>
-  .right2{
-	text-align:right !important;
-	}
-	i{
-		cursor:pointer;
-	}
-	.top{
-		vertical-align: text-top;
-		padding-top:20px;
-	}
-  </style>
+		.right2{
+		text-align:right !important;
+		}
+		i{
+			cursor:pointer;
+		}
+		.top{
+			vertical-align: text-top;
+			padding-top:20px;
+		}
+	</style>
 </head>
 <body>
-  <nav class="light-blue lighten-1 headerPage" role="navigation">
-  </nav>
+  <nav class="light-blue lighten-1 headerPage" role="navigation"></nav>
 
   <div class="container">
     <div class="section">
@@ -33,15 +32,13 @@
 				<thead>
 				  <tr>
 					  <th></th>
-					  <th>Foto</th>
-					  <th>Descrição</th>
-					  <th>Quantidade</th>
-					  <th>Preço</th>
-					  <th>Total</th>
+					  <th>Foto:</th>
+					  <th>Descrição:</th>
+					  <th>Quantidade:</th>
+					  <th>Preço:</th>
+					  <th>Total:</th>
 				  </tr>
 				</thead>
-				<tbody>
-				</tbody>
 			</table>				
 		</div>
 		<div class="row pagamentofinalizacao">
@@ -50,31 +47,31 @@
 				<div class="row">
 					<div class="input-field col s12">
 						<input id="bandeiraCartao" type="text" class="validate" maxlength="16">
-						<label>Bandeira do Cartão</label>
+						<label>Bandeira do cartão:</label>
 					</div>
 				</div>
 				<div class="row">
 					<div class="input-field col s12">
 						<input id="numeroCartao" type="text" class="validate" maxlength="16">
-						<label>Número Cartão</label>
+						<label>Número do cartão:</label>
 					</div>
 				</div>
 				<div class="row">
 					<div class="input-field col s12">
 						<input id="mesAnoValidadeCartao" type="text" class="validate" maxlength="5">
-						<label>Mês e Ano de Validade</label>
+						<label>Mês e ano de validade:</label>
 					</div>
 				</div>
 				<div class="row">
 					<div class="input-field col s12">
 						<input id="nomeClienteCartao" type="text" class="validate">
-						<label>Nome Igual ao Cartão</label>
+						<label>Nome igual ao cartão:</label>
 					</div>
 				</div>				
 				<div class="row">
 					<div class="input-field col s12">
 						<input id="codigoSegurancaCartao" type="text" class="validate" maxlength="3">
-						<label>Código Segurança</label>
+						<label>Código de segurança:</label>
 					</div>
 				</div>
 			</div>
@@ -91,32 +88,30 @@
 			<div class="row">
 			<br><br><br><br>
 			<h4 class="medium center green-text">
-			<i class="large mdi-action-done"></i>
-			Pedido finalizado com sucesso!</h4>
+				<i class="large mdi-action-done"></i>
+				Pedido finalizado com sucesso!
+			</h4>
 			<br><br><br>
-			<div id="textRedirect" >Em 10 segundos você será redirecionado para página principal.</div>
+			<div id="textRedirect" >Em 10 segundos, você será redirecionado para página principal.</div>
 			</div>
 		</div>  
 	</div>
-	
-  </div>
-  <br>
+	</div>
+	<br>
     
+	<footer class="page-footer orange"></footer>
 
-  <footer class="page-footer orange"></footer>
-
-  <!--  Scripts-->
-  <script src="js/jquery-2.1.1.min.js"></script>
-  <script src="js/jquery.html5storage.min.js"></script>
-  <script src="js/materialize.js"></script>
-  <script src="js/util.js"></script>
-  <script src="js/init.js"></script>
-  <script src="js/pages/cart-buy.js"></script>
-  <script>
-  $(document).ready(function(){
-    cart_buy.init();
-  });
-  </script>
-  
-  </body>
+	<!--  Scripts-->
+	<script src="js/jquery-2.1.1.min.js"></script>
+	<script src="js/jquery.html5storage.min.js"></script>
+	<script src="js/materialize.js"></script>
+	<script src="js/util.js"></script>
+	<script src="js/init.js"></script>
+	<script src="js/pages/cart-buy.js"></script>
+	<script>
+		$(document).ready(function(){
+		cart_buy.init();
+		});
+	</script>
+</body>
 </html>

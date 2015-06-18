@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-    <title>BDICDM</title>
+    <title>BDIC-DM</title>
 
     <!-- CSS  -->
     <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
@@ -18,13 +18,13 @@
 <body>
 	<nav class="light-blue lighten-1" role="navigation">
     <div class="nav-wrapper container">
-		<a id="logo-container" href="" class="brand-logo">eCommerce</a>
+		<a id="logo-container" href="" class="brand-logo">e-Commerce</a>
 		<ul class="right hide-on-med-and-down">
 			<li class="liLogged">
 			<a class="dropdown-button userName" href="" data-activates="dropdown1">Olá, userName
 			<i class="mdi-navigation-arrow-drop-down right"></i></a></li>
 			<ul id='dropdown1' class='dropdown-content'>
-                <li><a href="">Meus Dados</a></li>
+                <li><a href="">Meus dados</a></li>
 				<li class="divider"></li>
 				<li><a href="" onclick="util.logout(); return false;">Sair</a></li>
 			</ul>		
@@ -32,7 +32,7 @@
 
 		<ul id="nav-mobile" class="side-nav">
 			<li><a href="" class="userName">Olá, userName</a></li>
-            <li><a href="">Meus Dados</a></li>
+            <li><a href="">Meus dados</a></li>
 			<li><a href="" onclick="util.logout(); return false;">Sair</a></li>
 		</ul>
 		<a href="" data-activates="nav-mobile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
@@ -46,42 +46,42 @@
 			<div class="row">
                 <ul class="collapsible" data-collapsible="accordion">
                     <li>
-                      <div class="collapsible-header"><i class="mdi-action-account-child"></i>Clientes ou Transações</div>
+                      <div class="collapsible-header"><i class="mdi-action-account-child"></i>Clientes ou transações</div>
                       <div class="collapsible-body">
                           <div class="collection" style="border:0px;">
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '01')" class="collection-item">01 - Classificar clientes que mais compraram em ordem decrescente</a>
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '02')" class="collection-item">02 - Classificar, em ordem decrescente, os clientes por valor das transacoes</a>
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '03')" class="collection-item">03 - Selecionar todos os campos de Transacoes e nome do cliente</a>
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '04')" class="collection-item">04 - Ordenar as transacoes em ordem decrescente por valor</a>
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '05')" class="collection-item">05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica</a>
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '06')" class="collection-item">06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor</a>
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '07')" class="collection-item">07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc</a>
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '08')" class="collection-item">08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor</a>
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '09')" class="collection-item">09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor</a>
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '10')" class="collection-item">10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente</a>
-                            <a href="#!" onclick="index.getQueryResult('custntrans', '11')" class="collection-item">11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '01')" class="collection-item">01 - Classificar, em ordem decrescente, os clientes que mais compraram</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '02')" class="collection-item">02 - Classificar, em ordem decrescente, os clientes por valor das transações</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '03')" class="collection-item">03 - Selecionar todos os campos de transações e nome do cliente</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '04')" class="collection-item">04 - Ordenar as transações por valor em ordem decrescente</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '05')" class="collection-item">05 - Ordenar todos os clientes que realizaram compras em ordem alfabética</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '06')" class="collection-item">06 - Classificar as transações por data exibindo também o nome do cliente e valor da compra em ordem decrescente</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '07')" class="collection-item">07 - Classificar as transações por local, em ordem alfabetica, exibindo campos como nome, valor da compra, região, país, etc</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '08')" class="collection-item">08 - Classificar as transações por data a cada 7 dias, exibindo o nome do cliente, local e valor da compra em ordem decrescente</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '09')" class="collection-item">09 - Classificar as transações por data a cada 30 dias, exibindo o nome do cliente, local e valor da compra em ordem decrescente</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '10')" class="collection-item">10 - Classificar os clientes por quantidade de transações mensais no último ano em ordem decrescente</a>
+                            <a href="#!" onclick="index.getQueryResult('custntrans', '11')" class="collection-item">11 - Classificar a quantidade de transações por país no último ano, agrupadas por meses</a>
                           </div>
                       </div>
                     </li>
                     <li>
-                      <div class="collapsible-header"><i class="mdi-editor-insert-chart"></i>Produtos ou Categorias</div>
+                      <div class="collapsible-header"><i class="mdi-editor-insert-chart"></i>Produtos ou categorias</div>
                       <div class="collapsible-body">
                           <div class="collection" style="border:0px;">
                             <a href="#!" onclick="index.getQueryResult('prodncate', '01')" class="collection-item">01 - Classificar os produtos mais vendidos no último ano por quantidade</a>
-                            <a href="#!" onclick="index.getQueryResult('prodncate', '02')" class="collection-item">02 - Classificar os total de vendas por produto no último ano</a>
+                            <a href="#!" onclick="index.getQueryResult('prodncate', '02')" class="collection-item">02 - Classificar o total de vendas por produto no último ano</a>
                             <a href="#!" onclick="index.getQueryResult('prodncate', '03')" class="collection-item">03 - Classificar os produtos mais vendidos nos últimos 7 dias</a>
                             <a href="#!" onclick="index.getQueryResult('prodncate', '04')" class="collection-item">04 - Classificar as categorias mais vendidas nos últimos 365 dias</a>
-                            <a href="#!" onclick="index.getQueryResult('prodncate', '05')" class="collection-item">05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final</a>
+                            <a href="#!" onclick="index.getQueryResult('prodncate', '05')" class="collection-item">05 - Classificar os produtos mais vendidos por período (data inicial e data final)</a>
                             <a href="#!" onclick="index.getQueryResult('prodncate', '06')" class="collection-item">06 - Total de venda por produtos em dias específicos da semana</a>
                             <a href="#!" onclick="index.getQueryResult('prodncate', '07')" class="collection-item">07 - Total de venda por produtos e categorias em dias específicos</a>
                           </div>
                       </div>
                     </li>
                     <li>
-                      <div class="collapsible-header"><i class="mdi-action-shopping-cart"></i>Clientes e Produtos</div>
+                      <div class="collapsible-header"><i class="mdi-action-shopping-cart"></i>Clientes e produtos</div>
                       <div class="collapsible-body">
                           <div class="collection" style="border:0px;">
-                            <a href="#!" onclick="index.getQueryResult('clinprod', '01')" class="collection-item">01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria</a>
+                            <a href="#!" onclick="index.getQueryResult('clinprod', '01')" class="collection-item">01 - Classificar os clientes por grupo de tipo de compra agrupando por categoria</a>
                           </div>
                       </div>
                     </li>
@@ -130,13 +130,13 @@
 			<div class="row">
 				<div class="col l6 s12">
 					<h5 class="white-text">Projeto BDIC-DM</h5>
-					<p class="grey-text text-lighten-4">Projeto Interdisciplinar BDIC-DM (Projeto de Sistema de Banco de Dados envolvendo Big Data, Internet das Coisas e Dispositivos Móveis), anteriormente denominado de BDI-C3² 2015.</p>
+					<p class="grey-text text-lighten-4">Projeto Interdisciplinar BDIC-DM (Projeto de Sistema de Banco de Dados envolvendo Big Data, Internet das Coisas e Dispositivos Móveis), anteriormente denominado BDI-C3² 2015.</p>
 				</div>
 			</div>
 		</div>
 		<div class="footer-copyright">
 			<div class="container">
-				Made by <a class="orange-text text-lighten-3" href="https://sites.google.com/site/projetobdic32/">Site Oficial do Projeto BDIC-DM ITA</a>
+				Desenvolvido por:<a class="orange-text text-lighten-3" href="https://sites.google.com/site/projetobdic32/">Projeto BDIC-DM ITA 2015</a>
 			</div>
 		</div>
 	</footer>
