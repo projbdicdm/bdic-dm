@@ -161,12 +161,15 @@ CREATE TABLE venda
  ven_tip_cod INT,
  ven_car_cod INT,
  ven_tra_cod char(50) DEFAULT NULL,
+ ven_sta_cod INT DEFAULT 1,
  CONSTRAINT FK_ven_cli_cod FOREIGN KEY (ven_cli_cod)
   REFERENCES cliente (cli_id),
  CONSTRAINT FK_ven_tip_cod FOREIGN KEY (ven_tip_cod)
   REFERENCES tipovenda (tip_id),
  CONSTRAINT FK_ven_car_cod FOREIGN KEY (ven_car_cod)
-  REFERENCES cartao (car_id)
+  REFERENCES cartao (car_id),
+ CONSTRAINT FK_ven_sta_cod FOREIGN KEY (ven_sta_cod)
+  REFERENCES status (sta_id)
 );
 
 -- Criação da tabela "Venda"
