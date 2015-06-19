@@ -340,20 +340,83 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	return res.json({status: "ok"});
 });
 
-app.get('/api/products', jsonParser, function(req, res){
+//Finalização da venda
+app.get('/api/sale', jsonParser, function(req, res){
 
-	//objeto de retorno
-	retorno = [];
+	/*
+	Parametros querystring
+		cod_cli: codigo do cliente
+		cod_tipo_venda: codigo do tipo da venda
+		cod_cartao: codigo do cartão de crédito
+		cod_transacao: codigo da transação enviado pelo endpoint buy
+		cod_status_venda: codigo do status da venda
+	*/
 
 	try {
 
+		//parametro opcional
+		var params = {
+			cod_cli: 0,
+			data_venda: moment().format("YYYY-MM-DD HH:mm:SS"),
+			cod_tipo_venda: 0,
+			cod_cartao: 0,
+			cod_transacao: 0,
+			cod_status_venda: 0
+		};
+
+		//dados de teste
+		params.cod_cli = 2
+		params.cod_tipo_venda = 2
+		params.cod_cartao = 2
+		params.cod_transacao = '1234-5678-90AB-CDEF'
+		params.cod_status_venda = 2
+
+		/*
+		params.cod_cli= req.query.cod_cli,
+		params.data_venda= moment().format("YYYY-MM-DD HH:mm:SS"),
+		params.cod_tipo_venda= req.query.cod_tipo_venda,
+		params.cod_cartao= req.query.cod_cartao,
+		params.cod_transacao= req.query.cod_transacao,
+		params.cod_status_venda= req.query.cod_status_venda
+		*/
+
+		var post = {
+			ven_id: 53,
+			ven_cli_cod: params.cod_cli, 
+			ven_dt: params.data_venda, 
+			ven_tip_cod: params.cod_tipo_venda, 
+			ven_car_cod: params.cod_cartao,
+			ven_tra_cod: params.cod_transacao, 
+			ven_sta_cod: params.cod_status_venda
+		}
+
+		var query = "INSERT INTO venda (ven_id, ven_cli_cod, ven_dt, ven_tip_cod, ven_car_cod, ven_tra_cod, ven_sta_cod) VALUES (?)";
+
+		//console.log(query);
+
+        // MySQL
+		connection.query(query, post, function (error, result) {
+
+			res.json({
+				error: error, 
+				result: result
+			});
+		});
+		// MySQL
+
 	}
 	catch(e){
-		// erro na conexão ou query mysql
+		console.log(e);
+
 		res.statusCode = 400;
-		return res.json({status: "Conexão falhou." + e});
+		res.json({status: "Conexão falhou." + e});
 	}
 });
+
+app.get('/api/sale/confirm', jsonParser, function(req, res){
+
+});
+//Finalização da venda
 
 //Integração time03
 app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
