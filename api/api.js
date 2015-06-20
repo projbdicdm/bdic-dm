@@ -660,7 +660,7 @@ switch(hiveQueryId) {
 		break;
 	}
 	case "04":
-		hqlHive = "SELECT prd_category_id as id, cat_name as categorie, COUNT(sales.salepr_pro_cod) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) JOIN categories ON (prd_category_id = cat_id) GROUP BY prd_category_id, cat_name ORDER BY count DESC LIMIT 250";
+		hqlHive = "SELECT prd_category_id as id, cat_name as categories, COUNT(sales.salepr_pro_cod) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) JOIN categories ON (prd_category_id = cat_id) GROUP BY prd_category_id, cat_name ORDER BY count DESC LIMIT 250";
 		break;
 	case "05":
 		hqlHive = "SELECT prd_category_id as id, cat_name as categories, COUNT(sales.salepr_pro_cod) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) JOIN categories ON (prd_category_id = cat_id) GROUP BY prd_category_id, cat_name ORDER BY count DESC LIMIT 250";
