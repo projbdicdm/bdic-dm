@@ -20,8 +20,8 @@ pegaOMaior <- function(coluna){
 
 
 obtemTransacoes <- function(uuid){
-	cassdrv <- JDBC("org.apache.cassandra.cql.jdbc.CassandraDriver", list.files("/home/usuario/cassandra-jdbc",pattern="jar$",full.names=T))
-	casscon <- dbConnect(cassdrv, "jdbc:cassandra://192.168.56.101:9160/BDICDM")
+	cassdrv <- JDBC("org.apache.cassandra.cql.jdbc.CassandraDriver", list.files("/root/cassandra-jdbc",pattern="jar$",full.names=T))
+	casscon <- dbConnect(cassdrv, "jdbc:cassandra://orion2412.startdedicated.net:9160/BDICDM")
 	res <- dbGetQuery(casscon, "select * from \"TRANSACTION\" where usr_token = ? ", uuid)
 	return(res)
 }
@@ -45,7 +45,6 @@ classificaBoxPlot <- function (uuid, valorNovo){
 classificaHMM <- function (uuid, valorNovo){
 
 	res <- obtemTransacoes(uuid)
-	#só importam transacoes OK para o calculo!
 	res2 <- res[res$tra_status %in% c('PENDING','CONFIRMED'),]
 	
 	if(length(res[,1]) < 10){
@@ -55,10 +54,9 @@ classificaHMM <- function (uuid, valorNovo){
 	
 	res2$c <- tapply(res2$tra_value,1:length(res2$tra_value), categoriza)
 
-	#classificacao HMM
 	states <- c("low","medium","high")
 	symbols <- c("low","medium","high")
-	#baumWelch demora muito...
+        hmm <- initHMM (states, symbols)
 	vit <- viterbiTraining(hmm, res2$c, pseudoCount=3)
 	novaTransacao <- categoriza(valorNovo)
 
