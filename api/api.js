@@ -425,7 +425,7 @@ var config = {
   libpath: '/usr/local/hive/lib/hive-jdbc-1.1.0-standalone.jar',
   libs: ['/usr/local/hadoop/common/hadoop-common-2.6.0.jar', '/usr/local/hadoop/share/hadoop/common/hadoop-common-2.6.0.jar'],
   drivername: 'org.apache.hive.jdbc.HiveDriver',
-  url: 'jdbc:hive2://' + HIVE_IP + ':' + HIVE_PORT + '/project_bdi?connectTimeout=60000&socketTimeout=60000',
+  url: 'jdbc:hive2://' + HIVE_IP + ':' + HIVE_PORT + '/bdicdm?connectTimeout=60000&socketTimeout=60000',
   // optionally
   user: 'hduser',
   password: 'hduser',
@@ -647,8 +647,8 @@ var flag = false;
 
 // definição de funcao e chamada do Hive
 switch(hiveQueryId) {
-	case "01":{
-			hqlHive = "SELECT products.prd_name as product, COUNT(sales.salepr_prod_id) as count FROM products JOIN sales ON (salepr_prod_id = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) GROUP BY prd_name ORDER BY count DESC LIMIT 250";
+	case "01":{		
+			hqlHive = "SELECT products.prd_name as product, COUNT(sales.salepr_prod_id) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) GROUP BY prd_name ORDER BY count DESC LIMIT 250";
 		break;
 	}
 	case "02":{
