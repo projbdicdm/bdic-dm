@@ -260,7 +260,8 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 							status: "denied",
 							reason: trans_status,
 							tra_id: transID, 
-							usr_token: req.body.token
+							usr_token: req.body.token,
+							tra_value: req.body.value
 						};
 
 						clientMQTT.publish(req.body.token, JSON.stringify(message), function(err){
