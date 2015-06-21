@@ -63,6 +63,53 @@ var segmentsWithGEO = ['VAREJO'];
 var CREDIT_LIMIT = 2500.00; //TODO: alterar modelagem para incluir no cassndra o Limite de crédito (Sprint #03)
 var THRESHOLD_GEO = 5000; //TODO: parametrizar isso via sistema (distancia em metros!)
 
+app.post('/api/user/login', jsonParser, function(req, res){
+    if(!req.body.hasOwnProperty('login') || 
+       !req.body.hasOwnProperty('password')) {
+    
+        res.statusCode = 400;
+        return res.json({status: 'Error 400: use of login with bad data.'});
+    } 
+    
+    client.execute(query_login, [req.body.login], function(err, result) {
+        
+        if(err){
+            res.statusCode = 500;
+            return res.json({status: "query_login Failed"});
+        }else{
+            if(result.rows.length == 1){
+                //precisamos verificar a senha 1o
+                if(result.rows[0].usr_password != req.body.password){
+                    res.statusCode = 403;
+                    return res.json({status: "Auth failed"});
+                } //senha OK, continua (menus um else...)
+            //o ususario ja tem token?
+            if(result.rows[0].usr_token == null){
+                //o usuario logou a 1a vez e nao tem token
+                //cria o token, atualiza o usuario
+                var id = Uuid.random().toString();
+                client.execute(query_update_token, [id, req.body.login], {prepare: true}, function(err, result_update) {
+                    if(err){
+                        res.statusCode = 500;
+                        return res.json({status: "Erro no query_update_token" + err});
+                    }else{
+                        return res.json({token:id, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
+                    }
+                });
+                //retorna o token
+            }else{
+                return res.json({token:result.rows[0].usr_token, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
+            }
+        }else{
+            res.statusCode = 400;
+            return res.json({status: "Auth failed"});
+        }
+    }
+    });
+
+});
+
+
 
 app.post('/api/transaction/buy', jsonParser, function(req, res){
 	if(!req.body.hasOwnProperty('token')|| 
@@ -222,7 +269,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 				req.body.token, 
 				-1, 
 				-1, 
-				moment().unix(), 
+				moment().toISOString(), 
 				req.body.value,
 				req.body.geo.lat,
 				req.body.geo.lon,
@@ -330,7 +377,8 @@ app.post('/api/transaction/confirm', jsonParser, function(req, res){
 						return res.json({status: "Error on query_confirm_transaction", message: err});			
 					}
 					
-					var message = {
+					 return res.json({status: "ok"});
+					/*var message = {
 						status: "ok",
 						tra_id: req.body.id, 
 						usr_token: req.body.token,
@@ -343,7 +391,7 @@ app.post('/api/transaction/confirm', jsonParser, function(req, res){
 						}else{
 							return res.json({status: "ok"});
 						}
-					});
+					});*/
 				});
 				
 			}else{
