@@ -10,6 +10,9 @@ var app = express();
 //criamos a instancia do conector ao mysql
 var mysql = require("mysql");
 
+//instancia do http request
+var requestify = require('requestify'); 
+
 var connection = mysql.createConnection({
 	host: "orion2412.startdedicated.net",
 	user: "root",
@@ -101,19 +104,19 @@ app.get('/api/card/client/:id', jsonParser, function(req, res){
 });
 
 app.get('/api/categories', jsonParser, function(req, res){
-    
-    //objeto de retorno
+	
+	//objeto de retorno
 	retorno = [];
-    
+	
 	try {
-        
-        //MySQL
+		
+		//MySQL
 		connection.query(query_categorias, function (error, rows, fields) {
 			if (error) {
 				console.log('Erro:' + error);
 			}
 			else if (rows != null) {
-                retorno = {"list":rows};
+				retorno = {"list":rows};
 			}
 
 			res.json(retorno);
@@ -128,20 +131,20 @@ app.get('/api/categories', jsonParser, function(req, res){
 });
 
 app.get('/api/products/details/:id', jsonParser, function(req, res){
-    
-    //objeto de retorno
+	
+	//objeto de retorno
 	retorno = [];
-    
+	
 	try {
-        
-        
-        //MySQL
+		
+		
+		//MySQL
 		connection.query(query_detalhes_produto_by_id, [req.params.id], function (error, rows, fields) {
 			if (error) {
 				console.log('Erro:' + error);
 			}
 			else if (rows != null) {
-                retorno = rows[0];
+				retorno = rows[0];
 			}
 			res.json(retorno);
 		});
@@ -176,17 +179,17 @@ app.get('/api/products/:id_category*?', jsonParser, function(req, res){
 
 		//console.log(query);
 
-        // MySQL
+		// MySQL
 		connection.query(query, function (error, rows, fields) {
 
 			if (error) {
 				console.log('Erro:' + error);
 			}
 			else if (rows != null) {
-                retorno = {"list":rows,
-                    "totalPages": 1,
-                    "currentPage": 1
-                };
+				retorno = {"list":rows,
+					"totalPages": 1,
+					"currentPage": 1
+				};
 			}
 
 			res.json(retorno);
@@ -227,48 +230,48 @@ app.post('/api/user/login', jsonParser, function(req, res){
 		}).end();
 		*/
 
-    if(!req.body.hasOwnProperty('login') || 
-       !req.body.hasOwnProperty('password')) {
-    
-        res.statusCode = 400;
-        return res.json({status: 'Error 400: use of login with bad data.'});
-    } 
-    
-    client.execute(query_login, [req.body.login], function(err, result) {
-        
-        if(err){
-            res.statusCode = 500;
-            return res.json({status: "query_login Failed"});
-        }else{
-            if(result.rows.length == 1){
-                //precisamos verificar a senha 1o
-                if(result.rows[0].usr_password != req.body.password){
-                    res.statusCode = 403;
-                    return res.json({status: "Auth failed"});
-                } //senha OK, continua (menus um else...)
-            //o ususario ja tem token?
-            if(result.rows[0].usr_token == null){
-                //o usuario logou a 1a vez e nao tem token
-                //cria o token, atualiza o usuario
-                var id = Uuid.random().toString();
-                client.execute(query_update_token, [id, req.body.login], {prepare: true}, function(err, result_update) {
-                    if(err){
-                        res.statusCode = 500;
-                        return res.json({status: "Erro no query_update_token" + err});
-                    }else{
-                        return res.json({token:id, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
-                    }
-                });
-                //retorna o token
-            }else{
-                return res.json({token:result.rows[0].usr_token, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
-            }
-        }else{
-            res.statusCode = 400;
-            return res.json({status: "Auth failed"});
-        }
-    }
-    });
+	if(!req.body.hasOwnProperty('login') || 
+	   !req.body.hasOwnProperty('password')) {
+	
+		res.statusCode = 400;
+		return res.json({status: 'Error 400: use of login with bad data.'});
+	} 
+	
+	client.execute(query_login, [req.body.login], function(err, result) {
+		
+		if(err){
+			res.statusCode = 500;
+			return res.json({status: "query_login Failed"});
+		}else{
+			if(result.rows.length == 1){
+				//precisamos verificar a senha 1o
+				if(result.rows[0].usr_password != req.body.password){
+					res.statusCode = 403;
+					return res.json({status: "Auth failed"});
+				} //senha OK, continua (menus um else...)
+			//o ususario ja tem token?
+			if(result.rows[0].usr_token == null){
+				//o usuario logou a 1a vez e nao tem token
+				//cria o token, atualiza o usuario
+				var id = Uuid.random().toString();
+				client.execute(query_update_token, [id, req.body.login], {prepare: true}, function(err, result_update) {
+					if(err){
+						res.statusCode = 500;
+						return res.json({status: "Erro no query_update_token" + err});
+					}else{
+						return res.json({token:id, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
+					}
+				});
+				//retorna o token
+			}else{
+				return res.json({token:result.rows[0].usr_token, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
+			}
+		}else{
+			res.statusCode = 400;
+			return res.json({status: "Auth failed"});
+		}
+	}
+	});
 
 });
 
@@ -330,14 +333,43 @@ app.post('/api/user/register', jsonParser, function(req, res){
 });
 
 app.post('/api/transaction/buy', jsonParser, function(req, res){
- 	if(!req.body.hasOwnProperty('token')) {
 	
+	if(!req.body.hasOwnProperty('token')|| 
+	   !req.body.hasOwnProperty('creditcardNumber')|| 
+	   !req.body.hasOwnProperty('value')|| 
+	   !req.body.hasOwnProperty('geo') ||
+	   !req.body.hasOwnProperty('segment')) {
+
 		res.statusCode = 400;
-		//return res.send('Error 400: use of register with bad data.');
-		return res.send(req.body.hasOwnProperty('token'));
-	} 
-	
-	return res.json({status: "ok"});
+		return res.json({status: 'Error 400', message: 'Use of buy with bad data (missing properties).', parametros: req.body});
+	}
+
+	try {
+
+		var parametros = { 
+	        token: req.body.token,
+			creditcardNumber: req.body.creditcardNumber,
+			value: req.body.value,
+			geo: req.body.geo,
+			segment: req.body.segment
+		};
+
+		//console.log(parametros);
+
+		//httprequest mode: post
+		requestify.post('http://orion2412.startdedicated.net:8899/api/transaction/buy', parametros)
+		.then(function(response) {
+
+			var body = response.getBody();
+			res.json(body);
+
+		});
+	}
+	catch(e){
+		console.log(e);
+		res.statusCode = 400;
+		res.json({status: "Conexão falhou." + e});
+	}
 });
 
 //Finalização da venda
@@ -394,7 +426,7 @@ app.get('/api/sale', jsonParser, function(req, res){
 
 		//console.log(query);
 
-        // MySQL
+		// MySQL
 		connection.query(query, post, function (error, result) {
 
 			res.json({
@@ -413,8 +445,16 @@ app.get('/api/sale', jsonParser, function(req, res){
 	}
 });
 
-app.get('/api/sale/confirm', jsonParser, function(req, res){
+app.post('/api/sale/confirm', jsonParser, function(req, res){
+	
+	if(!req.body.hasOwnProperty('token') || 
+	   !req.body.hasOwnProperty('status')) {
 
+		res.statusCode = 400;
+		return res.json({status: 'Error 400', message: 'Use of buy with bad data (missing properties).', parametros: req.body});
+	}
+
+	res.json({status: 'ok'});
 });
 //Finalização da venda
 
@@ -433,27 +473,27 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 	}
 
 	//objeto de retorno
-    retorno = { titulo: 'Clientes ou Transações', dados: [] };
+	retorno = { titulo: 'Clientes ou Transações', dados: [] };
 
 	try {
 		
 		switch(queryId) {
 			case "01":
-                retorno.subtitulo = '01 - Classificar clientes que mais compraram em ordem decrescente';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '01 - Classificar clientes que mais compraram em ordem decrescente';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"ID da Transação" : 1, 
 					"Nome" : 'Pedro', 
 					"Sobrenome" : 'Santos', 
 					"Contagem" : 1000
 				});
-                retorno.dados.push({
+				retorno.dados.push({
 					"ID da Transação" : 2, 
 					"Nome" : 'João', 
 					"Sobrenome" : 'Silva', 
 					"Contagem" : 500
 				});
-                retorno.dados.push({
+				retorno.dados.push({
 					"ID da Transação" : 3, 
 					"Nome" : 'Maria', 
 					"Sobrenome" : 'Almeida', 
@@ -461,20 +501,20 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				});
 				break;
 			case "02":
-                retorno.subtitulo = '02 - Classificar, em ordem decrescente, os clientes por valor das transacoes';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '02 - Classificar, em ordem decrescente, os clientes por valor das transacoes';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"ID da Transação" : 1, 
 					"Valor da Transação" : 1000
 				});
-                retorno.dados.push({
+				retorno.dados.push({
 					"ID da Transação" : 2, 
 					"Valor da Transação" : 800
 				});
 				break;
 			case "03":
-                retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome" : 'Pedro', 
 					"Sobrenome" : 'Santos', 
@@ -482,8 +522,8 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				});
 				break;
 			case "04":
-                retorno.subtitulo = '04 - Ordenar as transacoes em ordem decrescente por valor';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '04 - Ordenar as transacoes em ordem decrescente por valor';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome" : 'Pedro', 
 					"Sobrenome" : 'Santos', 
@@ -491,7 +531,7 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 					"Valor da Transação" : '',
 					"ID da Transação" : 1
 				});
-                retorno.dados.push({
+				retorno.dados.push({
 					"Nome" : 'João', 
 					"Sobrenome" : 'Silva', 
 					"Data da Transação" : '',
@@ -500,8 +540,8 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				});
 				break;
 			case "05":
-                retorno.subtitulo = '05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome" : 'Pedro',
 					"Sobrenome" : 'Santos',
@@ -510,8 +550,8 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				});
 				break;
 			case "06":
-                retorno.subtitulo = '06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome" : 'Pedro',
 					"Sobrenome" : 'Santos',
@@ -521,8 +561,8 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				});
 				break;
 			case "07":
-                retorno.subtitulo = '07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome" : 'Pedro',
 					"Sobrenome" : 'Santos',
@@ -535,8 +575,8 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				});
 				break;
 			case "08":
-                retorno.subtitulo = '08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"ID da Transação" : 1, 
 					"Nome" : 'Pedro', 
@@ -547,8 +587,8 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				});
 				break;
 			case "09":
-                retorno.subtitulo = '09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"ID da Transação" : 1, 
 					"Nome" : 'Pedro', 
@@ -559,8 +599,8 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				});
 				break;
 			case "10":
-                retorno.subtitulo = '10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"ID da Transação" : 1, 
 					"Nome" : 'Pedro', 
@@ -570,8 +610,8 @@ app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
 				});
 				break;
 			case "11":
-                retorno.subtitulo = '11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"ID da Transação" : 1, 
 					"País" : 'Brasil', 
@@ -639,44 +679,44 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 		
 		switch(queryId) {
 			case "01":
-                retorno.subtitulo = '01 - Classificar os produtos mais vendidos no último ano por quantidade';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '01 - Classificar os produtos mais vendidos no último ano por quantidade';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome do Produto" : 'Produto 1' , 
 					"Quantidade" : 1000
 				});
-                retorno.dados.push({
+				retorno.dados.push({
 					"Nome do Produto" : 'Produto 2' , 
 					"Quantidade" : 500
 				});
-                retorno.dados.push({
+				retorno.dados.push({
 					"Nome do Produto" : 'Produto 3' , 
 					"Quantidade" : 750
 				});
-                retorno.dados.push({
+				retorno.dados.push({
 					"Nome do Produto" : 'Produto 4' , 
 					"Quantidade" : 1200
 				});
 				break;
 			case "02":
-                retorno.subtitulo = '02 - Classificar os total de vendas por produto no último ano';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '02 - Classificar os total de vendas por produto no último ano';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome do Produto" : 'Produto 1', 
 					"Total por Vendas" : 10000
 				});
 				break;
 			case "03":
-                retorno.subtitulo = '03 - Classificar os produtos mais vendidos nos últimos 7 dias';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '03 - Classificar os produtos mais vendidos nos últimos 7 dias';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome do Produto" : 'Produto 1', 
 					"Quantidade": 4000
 				});
 				break;
 			case "04":
-                retorno.subtitulo = '04 - Classificar as categorias mais vendidas nos últimos 365 dias';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '04 - Classificar as categorias mais vendidas nos últimos 365 dias';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"ID da Categoria" : 1, 
 					"Nome da Categoria" : 'Informática', 
@@ -684,24 +724,24 @@ app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
 				});
 				break;
 			case "05":
-                retorno.subtitulo = '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome do Produto" : 'Produto 1', 
 					"Total por Vendas" : 5000
 				});
 				break;
-            case "06":
-                retorno.subtitulo = '06 - Total de venda por produtos em dias específicos da semana';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+			case "06":
+				retorno.subtitulo = '06 - Total de venda por produtos em dias específicos da semana';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome do Produto" : 'Produto 1', 
 					"Total por Vendas" : 5000
 				});
 				break;
-            case "07":
-                retorno.subtitulo = '07 - Total de venda por produtos e categorias em dias específicos';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+			case "07":
+				retorno.subtitulo = '07 - Total de venda por produtos e categorias em dias específicos';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"Nome do Produto" : 'Produto 1', 
 					"Total por Vendas" : 5000
@@ -769,21 +809,21 @@ app.get('/api/adtf/clinprod/:queryId', jsonParser, function(req, res){
 		
 		switch(queryId) {
 			case "01":
-                retorno.subtitulo = '01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
+				retorno.subtitulo = '01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria';
+				retorno.descricao = '[ Descrição detalhada aqui ]';
 				retorno.dados.push({
 					"ID" : 1, 
 					"Nome da Categoria" : 'Informática', 
 					"Sobrenome" : 'Pereira', 
 					"Total da Venda": 1000
 				});
-                retorno.dados.push({
+				retorno.dados.push({
 					"ID" : 2, 
 					"Nome da Categoria" : 'House', 
 					"Sobrenome" : 'Computadores', 
 					"Total da Venda": 2300
 				});
-                retorno.dados.push({
+				retorno.dados.push({
 					"ID" : 3, 
 					"Nome da Categoria" : 'Magazine', 
 					"Sobrenome" : 'da Informática', 

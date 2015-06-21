@@ -1,0 +1,53 @@
+<html>
+<head>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript">
+
+		function enviar(){
+
+			if (navigator.geolocation) {
+        		navigator.geolocation.getCurrentPosition(function(loc){
+
+        			var parametros = { 
+				        token: '2984kdd-slk394k-ksj39dljsf', //token-login
+						creditcardNumber: '1234567890', // cartão de crédito
+						value: '399', //valor total da venda
+						geo: {
+							lat: loc.coords.latitude,
+							lon: loc.coords.longitude,
+						},
+						segment: 'E-COMMERCE-VAREJO' // estatico
+					};
+
+					console.log(parametros);
+
+        			$.ajax({
+					    type: 'POST',
+					    url: '/api/transaction/buy',
+					    contentType: "application/json",
+					    dataType: 'json',
+					    data: JSON.stringify(parametros),
+					    success: function(data){
+
+					    	var res = JSON.stringify(data);
+					        $('#resposta').html(res);
+
+					    },
+					    error: function(e, s, m){
+
+					    	var res = JSON.stringify(m);
+					    	$('#resposta').html(res);
+
+					    }
+					});
+        		});
+        	}
+		}
+	</script>
+</head>
+<body>
+	<button onclick="enviar()">Enviar parametros</button><br/><br/>
+	<div>Parametros callback</div><br/>
+	<div id="resposta"></div>
+</body>
+</html>
