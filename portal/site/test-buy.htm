@@ -10,8 +10,8 @@
         		navigator.geolocation.getCurrentPosition(function(loc){
 
         			var parametros = { 
-				        token: 'abcd-1234-efgh-5678', //token-login
-						creditcardNumber: '1234567890', // cartão de crédito
+				        token: "1a87bb69-831e-4991-9917-e3adce68920e", //token-login
+						creditcardNumber: "1234567890", // cartão de crédito
 						cod_cliente: 1,
 						cod_credit_card: 123,
 						products: [{
@@ -24,12 +24,12 @@
 							value: 50,
 							qtd: 1
 						}],
-						value: '150', //valor total da venda
+						value: 150, //valor total da venda
 						geo: {
 							lat: loc.coords.latitude,
 							lon: loc.coords.longitude,
 						},
-						segment: 'E-COMMERCE-VAREJO'
+						segment: "E-COMMERCE-VAREJO"
 					};
 
 					//console.log(parametros);
@@ -60,8 +60,8 @@
 		function confirm(){
 
 			var parametros = { 
-				token:'abcd-1234-efgh-5678',
-				status:'ok'
+				token:'b30be629-18ef-11e5-9b5c-974e1ba6f43c',
+				status:'ok' //ok:confirmado ou n_ok: cancelada pelo usuário (notificação android)
 			};
 
 			$.ajax({

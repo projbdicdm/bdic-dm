@@ -58,7 +58,7 @@ var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = 
 var Uuid = require('cassandra-driver').types.Uuid;
 
 // querys mysql
-var query_categorias = 'SELECT cat_id, cat_nm FROM categoria;'
+var query_categorias = 'SELECT cat_id, cat_nm FROM categoria;';
 var query_lista_produtos = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM produto';
 var query_detalhes_produto_by_id = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM produto WHERE pro_id = ?';
 var query_cartoes_cliente = 'SELECT * FROM cartao WHERE car_cli_cod=?';
@@ -213,29 +213,6 @@ app.get('/api/products/:id_category*?', jsonParser, function(req, res){
 
 app.post('/api/user/login', jsonParser, function(req, res){
 	
-
-	/*
-		//codigo para realizar chamada na api principal TODO
-		var options = {
-		  host: 'endereco_api_principal',
-		  path: '/rotas/?parametros='
-		};
-
-		http.request(options, function(response) {
-			var str = '';
-
-			
-			response.on('data', function (chunk) {
-				str += chunk;
-			});
-
-			
-			response.on('end', function () {
-				console.log(str);
-			});
-		}).end();
-		*/
-
 	if(!req.body.hasOwnProperty('login') || 
 	   !req.body.hasOwnProperty('password')) {
 	
@@ -278,7 +255,6 @@ app.post('/api/user/login', jsonParser, function(req, res){
 		}
 	}
 	});
-
 });
 
 app.post('/api/user/resetpassword', jsonParser, function(req, res){
@@ -338,13 +314,10 @@ app.post('/api/user/register', jsonParser, function(req, res){
 	return res.json({status: "ok"});
 });
 
-app.post('/api/transaction/buy_test', jsonParser, function(req, res){
-	res.json({status:'ok', body:req.body});
-});
-
 //var TimeUuid = require('cassandra-driver').types.TimeUuid;
 app.post('/api/transaction/buy', jsonParser, function(req, res){
-	if(!req.body.hasOwnProperty('token')|| 
+	
+	if (!req.body.hasOwnProperty('token')|| 
 	   !req.body.hasOwnProperty('cod_cliente')|| 
 	   !req.body.hasOwnProperty('creditcardNumber')||
 	   !req.body.hasOwnProperty('cod_credit_card')||
@@ -354,12 +327,9 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	   !req.body.hasOwnProperty('segment')) {
 
 		res.statusCode = 400;
-		return res.json({status: 'Error 400', message: 'Use of buy with bad data (missing properties).'});
-}
-		//	}else{
-	//	var transID = TimeUuid.now();
-		//return res.json({status: "ok", transactionid: transID, token: req.body.token});
-//	}
+		return res.json({status: 'Error 400', message: 'Use of buy with bad data (missing properties)'});
+	}
+
 	try {
 
 		var parametros_cassandra = { 
@@ -371,24 +341,14 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 			segment: req.body.segment
 		};
 
-		//httprequest mode: post
-		requestify.request('http://orion2412.startdedicated.net:8899/api/transaction/buy', {
-		    method: 'POST',
-		    body: parametros_cassandra,
-		    dataType: 'json',
-		    headers: {
-		        'Content-Type': 'application/json'
-		    }
-		 })
+		//chama a API root para obter o token da transação
+		requestify.post('http://orion2412.startdedicated.net:8899/api/transaction/buy', parametros_cassandra)
 		.then(function(response) {
 
 			var body = response.getBody();
 
-			console.log(body);
-
 			var status = body.status;
-			var token_transaction = body.transID;
-
+			var token_transaction = body.transactionid;
 
 			if (body.status == 'error'){
 				res.statusCode = 400;
@@ -396,7 +356,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 
 			} else { // status: ok ou denied
 				//codigo mysql tabela status [3: fraude, 1: aguardando pagamento]
-				var cod_status = (body.status == 'denied' ? 3: 1);
+				var cod_status = (body.status === 'denied' ? 3 : 1);
 
 				// atualização no mysql
 				var params_mysql = {
@@ -404,7 +364,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 					data_venda: moment().format("YYYY-MM-DD HH:mm:SS"),
 					cod_tipo_venda: 1, // à vista (estático)
 					cod_cartao: req.body.cod_credit_card, // dado view
-					cod_transacao: req.body.token, //api buy cassandra
+					cod_transacao: body.transactionid, //api buy cassandra
 					cod_status_venda: cod_status, //api buy cassandra
 					cod_credit_card: req.body.cod_credit_card, //dado view
 					products: req.body.products // dado view
