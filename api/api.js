@@ -582,7 +582,7 @@ switch(hiveQueryId) {
                 retorno.subtitulo = '01 - Classificar clientes que mais compraram em ordem decrescente';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
 				
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
                 
@@ -591,7 +591,7 @@ switch(hiveQueryId) {
 			case "02":{
                 retorno.subtitulo = '02 - Classificar, em ordem decrescente, os clientes por valor das transacoes';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -599,7 +599,7 @@ switch(hiveQueryId) {
 			case "03":{
                 retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -607,7 +607,7 @@ switch(hiveQueryId) {
 			case "04":{
                 retorno.subtitulo = '04 - Ordenar as transacoes em ordem decrescente por valor';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
                		break;
@@ -615,7 +615,7 @@ switch(hiveQueryId) {
 			case "05":{
                 retorno.subtitulo = '05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -623,7 +623,7 @@ switch(hiveQueryId) {
 			case "06":{
                 retorno.subtitulo = '06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -631,7 +631,7 @@ switch(hiveQueryId) {
 			case "07":{
                 retorno.subtitulo = '07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -639,7 +639,7 @@ switch(hiveQueryId) {
 			case "08":{
                 retorno.subtitulo = '08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -647,7 +647,7 @@ switch(hiveQueryId) {
 			case "09":{
                 retorno.subtitulo = '09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -655,7 +655,7 @@ switch(hiveQueryId) {
 			case "10":{
                 retorno.subtitulo = '10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -663,7 +663,7 @@ switch(hiveQueryId) {
 			case "11":{
                 retorno.subtitulo = '11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -749,7 +749,7 @@ switch(hiveQueryId) {
                 retorno.subtitulo = '01 - Classificar os produtos mais vendidos no último ano por quantidade';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
 				
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
                 
@@ -758,7 +758,7 @@ switch(hiveQueryId) {
 			case "02":{
                 retorno.subtitulo = '02 - Classificar os total de vendas por produto no último ano';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -766,7 +766,7 @@ switch(hiveQueryId) {
 			case "03":{
                 retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -774,7 +774,7 @@ switch(hiveQueryId) {
 			case "04":{
                 retorno.subtitulo = '04 - Classificar as categorias mais vendidas nos últimos 365 dias';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
                		break;
@@ -782,7 +782,7 @@ switch(hiveQueryId) {
 			case "05":{
                 retorno.subtitulo = '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
 				break;
@@ -855,7 +855,7 @@ switch(hiveQueryId) {
                 retorno.subtitulo = '01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria';
                 retorno.descricao = '[ Descrição detalhada aqui ]';
 				
-				for (counter=0;counter<=categories.length;counter++){
+				for (counter = 0; counter <= categories.length - 1; counter++) {
 				retorno.dados.push(categories[counter]);
 				}
                 
