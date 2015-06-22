@@ -374,9 +374,9 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 
 					if (data.error != null){
 						res.statusCode = 400;
-						res.json({status: "n_ok", msg: data.error});
+						res.json({status_venda: "n_ok", msg: data.error, status_tran: body.status, transactionid: body.transactionid});
 					} else {
-						res.json({status: 'ok'});
+						res.json({status_venda: 'ok', status_tran: body.status, transactionid: body.transactionid });
 					}
 					
 				});
