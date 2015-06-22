@@ -1,3 +1,6 @@
+//url da api principal
+var MAIN_API = "http://localhost:8899/api/";
+
 //criamos o obj que renderiza HTML na saida
 var jade = require('jade');
 
@@ -459,411 +462,49 @@ app.post('/api/sale/confirm', jsonParser, function(req, res){
 //Finalização da venda
 
 //Integração time03
-app.get('/api/adtf/custntrans/:queryId', jsonParser, function(req, res){
-
-
-	var queryId = req.params.queryId;
-
-	//validação do parametro
-	if (queryId == 'undefined'){
-		res.json({
-			status: 'Identificador nao encontrado'
-		});
-		return;
-	}
-
-	//objeto de retorno
-	retorno = { titulo: 'Clientes ou Transações', dados: [] };
-
-	try {
-		
-		switch(queryId) {
-			case "01":
-				retorno.subtitulo = '01 - Classificar clientes que mais compraram em ordem decrescente';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"ID da Transação" : 1, 
-					"Nome" : 'Pedro', 
-					"Sobrenome" : 'Santos', 
-					"Contagem" : 1000
-				});
-				retorno.dados.push({
-					"ID da Transação" : 2, 
-					"Nome" : 'João', 
-					"Sobrenome" : 'Silva', 
-					"Contagem" : 500
-				});
-				retorno.dados.push({
-					"ID da Transação" : 3, 
-					"Nome" : 'Maria', 
-					"Sobrenome" : 'Almeida', 
-					"Contagem" : 800
-				});
-				break;
-			case "02":
-				retorno.subtitulo = '02 - Classificar, em ordem decrescente, os clientes por valor das transacoes';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"ID da Transação" : 1, 
-					"Valor da Transação" : 1000
-				});
-				retorno.dados.push({
-					"ID da Transação" : 2, 
-					"Valor da Transação" : 800
-				});
-				break;
-			case "03":
-				retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome" : 'Pedro', 
-					"Sobrenome" : 'Santos', 
-					"Dados da Transação" : []
-				});
-				break;
-			case "04":
-				retorno.subtitulo = '04 - Ordenar as transacoes em ordem decrescente por valor';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome" : 'Pedro', 
-					"Sobrenome" : 'Santos', 
-					"Data da Transação" : '',
-					"Valor da Transação" : '',
-					"ID da Transação" : 1
-				});
-				retorno.dados.push({
-					"Nome" : 'João', 
-					"Sobrenome" : 'Silva', 
-					"Data da Transação" : '',
-					"Valor da Transação" : '',
-					"ID da Transação" : 2
-				});
-				break;
-			case "05":
-				retorno.subtitulo = '05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome" : 'Pedro',
-					"Sobrenome" : 'Santos',
-					"Data da Transação" : '',
-					"Valor da Transação": 1000
-				});
-				break;
-			case "06":
-				retorno.subtitulo = '06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome" : 'Pedro',
-					"Sobrenome" : 'Santos',
-					"Data da Transação" : '',
-					"Valor da Transação" : '',
-					"ID da Transação" : 1
-				});
-				break;
-			case "07":
-				retorno.subtitulo = '07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome" : 'Pedro',
-					"Sobrenome" : 'Santos',
-					"Data da Transação" : '', 
-					"ID da Transação" : 1, 
-					"Cidade" : 'Campinas', 
-					"Região" : 'SP', 
-					"País" : 'Brasil',
-					"Valor da Transação" : 1000
-				});
-				break;
-			case "08":
-				retorno.subtitulo = '08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"ID da Transação" : 1, 
-					"Nome" : 'Pedro', 
-					"Sobrenome" : 'Santos', 
-					"Cidade" : 'Campinas', 
-					"País" : 'Brasil',
-					"Valor" : 2000
-				});
-				break;
-			case "09":
-				retorno.subtitulo = '09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"ID da Transação" : 1, 
-					"Nome" : 'Pedro', 
-					"Sobrenome" : 'Santos', 
-					"Cidade" : 'Campinas', 
-					"País" : 'Brasil',
-					"Valor" : 3000
-				});
-				break;
-			case "10":
-				retorno.subtitulo = '10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"ID da Transação" : 1, 
-					"Nome" : 'Pedro', 
-					"Sobrenome" : 'Santos', 
-					"Mês": 5, 
-					"Total do Mês" : 1000
-				});
-				break;
-			case "11":
-				retorno.subtitulo = '11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"ID da Transação" : 1, 
-					"País" : 'Brasil', 
-					"Mês": 5, 
-					"Total do Mês" : 3000
-				});
-				break;
-			default:
-				break;
-		}
-
-		res.json(retorno);
-
-
-		/*
-		//codigo para realizar chamada na api principal TODO
-		var options = {
-		  host: 'endereco_api_principal',
-		  path: '/rotas/?parametros='
-		};
-
-		http.request(options, function(response) {
-			var str = '';
-
-			
-			response.on('data', function (chunk) {
-				str += chunk;
-			});
-
-			
-			response.on('end', function () {
-				console.log(str);
-			});
-		}).end();
-		*/
-
-	}
-	catch(e){
-		// erro na conexão ou query mysql
-		res.statusCode = 400;
-		return res.json({status: "Conexão falhou." + e});
-	}
-});
-
-app.get('/api/adtf/prodncate/:queryId', jsonParser, function(req, res){
-
-
-	var queryId = req.body.queryId;
-
-	try {
-		var queryId = req.params.queryId;
-
-	//validação do parametro
-	if (queryId == 'undefined'){
-		res.json({
-			status: 'Identificador nao encontrado'
-		});
-		return;
-	}
-
-	//objeto de retorno
-	retorno = { titulo: 'Produtos ou Categorias', dados: [] };
-
-	try {
-		
-		switch(queryId) {
-			case "01":
-				retorno.subtitulo = '01 - Classificar os produtos mais vendidos no último ano por quantidade';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome do Produto" : 'Produto 1' , 
-					"Quantidade" : 1000
-				});
-				retorno.dados.push({
-					"Nome do Produto" : 'Produto 2' , 
-					"Quantidade" : 500
-				});
-				retorno.dados.push({
-					"Nome do Produto" : 'Produto 3' , 
-					"Quantidade" : 750
-				});
-				retorno.dados.push({
-					"Nome do Produto" : 'Produto 4' , 
-					"Quantidade" : 1200
-				});
-				break;
-			case "02":
-				retorno.subtitulo = '02 - Classificar os total de vendas por produto no último ano';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome do Produto" : 'Produto 1', 
-					"Total por Vendas" : 10000
-				});
-				break;
-			case "03":
-				retorno.subtitulo = '03 - Classificar os produtos mais vendidos nos últimos 7 dias';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome do Produto" : 'Produto 1', 
-					"Quantidade": 4000
-				});
-				break;
-			case "04":
-				retorno.subtitulo = '04 - Classificar as categorias mais vendidas nos últimos 365 dias';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"ID da Categoria" : 1, 
-					"Nome da Categoria" : 'Informática', 
-					"Quantidade" : 1000
-				});
-				break;
-			case "05":
-				retorno.subtitulo = '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome do Produto" : 'Produto 1', 
-					"Total por Vendas" : 5000
-				});
-				break;
-			case "06":
-				retorno.subtitulo = '06 - Total de venda por produtos em dias específicos da semana';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome do Produto" : 'Produto 1', 
-					"Total por Vendas" : 5000
-				});
-				break;
-			case "07":
-				retorno.subtitulo = '07 - Total de venda por produtos e categorias em dias específicos';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"Nome do Produto" : 'Produto 1', 
-					"Total por Vendas" : 5000
-				});
-				break;
-			default:
-				break;
-		}
-
-		res.json(retorno);
-
-
-		/*
-		//codigo para realizar chamada na api principal TODO
-		var options = {
-		  host: 'endereco_api_principal',
-		  path: '/rotas/?parametros='
-		};
-
-		http.request(options, function(response) {
-			var str = '';
-
-			
-			response.on('data', function (chunk) {
-				str += chunk;
-			});
-
-			
-			response.on('end', function () {
-				console.log(str);
-			});
-		}).end();
-		*/
-
-	}
-	catch(e){
-		// erro na conexão ou query mysql
-		res.statusCode = 400;
-		return res.json({status: "Conexão falhou." + e});
-	}
-	}
-	catch(e){
-		// erro na conexão ou query mysql
-		res.statusCode = 400;
-		return res.json({status: "Conexão falhou." + e});
-	}
-});
-
-app.get('/api/adtf/clinprod/:queryId', jsonParser, function(req, res){
+app.get('/api/adtf/:category/:queryId', jsonParser, function(req, res){
 	
+	var category = req.params.category;
 	var queryId = req.params.queryId;
 
 	//validação do parametro
+	if (category == 'undefined') {
+		res.json({
+			status: 'Categoria inválida'
+		});
+		return;
+	}
 	if (queryId == 'undefined') {
 		res.json({
 			status: 'Identificador nao encontrado'
 		});
 		return;
 	}
-
-	//objeto de retorno
-	retorno = { titulo: 'Clientes e produtos', dados: [] };
-
-	try {
-		
-		switch(queryId) {
-			case "01":
-				retorno.subtitulo = '01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria';
-				retorno.descricao = '[ Descrição detalhada aqui ]';
-				retorno.dados.push({
-					"ID" : 1, 
-					"Nome da Categoria" : 'Informática', 
-					"Sobrenome" : 'Pereira', 
-					"Total da Venda": 1000
-				});
-				retorno.dados.push({
-					"ID" : 2, 
-					"Nome da Categoria" : 'House', 
-					"Sobrenome" : 'Computadores', 
-					"Total da Venda": 2300
-				});
-				retorno.dados.push({
-					"ID" : 3, 
-					"Nome da Categoria" : 'Magazine', 
-					"Sobrenome" : 'da Informática', 
-					"Total da Venda": 1125
-				});
-				break;
-			default:
-				break;
-		}
-
-		res.json(retorno);
-
-		/*
-		//codigo para realizar chamada na api principal TODO
-		var options = {
-		  host: 'endereco_api_principal',
-		  path: '/rotas/?parametros='
+    
+    retorno = { };
+    
+    try {
+        
+		var parametros = { 
+	        "queryI"": queryId
 		};
 
-		http.request(options, function(response) {
-			var str = '';
+		//httprequest mode: post
+		requestify.post(MAIN_API + category, parametros)
+		.then(function(response) {
 
-			
-			response.on('data', function (chunk) {
-				str += chunk;
-			});
+			var body = response.getBody();
+			res.json(body);
 
-			
-			response.on('end', function () {
-				console.log(str);
-			});
-		}).end();
-		*/
+		});
+    
 	}
 	catch(e){
-		// erro na conexão ou query mysql
+        
 		res.statusCode = 400;
-		return res.json({status: "Conexão falhou." + e});
+		return res.json({status: "Requisição falhou." + e});
+        
 	}
-
 });
 //Integração time03
 
