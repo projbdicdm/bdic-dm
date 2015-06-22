@@ -482,7 +482,7 @@ app.get('/api/adtf/:category/:queryId', jsonParser, function(req, res){
     try {
         
 		var parametros = { 
-	        "queryI"": queryId
+	        "queryI": queryId
 		};
 
 		//httprequest mode: post
