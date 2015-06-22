@@ -16,6 +16,9 @@ var mysql = require("mysql");
 //instancia do http request
 var requestify = require('requestify'); 
 
+//util nodejs
+var util = require('util');
+
 var connection = mysql.createConnection({
 	host: "orion2412.startdedicated.net",
 	user: "root",
@@ -335,120 +338,100 @@ app.post('/api/user/register', jsonParser, function(req, res){
 	return res.json({status: "ok"});
 });
 
+app.post('/api/transaction/buy_test', jsonParser, function(req, res){
+	res.json({status:'ok', body:req.body});
+});
+
+//var TimeUuid = require('cassandra-driver').types.TimeUuid;
 app.post('/api/transaction/buy', jsonParser, function(req, res){
-	
 	if(!req.body.hasOwnProperty('token')|| 
-	   !req.body.hasOwnProperty('creditcardNumber')|| 
+	   !req.body.hasOwnProperty('cod_cliente')|| 
+	   !req.body.hasOwnProperty('creditcardNumber')||
+	   !req.body.hasOwnProperty('cod_credit_card')||
+	   !req.body.hasOwnProperty('products')|| 
 	   !req.body.hasOwnProperty('value')|| 
 	   !req.body.hasOwnProperty('geo') ||
 	   !req.body.hasOwnProperty('segment')) {
 
 		res.statusCode = 400;
-		return res.json({status: 'Error 400', message: 'Use of buy with bad data (missing properties).', parametros: req.body});
-	}
-
+		return res.json({status: 'Error 400', message: 'Use of buy with bad data (missing properties).'});
+}
+		//	}else{
+	//	var transID = TimeUuid.now();
+		//return res.json({status: "ok", transactionid: transID, token: req.body.token});
+//	}
 	try {
 
-		var parametros = { 
+		var parametros_cassandra = { 
 	        token: req.body.token,
+	        date: moment().format(),
 			creditcardNumber: req.body.creditcardNumber,
 			value: req.body.value,
 			geo: req.body.geo,
 			segment: req.body.segment
 		};
 
-		//console.log(parametros);
-
 		//httprequest mode: post
-		requestify.post('http://orion2412.startdedicated.net:8899/api/transaction/buy', parametros)
+		requestify.request('http://orion2412.startdedicated.net:8899/api/transaction/buy', {
+		    method: 'POST',
+		    body: parametros_cassandra,
+		    dataType: 'json',
+		    headers: {
+		        'Content-Type': 'application/json'
+		    }
+		 })
 		.then(function(response) {
 
 			var body = response.getBody();
-			res.json(body);
 
+			console.log(body);
+
+			var status = body.status;
+			var token_transaction = body.transID;
+
+
+			if (body.status == 'error'){
+				res.statusCode = 400;
+				res.json({status: body.status});
+
+			} else { // status: ok ou denied
+				//codigo mysql tabela status [3: fraude, 1: aguardando pagamento]
+				var cod_status = (body.status == 'denied' ? 3: 1);
+
+				// atualização no mysql
+				var params_mysql = {
+					cod_cli: req.body.cod_cliente,
+					data_venda: moment().format("YYYY-MM-DD HH:mm:SS"),
+					cod_tipo_venda: 1, // à vista (estático)
+					cod_cartao: req.body.cod_credit_card, // dado view
+					cod_transacao: req.body.token, //api buy cassandra
+					cod_status_venda: cod_status, //api buy cassandra
+					cod_credit_card: req.body.cod_credit_card, //dado view
+					products: req.body.products // dado view
+				};
+
+				inserir_venda(params_mysql, function(data){
+
+					if (data.error != null){
+						res.statusCode = 400;
+						res.json({status: "n_ok", msg: data.error});
+					} else {
+						res.json({status: 'ok'});
+					}
+					
+				});
+			}
 		});
+
 	}
 	catch(e){
 		console.log(e);
 		res.statusCode = 400;
-		res.json({status: "Conexão falhou." + e});
+		res.json({status: "Conexão falhou. " + e});
 	}
 });
 
-//Finalização da venda
-app.get('/api/sale', jsonParser, function(req, res){
-
-	/*
-	Parametros querystring
-		cod_cli: codigo do cliente
-		cod_tipo_venda: codigo do tipo da venda
-		cod_cartao: codigo do cartão de crédito
-		cod_transacao: codigo da transação enviado pelo endpoint buy
-		cod_status_venda: codigo do status da venda
-	*/
-
-	try {
-
-		//parametro opcional
-		var params = {
-			cod_cli: 0,
-			data_venda: moment().format("YYYY-MM-DD HH:mm:SS"),
-			cod_tipo_venda: 0,
-			cod_cartao: 0,
-			cod_transacao: 0,
-			cod_status_venda: 0
-		};
-
-		//dados de teste
-		params.cod_cli = 2
-		params.cod_tipo_venda = 2
-		params.cod_cartao = 2
-		params.cod_transacao = '1234-5678-90AB-CDEF'
-		params.cod_status_venda = 2
-
-		/*
-		params.cod_cli= req.query.cod_cli,
-		params.data_venda= moment().format("YYYY-MM-DD HH:mm:SS"),
-		params.cod_tipo_venda= req.query.cod_tipo_venda,
-		params.cod_cartao= req.query.cod_cartao,
-		params.cod_transacao= req.query.cod_transacao,
-		params.cod_status_venda= req.query.cod_status_venda
-		*/
-
-		var post = {
-			ven_id: 53,
-			ven_cli_cod: params.cod_cli, 
-			ven_dt: params.data_venda, 
-			ven_tip_cod: params.cod_tipo_venda, 
-			ven_car_cod: params.cod_cartao,
-			ven_tra_cod: params.cod_transacao, 
-			ven_sta_cod: params.cod_status_venda
-		}
-
-		var query = "INSERT INTO venda (ven_id, ven_cli_cod, ven_dt, ven_tip_cod, ven_car_cod, ven_tra_cod, ven_sta_cod) VALUES (?)";
-
-		//console.log(query);
-
-		// MySQL
-		connection.query(query, post, function (error, result) {
-
-			res.json({
-				error: error, 
-				result: result
-			});
-		});
-		// MySQL
-
-	}
-	catch(e){
-		console.log(e);
-
-		res.statusCode = 400;
-		res.json({status: "Conexão falhou." + e});
-	}
-});
-
-app.post('/api/sale/confirm', jsonParser, function(req, res){
+app.post('/api/transaction/buy/confirm', jsonParser, function(req, res){
 	
 	if(!req.body.hasOwnProperty('token') || 
 	   !req.body.hasOwnProperty('status')) {
@@ -457,7 +440,20 @@ app.post('/api/sale/confirm', jsonParser, function(req, res){
 		return res.json({status: 'Error 400', message: 'Use of buy with bad data (missing properties).', parametros: req.body});
 	}
 
-	res.json({status: 'ok'});
+	var status = (req.body.status == 'ok' ? 2 : 4);
+	var query  = util.format("UPDATE venda SET ven_sta_cod = %d WHERE ven_tra_cod = '%s'", status, req.body.token);
+
+	// MySQL
+	connection.query(query, function (error, result) {
+
+		if (error != null){
+			res.statusCode = 400;
+			res.json({status: "n_ok", msg: data.error});
+		} else {
+			res.json({status: 'ok'});
+		}
+	});
+	
 });
 //Finalização da venda
 
@@ -507,6 +503,110 @@ app.get('/api/adtf/:category/:queryId', jsonParser, function(req, res){
 	}
 });
 //Integração time03
+
+function inserir_venda(params, callback){
+
+	/*
+	Parametros:
+	cod_cli: codigo do cliente
+	cod_tipo_venda: codigo do tipo da venda
+	cod_cartao: codigo do cartão de crédito
+	cod_transacao: codigo da transação enviado pelo endpoint buy
+	cod_status_venda: codigo do status da venda
+	*/
+
+	try {
+
+		//console.log(params);
+
+		var post = {
+			ven_cli_cod: params.cod_cli, 
+			ven_dt: params.data_venda, 
+			ven_tip_cod: params.cod_tipo_venda, 
+			ven_car_cod: params.cod_cartao,
+			ven_tra_cod: params.cod_transacao, 
+			ven_sta_cod: params.cod_status_venda
+		}
+
+		var query = "INSERT INTO venda set ?";
+
+		// MySQL
+		connection.query(query, post, function (error, result) {
+
+			if (error != null){
+				callback(error);
+				return;
+
+			} else {
+
+				if (params.products.length > 0){
+
+					var parametros_vendaprodutos = {
+						cod_venda: result.insertId,
+						products: params.products
+					};
+
+					inserir_vendaprodutos(parametros_vendaprodutos, function(data){
+						
+						callback({
+							error: data.error, 
+							result: data.result
+						});
+
+					});
+
+				} else {
+
+					callback({
+						error: data.error, 
+						result: data.result
+					});
+				}
+			}
+
+		});
+		// MySQL
+
+	}
+	catch(e){
+		console.log(e);
+		callback({status: "Conexão falhou." + e});
+	}
+}
+
+function inserir_vendaprodutos(data, callback){
+	
+
+	try {
+
+		var insert = 'INSERT INTO vendaproduto (vpr_ven_cod, vpr_pro_cod, vpr_vl, vpr_qt) VALUES ';
+		var values = '';
+
+		for	(index = 0; index < data.products.length; index++) {
+			var product = data.products[index];
+		    values += util.format("(%d,%d,%d,%d),",data.cod_venda, product.cod, product.value, product.qtd);
+		}
+
+		var query = util.format("%s %s;", insert, values.substring(0,values.length-1));
+
+		//console.log(query);
+
+		// MySQL
+		connection.query(query, function (error, result) {
+
+			callback({
+				error: error, 
+				result: result
+			});
+		});
+		// MySQL
+
+	}
+	catch(e){
+		console.log(e);
+		callback({status: "Conexão falhou." + e});
+	}
+}
 
 app.listen(process.env.PORT || 8898, '0.0.0.0');
 console.log("Running API portal");

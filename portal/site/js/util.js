@@ -117,7 +117,7 @@ util = function(){
 				$.each(data, function(index, produtos) {
 					 $.each(produtos, function (i, item) {
 						var div  = "<div class='col s4 center'>";
-								div += "<div class='row'><img src='"+item.imagem+"' height='100px'/></div>";
+								div += "<div class='row'><img src='"+item.imagem+"' height='100px' onerror='util.imageError(this);'/></div>";
 								div += "<div class='row'>"+ item.descricao.substring(0,80);
 									if (item.descricao.length > 80){
 										div +="...";
@@ -240,7 +240,39 @@ util = function(){
 			}
 		});
 		return isValid;		
-	}	
+	}
+	var _dataAgora = function(){
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth()+1; //January is 0!
+		var yyyy = today.getFullYear();
+
+		if(dd<10) {
+			dd='0'+dd
+		} 
+
+		if(mm<10) {
+			mm='0'+mm
+		} 
+
+		today = mm+'/'+dd+'/'+yyyy;
+		return today;	
+	}
+	var _setLocationSession = function() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(_setPosition);
+		} else { 
+			Materialize.toast('Geolocation is not supported by this browser!', 4000);
+			return false;
+		}
+	}
+	var _setPosition = function (position) {
+		$.sessionStorage.setItem('lat', position.coords.latitude);
+		$.sessionStorage.setItem('long', position.coords.longitude);
+	}
+	var _imageError	= function(element){
+		$(element).attr('src','img/no-images.jpg');
+	}
 	return {
 		setNameUser: _setNameUser,
 		logout: _logout,
@@ -251,7 +283,10 @@ util = function(){
 		loadFooter: _loadFooter,
 		load_category_product: _load_category_product,
 		filter_category_product: _filter_category_product,
-		valida_form: _valida_form
+		valida_form: _valida_form,
+		dataAgora: _dataAgora,
+		setLocationSession: _setLocationSession,
+		imageError: _imageError
 	}
 }();
 

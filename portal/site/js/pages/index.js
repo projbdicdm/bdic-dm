@@ -8,6 +8,9 @@
 		// Inicia Combo Categoria
 		$('select').material_select();
 		
+		//grava localização
+		util.setLocationSession();
+		
 		//carrega conteudo do modal do login
 		 $.ajax({
             type: 'GET',
@@ -38,7 +41,7 @@
 				$.each(data, function(index, produtos) {
 					 $.each(produtos, function (i, item) {
 						var div  = "<div class='col s4 center'>";
-								div += "<div class='row'><img src='"+item.imagem+"' height='100px'/></div>";
+								div += "<div class='row'><img src='"+item.imagem+"' height='100px' onerror='util.imageError(this);' /></div>";
 								div += "<div class='row'>"+ item.descricao.substring(0,80);
 									if (item.descricao.length > 80){
 										div +="...";
@@ -83,29 +86,38 @@
 		$.ajax({
 			url: '/api/user/login',
 			type: 'POST',
+			async: false,
 			contentType: 'application/json; charset=utf-8',
 			dataType: 'json',
 			data: requestData
 		}).done(function(data, textStatus, jqXHR) {
+			$.sessionStorage.setItem('userToken', data.token);
 			$.sessionStorage.setItem('userName', data.userName);
             $.sessionStorage.setItem('userType', data.userType);
+			$.sessionStorage.setItem('userEmail', data.userEmail);
 			
 			//busca id do cliente no mysql
 			$.ajax({
 				url: '/api/user/getIDClient/'+ data.userEmail,
 				contentType: 'application/json; charset=utf-8',
 				dataType: 'json',
+				async: false,
 				success: function(cli_mysql){
-					$.sessionStorage.setItem('userIDMySQL', cli_mysql.list[0].cli_id);					
+				if(cli_mysql.list.length!=0)
+				{
+					$.sessionStorage.setItem('userIDMySQL', cli_mysql.list[0].cli_id);
+				}
+				if(data.userType == "adtf")
+					location.href = baseUrl + "/index-adtf.html";
+				else
+				if(data.userType == "admin")
+					location.href = baseUrl + "/index-admin.html";
+				else
+					location.href = baseUrl + "/index.html";										
 				}
 			});
-			if(data.userType == "adtf")
-				location.href = baseUrl + "/index-adtf.html";
-			else
-			if(data.userType == "admin")
-                location.href = baseUrl + "/index-admin.html";
-			else
-                location.href = baseUrl + "/index.html";
+
+				
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			$('#modal-user-login-fail').openModal();
 		});
