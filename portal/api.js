@@ -13,6 +13,9 @@ var mysql = require("mysql");
 //instancia do http request
 var requestify = require('requestify'); 
 
+//util nodejs
+var util = require('util');
+
 var connection = mysql.createConnection({
 	host: "orion2412.startdedicated.net",
 	user: "root",
@@ -332,10 +335,17 @@ app.post('/api/user/register', jsonParser, function(req, res){
 	return res.json({status: "ok"});
 });
 
+app.post('/api/transaction/buy_test', jsonParser, function(req, res){
+	res.json({status:'ok', body:req.body});
+});
+
 //var TimeUuid = require('cassandra-driver').types.TimeUuid;
 app.post('/api/transaction/buy', jsonParser, function(req, res){
 	if(!req.body.hasOwnProperty('token')|| 
-	   !req.body.hasOwnProperty('creditcardNumber')|| 
+	   !req.body.hasOwnProperty('cod_cliente')|| 
+	   !req.body.hasOwnProperty('creditcardNumber')||
+	   !req.body.hasOwnProperty('cod_credit_card')||
+	   !req.body.hasOwnProperty('products')|| 
 	   !req.body.hasOwnProperty('value')|| 
 	   !req.body.hasOwnProperty('geo') ||
 	   !req.body.hasOwnProperty('segment')) {
@@ -956,7 +966,6 @@ function inserir_vendaprodutos(data, callback){
 		callback({status: "Conexão falhou." + e});
 	}
 }
-
 
 app.listen(process.env.PORT || 8898, '0.0.0.0');
 console.log("Running API portal");
