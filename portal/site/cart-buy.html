@@ -98,10 +98,43 @@
 			</div>
 		</div>  
 	</div>
+	<!-- Msg de Confirmacao Pagamento -->
+	<div id="modal-payment-buy" class="modal modal-fixed-footer">
+		<div class="container">
+		<br />
+			<div class="row center">
+				<div class="col s12">
+					<img src="img/confirmation-payment.jpg" alt="" class="circle responsive-img">
+				</div>
+			</div>	
+			<div class="row center">
+				<div class="col s12">
+					<span class="black-text">
+						Confirme o pagamento da sua compra em seu smartphone!
+					</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12">
+					<a href="javascript:void(0);" onclick="$('.row_confirmation_email').show();">Não recebi notificação!</a>
+				</div>
+			</div>
+			<form id="formConfirmEmail" class="col s12">
+			<div class="row row_confirmation_email">
+				<div class="input-field col s7">
+				  <input placeholder="e-Mail" id="email_confirmation" type="email" class="validate">
+				  <label for="email">Digite seu e-mail para confirmação</label>
+				</div>
+				<div class="input-field col s5">
+					<a href="javascript:void(0);" onclick="cart_buy.valida_finalizar();" class="waves-effect waves-light btn"><i class="mdi-content-send left"></i>FINALIZAR</a>
+				</div>
+			</div>
+			</form>
+		</div>  
+	</div>
 	
   </div>
   <br>
-    
 
   <footer class="page-footer orange"></footer>
 
