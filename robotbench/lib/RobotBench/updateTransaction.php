@@ -6,7 +6,7 @@
   try{
 
     $response1 = $connection->querySync('SELECT *
-                                      FROM "BDI"."TRANSACTION"' .
+                                      FROM ' . $namespace .
                                       " WHERE tra_alt = 'n'" .
                                       '');
 
@@ -23,7 +23,7 @@
     $limite = floor(($porcentagem / 100) * count($rows1));
 
     $response2 = $connection->querySync('SELECT *
-                                      FROM "BDI"."TRANSACTION"' .
+                                      FROM ' . $namespace .
                                       " WHERE tra_alt = 'n'" .
                                       'LIMIT ' . $limite);
 
@@ -52,8 +52,8 @@
       try{
 
         $statement = $connection->querySync(
-          'UPDATE "BDI"."TRANSACTION"
-            SET tra_alt = :tra_alt,
+          'UPDATE ' . $namespace .
+            ' SET tra_alt = :tra_alt,
                 tra_lat = :tra_lat,
                 tra_lon = :tra_lon
             WHERE usr_token = ' . "'" . $usr_token . "'" .

@@ -24,7 +24,7 @@
     try{
 
       $statement = $connection->queryAsync(
-            'INSERT INTO "BDI"."TRANSACTION" (
+            'INSERT INTO ' . $namespace . ' (
                     usr_token,
                     tra_id,
                     car_id,
@@ -34,7 +34,7 @@
                     tra_lat,
                     tra_lon,
                     tra_status,
-                    tra_value,
+                    tra_value)
                     tra_alt)
             VALUES (
                     :usr_token,
@@ -46,11 +46,10 @@
                     :tra_lat,
                     :tra_lon,
                     :tra_status,
-                    :tra_value,
+                    :tra_value),
                     :tra_alt)',
           [
             new Cassandra\Type\Varchar("$usr_token"),
-            //new Cassandra\Type\Uuid('$tra_id'),
             new Cassandra\Type\Int($car_id),
             new Cassandra\Type\Int($loc_id),
             new Cassandra\Type\Varchar("$tra_confirmationcode"),

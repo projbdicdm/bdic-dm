@@ -34,8 +34,9 @@
             <img src="img/logo-ita.png" class="img-rounded" width="50"> RobotBench BDIC-DM - #TS02 - ITA
           </a>
           <ul class="nav">
-            <li><a href="<?php echo $path?>robotbench/">Benchmarking Tool</a></li>
-            <li class="active"><a href="<?php echo $path?>robotbench/datashuffle.php">Data Shuffle GEO</a></li>
+            <li class="active"><a href="<?php echo $path?>robotbench/">Benchmarking Tool</a></li>
+            <li><a href="<?php echo $path?>robotbench/datashuffle.php">Data Shuffle GEO</a></li>
+            <li><a href="<?php echo $path?>robotbench/transreport.php">Transactions Report</a></li>
             <li><a href="<?php echo $path?>robotbench/fraudreport.php">Fraud Report</a></li>
           </ul>
         </div>

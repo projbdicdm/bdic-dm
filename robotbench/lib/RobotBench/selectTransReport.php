@@ -5,7 +5,7 @@
                                                 tra_lat,
                                                 tra_lon
                                         FROM ' . $namespace .
-                                        " WHERE tra_alt = 's' LIMIT " . $_REQUEST["registros"]);
+                                        " WHERE tra_status = '" . $_REQUEST["status"] . "'");
   } catch (Cassandra\Exception $e){
     echo 'Caught exception: ',  $e->getMessage(), "\n";
     exit;

@@ -9,7 +9,7 @@
                                                 tra_lat,
                                                 tra_lon,
                                                 tra_status,
-                                                tra_value FROM "BDI"."TRANSACTION" LIMIT 10');
+                                                tra_value FROM ' . $namespace . ' LIMIT 10');
 
     //$response2 = $connection->querySync('select count(*) from "BDI"."TRANSACTION" limit 1000000;');
 

@@ -37,6 +37,7 @@
           <ul class="nav">
             <li class="active"><a href="<?php echo $path?>robotbench/">Benchmarking Tool</a></li>
             <li><a href="<?php echo $path?>robotbench/datashuffle.php">Data Shuffle GEO</a></li>
+            <li><a href="<?php echo $path?>robotbench/transreport.php">Transactions Report</a></li>
             <li><a href="<?php echo $path?>robotbench/fraudreport.php">Fraud Report</a></li>
           </ul>
         </div>
