@@ -1,5 +1,6 @@
 //url da api principal
-var MAIN_API = "http://localhost:8899/api/";
+// var MAIN_API = "http://localhost:8899/api/";
+var MAIN_API = "http://orion2412.startdedicated.net:8899/api/";
 
 //criamos o obj que renderiza HTML na saida
 var jade = require('jade');
@@ -442,7 +443,7 @@ app.get('/api/adtf/:category/:queryId', jsonParser, function(req, res){
     try {
         
 		var parametros = { 
-	        "queryI": queryId
+	        "queryId": queryId
 		};
 
 		//httprequest mode: post
