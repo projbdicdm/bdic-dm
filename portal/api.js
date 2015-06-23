@@ -394,7 +394,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 
 app.post('/api/transaction/buy/confirm', jsonParser, function(req, res){
 	
-	if(!req.body.hasOwnProperty('token') || 
+	if(!req.body.hasOwnProperty('transaction_id') || 
 	   !req.body.hasOwnProperty('status')) {
 
 		res.statusCode = 400;
@@ -402,7 +402,7 @@ app.post('/api/transaction/buy/confirm', jsonParser, function(req, res){
 	}
 
 	var status = (req.body.status == 'ok' ? 2 : 4);
-	var query  = util.format("UPDATE venda SET ven_sta_cod = %d WHERE ven_tra_cod = '%s'", status, req.body.token);
+	var query  = util.format("UPDATE venda SET ven_sta_cod = %d WHERE ven_tra_cod = '%s'", status, req.body.transaction_id);
 
 	// MySQL
 	connection.query(query, function (error, result) {

@@ -6,6 +6,14 @@
 
 		function buy(){
 
+			/*
+			dados para teste na mão
+			{"token":"1a87bb69-831e-4991-9917-e3adce68920e","date":"2015-06-23T07:56:27-03:00","creditcardNumber":"1234567890","value":150,"geo":{"lat":-23.1673969,"lon":-45.8932194},"segment":"E-COMMERCE-VAREJO"}
+
+			usuário que possui cartão cadastrado
+			imelda@posuere.gov
+			*/
+
 			if (navigator.geolocation) {
         		navigator.geolocation.getCurrentPosition(function(loc){
 
@@ -57,10 +65,58 @@
         	}
 		}
 
+		function simular_fraude(){
+
+			var parametros = { 
+		        token: "1a87bb69-831e-4991-9917-e3adce68920e", //token-login
+				creditcardNumber: "1234567890", // cartão de crédito
+				cod_cliente: 1,
+				cod_credit_card: 123,
+				products: [{
+					cod: 1,
+					value: 100,
+					qtd:1
+				},
+				{
+					cod: 2,
+					value: 50,
+					qtd: 1
+				}],
+				value: 150000, //valor total da venda
+				geo: {
+					lat: 23.548594,
+					lon: 46.4302394,
+				},
+				segment: "E-COMMERCE-VAREJO"
+			};
+
+			//console.log(parametros);
+
+			$.ajax({
+			    type: 'POST',
+			    url: '/api/transaction/buy',
+			    contentType: "application/json",
+			    dataType: 'json',
+			    data: JSON.stringify(parametros),
+			    success: function(data){
+
+			    	var res = JSON.stringify(data);
+			        $('#res_buy_fraude').html(res);
+
+			    },
+			    error: function(e, s, m){
+
+			    	var res = JSON.stringify(m);
+			    	$('#res_buy_fraude').html(res);
+
+			    }
+			});
+		}
+
 		function confirm(){
 
 			var parametros = { 
-				token:'b30be629-18ef-11e5-9b5c-974e1ba6f43c',
+				transaction_id:'b30be629-18ef-11e5-9b5c-974e1ba6f43c',
 				status:'ok' //ok:confirmado ou n_ok: cancelada pelo usuário (notificação android)
 			};
 
@@ -91,6 +147,11 @@
 	<button onclick="buy()">Enviar parametros buy</button><br/><br/>
 	<div>Retorno do buy</div><br/>
 	<div id="res_buy"></div>
+
+	<button onclick="simular_fraude()">Enviar parametros buy fraude</button><br/><br/>
+	<div>Retorno do buy fraude</div><br/>
+	<div id="res_buy_fraude"></div>
+
 
 	<br><br><hr><br>
 
