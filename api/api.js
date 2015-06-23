@@ -466,10 +466,10 @@ app.get('/api/transaction/query/:token/:dateStart/:dateEnd/:page', jsonParser, f
 	
 });
 
-//TS03 - Conexão com Hive
-//adicionando o driver Hive npm install Node JDBC
-var jdbc = new ( require('jdbc') );
-
+// TS03 - Conexão com Hive - VM TS03
+/*
+// adicionando o driver Hive npm install Node JDBC
+var jdbc = new ( require('jdbc_vm') );
 var config = {
   libpath: '/usr/local/hive/lib/hive-jdbc-1.1.0-standalone.jar',
   libs: ['/usr/local/hadoop/common/hadoop-common-2.6.0.jar', '/usr/local/hadoop/share/hadoop/common/hadoop-common-2.6.0.jar'],
@@ -479,56 +479,70 @@ var config = {
   user: 'hduser',
   password: 'hduser',
 };
+*/
+
+// TS03 - Conexão com Hive - SERVIDOR
+var jdbc = new(require('jdbc'));
+var config = {
+	// libpath : '/usr/local/hive/lib/hive-jdbc-1.2.0-standalone.jar',
+    libpath : 'hive_lib/hive-jdbc-1.1.0-standalone.jar',
+	libs : ['hive_lib/hadoop-common-2.6.0.jar'],
+	drivername : 'org.apache.hive.jdbc.HiveDriver',
+	url : 'jdbc:hive2://' + HIVE_IP + ':' + HIVE_PORT + '/bdicdm?connectTimeout=60000&socketTimeout=60000',
+	// optionally
+	user : 'hduser',
+	password : 'hduser',
+};
 
 //Generic JDBC connection
-var genericQueryHandler = function(err, results) {
-  if (err) {
-    console.log(err);
-  } else if (results) {
-    console.log(results);
-  }
+var genericQueryHandler = function (err, results) {
+	if (err) {
+		console.log(err);
+	} else if (results) {
+		console.log(results);
+	}
 
-  jdbc.close(function(err) {
-    if(err) {
-      console.log(err);
-    } else {
-      console.log("Connection closed successfully!");
-    }
-  });
+	jdbc.close(function (err) {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log("Connection closed successfully!");
+		}
+	});
 };
 
 //API para a US04 do TS03
-app.post('/api/custntrans', jsonParser, function(request, response){
+app.post('/api/custntrans', jsonParser, function (request, response) {
 
-//Variavel que recebe o Parametro de entrada
-var hiveQueryId = request.body.queryId;  
+	//Variavel que recebe o Parametro de entrada
+	var hiveQueryId = request.body.queryId;
 
-//Variavel de retorno do banco
-var hqlHive = "";
-var fromHive = "";
-var categories = [];
-var flag = false;
+	//Variavel de retorno do banco
+	var hqlHive = "";
+	var fromHive = "";
+	var categories = [];
+	var flag = false;
 
-// definição de funcao e chamada do Hive
-switch(hiveQueryId) {
-	case "01":{
+	// definição de funcao e chamada do Hive
+	switch (hiveQueryId) {
+	case "01": {
 			hqlHive = "SELECT clients.cli_usr_login as login, clients.cli_first as nome, clients.cli_last as sobrenome, COUNT( trans_user_token ) as contagem FROM transactions JOIN clients ON (trans_user_token = usr_token ) GROUP BY cli_first, cli_last, cli_usr_login ORDER BY contagem DESC LIMIT 250";
-		break;
-	}
-	case "02":{
+			break;
+		}
+	case "02": {
 			hqlHive = "SELECT clients.cli_id as id, clients.cli_first as nome,clients.cli_last as sobrenome, trans_value as value FROM transactions JOIN clients ON (trans_user_token = usr_token ) ORDER BY trans_value DESC LIMIT 250";
-		break;
-	}
-	case "03":{
+			break;
+		}
+	case "03": {
 			hqlHive = "SELECT clients.cli_first as nome,clients.cli_last as sobrenome,transactions.* as all FROM transactions JOIN clients ON (trans_user_token = usr_token)";
-		break;
-	}
+			break;
+		}
 	case "04":
 		hqlHive = "SELECT clients.cli_first as nome,clients.cli_last as sobrenome,transactions.trans_date as date,transactions.trans_value as value,transactions.trans_loc_id as IdLocal FROM transactions JOIN clients ON (trans_user_token = usr_token) ORDER BY trans_value DESC LIMIT 250";
 		break;
 	case "05":
 		hqlHive = "SELECT clients.cli_first as nome, clients.cli_last as sobrenome, transactions.trans_date as date, transactions.trans_value as value FROM transactions JOIN clients ON (trans_user_token = usr_token) ORDER BY clients.cli_first";
-	break;
+		break;
 	case "06":
 		hqlHive = "SELECT clients.cli_first as nome,clients.cli_last as sobrenome,transactions.trans_date as date,transactions.trans_value as value,transactions.trans_loc_id as IdLocal FROM transactions JOIN clients ON (trans_user_token = usr_token) ORDER BY trans_date DESC LIMIT 250";
 		break;
@@ -539,341 +553,348 @@ switch(hiveQueryId) {
 		hqlHive = "SELECT transactions.trans_user_token, clients.cli_first as nome, clients.cli_last as sobrenome, locations.city_name as city, country_name, SUM(transactions.trans_value as value) as trans_total FROM transactions JOIN clients ON (trans_user_token = usr_token) JOIN locations ON (cli_loc_id = loc_id AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()), 7)) GROUP BY cli_first, cli_last, trans_user_token, city_name , country_name, trans_date ORDER BY trans_total LIMIT 250";
 		break;
 	case "09":
-	hqlHive = "SELECT transactions.trans_user_token, clients.cli_first as nome, clients.cli_last as sobrenome, locations.city_name as city, country_name as country, SUM(transactions.trans_value as value) as trans_total FROM transactions JOIN clients ON (trans_user_token = usr_token) JOIN locations ON (cli_loc_id = loc_id AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()), 30)) GROUP BY cli_first, cli_last, trans_user_token, city_name , country_name, trans_date ORDER BY trans_total LIMIT 250";
+		hqlHive = "SELECT transactions.trans_user_token, clients.cli_first as nome, clients.cli_last as sobrenome, locations.city_name as city, country_name as country, SUM(transactions.trans_value as value) as trans_total FROM transactions JOIN clients ON (trans_user_token = usr_token) JOIN locations ON (cli_loc_id = loc_id AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()), 30)) GROUP BY cli_first, cli_last, trans_user_token, city_name , country_name, trans_date ORDER BY trans_total LIMIT 250";
 		break;
 	case "10":
-	hqlHive = "SELECT transactions.trans_user_token, clients.cli_first as nome, cli_last as sobrenome, MONTH(trans_date) as month, COUNT(MONTH(trans_date)) as age FROM transactions JOIN clients ON (trans_user_token = usr_token AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) GROUP BY cli_first, cli_last, trans_user_token, MONTH(trans_date) LIMIT 250";
-	break;
+		hqlHive = "SELECT transactions.trans_user_token, clients.cli_first as nome, cli_last as sobrenome, MONTH(trans_date) as month, COUNT(MONTH(trans_date)) as age FROM transactions JOIN clients ON (trans_user_token = usr_token AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) GROUP BY cli_first, cli_last, trans_user_token, MONTH(trans_date) LIMIT 250";
+		break;
 	case "11":
-	hqlHive = "SELECT trans_loc_id as IdLocal, country_name as country, MONTH(trans_date) as month, COUNT(MONTH(trans_date)) as age FROM transactions JOIN locations ON (trans_loc_id = loc_id AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) GROUP BY trans_loc_id, country_name, MONTH(trans_date) LIMIT 250";
-	break;
-}   
+		hqlHive = "SELECT trans_loc_id as IdLocal, country_name as country, MONTH(trans_date) as month, COUNT(MONTH(trans_date)) as age FROM transactions JOIN locations ON (trans_loc_id = loc_id AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) GROUP BY trans_loc_id, country_name, MONTH(trans_date) LIMIT 250";
+		break;
+	}
 
-// Execute call
-jdbc.initialize(config, function(err, res) {
-	if (err) {
-		console.log(err);
-	}else{
-		jdbc.open(function(err, conn){
-			if(err){
-				console.log(err);
-			}else{
-				 jdbc.executeQuery(hqlHive,function(err, results){
+	// Execute call
+	jdbc.initialize(config, function (err, res) {
+		if (err) {
+			console.log(err);
+		} else {
+			jdbc.open(function (err, conn) {
 				if (err) {
 					console.log(err);
-					categories = err;
-				} else if (results) {
-					console.log(results);
-					categories = results;
-					
-	 
-						}
-					jdbc.close(function(err) {
-						if(err) {
+				} else {
+					jdbc.executeQuery(hqlHive, function (err, results) {
+						if (err) {
 							console.log(err);
-						} else {
-							console.log("Connection closed successfully!");
-							}
-//Retornando as respostas
-//objeto de retorno
-    retorno = { titulo: 'Clientes ou Transações', dados: [] };
-switch(hiveQueryId) {
-			case "01":{
-                retorno.subtitulo = '01 - Classificar clientes que mais compraram em ordem decrescente';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-                
-				break;
-			}
-			case "02":{
-                retorno.subtitulo = '02 - Classificar, em ordem decrescente, os clientes por valor das transacoes';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-			}
-			case "03":{
-                retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-			}
-			case "04":{
-                retorno.subtitulo = '04 - Ordenar as transacoes em ordem decrescente por valor';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-               		break;
-			}
-			case "05":{
-                retorno.subtitulo = '05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-				}
-			case "06":{
-                retorno.subtitulo = '06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-			}
-			case "07":{
-                retorno.subtitulo = '07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-			}
-			case "08":{
-                retorno.subtitulo = '08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-			}
-			case "09":{
-                retorno.subtitulo = '09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-				}
-			case "10":{
-                retorno.subtitulo = '10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-			}
-			case "11":{
-                retorno.subtitulo = '11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-			}
-			default:{
-				break;
-		}
-	}
-return	response.json(retorno);
-					});
-							});
+							categories = err;
+						} else if (results) {
+							console.log(results);
+							categories = results;
 
 						}
+						jdbc.close(function (err) {
+							if (err) {
+								console.log(err);
+							} else {
+								console.log("Connection closed successfully!");
+							}
+							//Retornando as respostas
+							//objeto de retorno
+							retorno = {
+								titulo : 'Clientes ou Transações',
+								dados : []
+							};
+							switch (hiveQueryId) {
+							case "01": {
+									retorno.subtitulo = '01 - Classificar clientes que mais compraram em ordem decrescente';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+
+									break;
+								}
+							case "02": {
+									retorno.subtitulo = '02 - Classificar, em ordem decrescente, os clientes por valor das transacoes';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "03": {
+									retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "04": {
+									retorno.subtitulo = '04 - Ordenar as transacoes em ordem decrescente por valor';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "05": {
+									retorno.subtitulo = '05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "06": {
+									retorno.subtitulo = '06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "07": {
+									retorno.subtitulo = '07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "08": {
+									retorno.subtitulo = '08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "09": {
+									retorno.subtitulo = '09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "10": {
+									retorno.subtitulo = '10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "11": {
+									retorno.subtitulo = '11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							default: {
+									break;
+								}
+							}
+							return response.json(retorno);
+						});
 					});
+
 				}
-});
+			});
+		}
+	});
 
 });
 
-app.post('/api/prodncate', jsonParser, function(request, response){
+app.post('/api/prodncate', jsonParser, function (request, response) {
 
-//Variavel que recebe o Parametro de entrada
-var hiveQueryId = request.body.queryId;  
+	//Variavel que recebe o Parametro de entrada
+	var hiveQueryId = request.body.queryId;
 
-//Variavel de retorno do banco
-var hqlHive = "";
-var fromHive = "";
-var categories = null;
-var flag = false;
+	//Variavel de retorno do banco
+	var hqlHive = "";
+	var fromHive = "";
+	var categories = null;
+	var flag = false;
 
-// definição de funcao e chamada do Hive
-switch(hiveQueryId) {
-	case "01":{		
+	// definição de funcao e chamada do Hive
+	switch (hiveQueryId) {
+	case "01": {
 			hqlHive = "SELECT products.prd_name as product, COUNT(sales.salepr_prod_id) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) GROUP BY prd_name ORDER BY count DESC LIMIT 250";
-		break;
-	}
-	case "02":{
+			break;
+		}
+	case "02": {
 			hqlHive = "SELECT products.prd_name as product, SUM(sales.salepr_value) as sales_total FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) GROUP BY prd_name ORDER BY sales_total DESC LIMIT 250";
-		break;
-	}
-	case "03":{
+			break;
+		}
+	case "03": {
 			hqlHive = "SELECT products.prd_name as products, COUNT(sales.salepr_prod_id) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),7)) GROUP BY prd_name ORDER BY count DESC LIMIT 250";
-		break;
-	}
+			break;
+		}
 	case "04":
 		hqlHive = "SELECT prd_category_id as id, cat_name as categories, COUNT(sales.salepr_pro_cod) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) JOIN categories ON (prd_category_id = cat_id) GROUP BY prd_category_id, cat_name ORDER BY count DESC LIMIT 250";
 		break;
 	case "05":
 		hqlHive = "SELECT prd_category_id as id, cat_name as categories, COUNT(sales.salepr_pro_cod) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) JOIN categories ON (prd_category_id = cat_id) GROUP BY prd_category_id, cat_name ORDER BY count DESC LIMIT 250";
-	break;
-}   
-
-// Execute call
-jdbc.initialize(config, function(err, res) {
-	if (err) {
-		console.log(err);
-	}else{
-		jdbc.open(function(err, conn){
-			if(err){
-				console.log(err);
-			}else{
-				 jdbc.executeQuery(hqlHive,function(err, results){
-				if (err) {
-					console.log(err);
-					categories = err;
-				} else if (results) {
-					console.log(results);
-					categories = results;
-					
-	 
-						}
-					jdbc.close(function(err) {
-						if(err) {
-							console.log(err);
-						} else {
-							console.log("Connection closed successfully!");
-							}
-//Retornando as respostas
-//objeto de retorno
-    retorno = { titulo: 'Produtos ou Categorias', dados: [] };
-switch(hiveQueryId) {
-			case "01":{
-                retorno.subtitulo = '01 - Classificar os produtos mais vendidos no último ano por quantidade';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-                
-				break;
-			}
-			case "02":{
-                retorno.subtitulo = '02 - Classificar os total de vendas por produto no último ano';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-			}
-			case "03":{
-                retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-			}
-			case "04":{
-                retorno.subtitulo = '04 - Classificar as categorias mais vendidas nos últimos 365 dias';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-               		break;
-			}
-			case "05":{
-                retorno.subtitulo = '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-				break;
-				}
-			default:{
-				break;
-		}
-	}
-return	response.json(retorno);
-
-					});
-							});
-
-						}
-					});
-				}
-});
-
-});
-
-app.post('/api/clinprod', jsonParser, function(request, response){
-
-//Variavel que recebe o Parametro de entrada
-var hiveQueryId = request.body.queryId;  
-
-//Variavel de retorno do banco
-var hqlHive = "";
-var fromHive = "";
-var categories = null;
-var flag = false;
-
-// definição de funcao e chamada do Hive
-switch(hiveQueryId) {
-	case "01":{
-		hqlHive = "SELECT c.cat_name as categories, cli.cli_id as id, cli.cli_last as sobrenome, count(sale_id) contagem FROM clients cli, sales s, products p, categories c WHERE cli.cli_id=s.sale_cli_cod and s.salepr_pro_cod=p.prd_id and p.prd_category_id=c.cat_id GROUP BY c.cat_name, cli.cli_id, cli.cli_last";
 		break;
-}
-}   
+	}
 
-// Execute call
-jdbc.initialize(config, function(err, res) {
-	if (err) {
-		console.log(err);
-	}else{
-		jdbc.open(function(err, conn){
-			if(err){
-				console.log(err);
-			}else{
-				 jdbc.executeQuery(hqlHive,function(err, results){
+	// Execute call
+	jdbc.initialize(config, function (err, res) {
+		if (err) {
+			console.log(err);
+		} else {
+			jdbc.open(function (err, conn) {
 				if (err) {
 					console.log(err);
-					categories = err;
-				} else if (results) {
-					console.log(results);
-					categories = results;
-					
-	 
-						}
-					jdbc.close(function(err) {
-						if(err) {
+				} else {
+					jdbc.executeQuery(hqlHive, function (err, results) {
+						if (err) {
 							console.log(err);
-						} else {
-							console.log("Connection closed successfully!");
-							}
-//Retornando as respostas
-//objeto de retorno
-    retorno = { titulo: 'Clientes e produtos', dados: [] };
-switch(hiveQueryId) {
-			case "01":{
-                retorno.subtitulo = '01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria';
-                retorno.descricao = '[ Descrição detalhada aqui ]';
-				
-				for (counter = 0; counter <= categories.length - 1; counter++) {
-				retorno.dados.push(categories[counter]);
-				}
-                
-				break;
-			}
-			default:{
-				break;
-		}
-	}
-return	response.json(retorno);
-					});
-							});
+							categories = err;
+						} else if (results) {
+							console.log(results);
+							categories = results;
 
 						}
+						jdbc.close(function (err) {
+							if (err) {
+								console.log(err);
+							} else {
+								console.log("Connection closed successfully!");
+							}
+							//Retornando as respostas
+							//objeto de retorno
+							retorno = {
+								titulo : 'Produtos ou Categorias',
+								dados : []
+							};
+							switch (hiveQueryId) {
+							case "01": {
+									retorno.subtitulo = '01 - Classificar os produtos mais vendidos no último ano por quantidade';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+
+									break;
+								}
+							case "02": {
+									retorno.subtitulo = '02 - Classificar os total de vendas por produto no último ano';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "03": {
+									retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "04": {
+									retorno.subtitulo = '04 - Classificar as categorias mais vendidas nos últimos 365 dias';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "05": {
+									retorno.subtitulo = '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							default: {
+									break;
+								}
+							}
+							return response.json(retorno);
+
+						});
 					});
+
 				}
+			});
+		}
+	});
+
 });
+
+app.post('/api/clinprod', jsonParser, function (request, response) {
+
+	//Variavel que recebe o Parametro de entrada
+	var hiveQueryId = request.body.queryId;
+
+	//Variavel de retorno do banco
+	var hqlHive = "";
+	var fromHive = "";
+	var categories = null;
+	var flag = false;
+
+	// definição de funcao e chamada do Hive
+	switch (hiveQueryId) {
+	case "01": {
+			hqlHive = "SELECT c.cat_name as categories, cli.cli_id as id, cli.cli_last as sobrenome, count(sale_id) contagem FROM clients cli, sales s, products p, categories c WHERE cli.cli_id=s.sale_cli_cod and s.salepr_pro_cod=p.prd_id and p.prd_category_id=c.cat_id GROUP BY c.cat_name, cli.cli_id, cli.cli_last";
+			break;
+		}
+	}
+
+	// Execute call
+	jdbc.initialize(config, function (err, res) {
+		if (err) {
+			console.log(err);
+		} else {
+			jdbc.open(function (err, conn) {
+				if (err) {
+					console.log(err);
+				} else {
+					jdbc.executeQuery(hqlHive, function (err, results) {
+						if (err) {
+							console.log(err);
+							categories = err;
+						} else if (results) {
+							console.log(results);
+							categories = results;
+
+						}
+						jdbc.close(function (err) {
+							if (err) {
+								console.log(err);
+							} else {
+								console.log("Connection closed successfully!");
+							}
+							//Retornando as respostas
+							//objeto de retorno
+							retorno = {
+								titulo : 'Clientes e produtos',
+								dados : []
+							};
+							switch (hiveQueryId) {
+							case "01": {
+									retorno.subtitulo = '01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+
+									break;
+								}
+							default: {
+									break;
+								}
+							}
+							return response.json(retorno);
+						});
+					});
+
+				}
+			});
+		}
+	});
 
 });
 
 app.listen(process.env.PORT || 8899, '0.0.0.0');
+console.log("Running API");
