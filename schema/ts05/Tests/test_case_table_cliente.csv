@@ -1,4 +1,5 @@
 "description";"commandChanger";"commandVerifier";"expectedResult"
+"CDT 00 - Inserir dados da Usuário";"INSERT INTO user (usr_login,usr_pwd,usr_token) VALUES('aleasloan','rTNYpjCH','832013')";"SELECT count(*) FROM user WHERE usr_login  = 'aleasloan';";"1"
 "Inserir, no Banco de Dados, os dados de Cliente";"INSERT INTO cliente (cli_loc_cod,cli_first,cli_middle,cli_last,cli_cpf,cli_gender,
 cli_mail,cli_dt_nasc,cli_rg,cli_renda,cli_usr_login) VALUES (24,'Alea','P','Sloan','22580721822','F','pamela@hymenaeos.org','1972/9/8','349785748',153536.11,'aleasloan');";"SELECT count(*) FROM cliente WHERE  cli_cpf = 22580721822;";"1"
 "Consultar, no Banco de Dados, os dados da Cliente";"";"SELECT cli_last FROM cliente WHERE  cli_cpf = 22580721822;";"Sloan"
