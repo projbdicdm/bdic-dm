@@ -445,13 +445,25 @@ app.get('/api/adtf/:category/:queryId', jsonParser, function(req, res){
 		var parametros = { 
 	        "queryId": queryId
 		};
+        
+        console.log(category);
+        console.log(parametros);
 
 		//httprequest mode: post
 		requestify.post(MAIN_API + category, parametros)
 		.then(function(response) {
 
+            console.log(response);
+            
 			var body = response.getBody();
 			res.json(body);
+
+		}, function(response) {
+
+            console.log(response);
+            
+            res.statusCode = response.code;
+            return res.json({status: "Requisição falhou. Detalhes: " + response.body});
 
 		});
     

@@ -494,6 +494,20 @@ var config = {
 	password : 'hduser',
 };
 
+// TS03 - Conexão com Hive - LOCALHOST
+/*
+var jdbc = new(require('jdbc'));
+var config = {
+	libpath : 'hive_lib/hive-jdbc-1.1.0-standalone.jar',
+	libs : ['hive_lib/hadoop-common-2.6.0.jar'],
+	drivername : 'org.apache.hive.jdbc.HiveDriver',
+	url : 'jdbc:hive2://' + HIVE_IP + ':' + HIVE_PORT + '/bdicdm?connectTimeout=60000&socketTimeout=60000',
+	// optionally
+	user : 'hduser',
+	password : 'hduser',
+};
+*/
+
 //Generic JDBC connection
 var genericQueryHandler = function (err, results) {
 	if (err) {
@@ -571,19 +585,30 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 			jdbc.open(function (err, conn) {
 				if (err) {
 					console.log(err);
+                    
+                    response.statusCode = 400;
+                    return response.json({status: "Erro ao abrir conexão com o Hive." + err});
+                                
 				} else {
 					jdbc.executeQuery(hqlHive, function (err, results) {
 						if (err) {
 							console.log(err);
-							categories = err;
+							//categories = err;
+                            
+                            response.statusCode = 400;
+                            return response.json({status: "Erro ao executar a query no Hive." + err});
+                            
 						} else if (results) {
 							console.log(results);
 							categories = results;
-
 						}
 						jdbc.close(function (err) {
 							if (err) {
+                                
 								console.log(err);
+                                response.statusCode = 400;
+                                return response.json({status: "Erro ao fechar conexão com o Hive." + err});
+                                
 							} else {
 								console.log("Connection closed successfully!");
 							}
