@@ -411,7 +411,12 @@ app.post('/api/transaction/buy/confirm', jsonParser, function(req, res){
 			res.statusCode = 400;
 			res.json({status: "n_ok", msg: data.error});
 		} else {
-			res.json({status: 'ok'});
+
+			if (result.affectedRows > 0){
+				res.json({status: 'ok'});	
+			} else{
+				res.json({status: 'n_ok'});	
+			}
 		}
 	});
 	
