@@ -36,6 +36,7 @@ public class MainFrame extends javax.swing.JFrame {
      * Creates new form NewJFrame
      */
     public MainFrame() {
+    	super("Transaction Generator");
         initComponents();
     }
 

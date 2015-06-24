@@ -44,6 +44,30 @@
 					<target>7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.5</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorId>jar-with-dependencies</descriptorId>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>br.ita.bdicdm.transactiongenerator.view.MainFrame</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
