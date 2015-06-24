@@ -85,7 +85,11 @@
 		</div>
     </div>
     </div>
-	<!-- Msg de Pedido Finalizado -->
+	<!-- Modal para Msg -->
+	<div id="modal-msg" class="modal">
+		<div class="modal-content"></div>
+	</div>
+<!-- Msg de Pedido Finalizado -->
 	<div id="modal-finish-buy" class="modal modal-fixed-footer">
 		<div class="container">
 			<div class="row">
@@ -96,11 +100,11 @@
 			<br><br><br>
 			<div id="textRedirect" >Em 10 segundos, você será redirecionado para página principal.</div>
 			</div>
-		</div>  
-	</div>
-	<!-- Msg de Confirmacao Pagamento -->
+		</div>  	
+  </div>
+  <!-- Msg de Confirmacao Pagamento -->
 	<div id="modal-payment-buy" class="modal modal-fixed-footer">
-		<div class="container">
+	<div class="container">
 		<br />
 			<div class="row center">
 				<div class="col s12">
@@ -112,11 +116,14 @@
 					<span class="black-text">
 						Confirme o pagamento da sua compra em seu smartphone!
 					</span>
+					<div class="progress">
+					  <div class="indeterminate"></div>
+				  </div>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col s12">
-					<a href="javascript:void(0);" onclick="$('.row_confirmation_email').show();">Não recebi notificação!</a>
+					<a href="javascript:void(0);" onclick="$('.row_confirmation_email').show();$('.progress').hide();">Não recebi notificação!</a>
 				</div>
 			</div>
 			<form id="formConfirmEmail" class="col s12">
@@ -132,8 +139,6 @@
 			</form>
 		</div>  
 	</div>
-	
-  </div>
   <br>
 
   <footer class="page-footer orange"></footer>

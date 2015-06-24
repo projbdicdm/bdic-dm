@@ -484,9 +484,9 @@ var config = {
 // TS03 - Conexão com Hive - SERVIDOR
 var jdbc = new(require('jdbc'));
 var config = {
-	// libpath : '/usr/local/hive/lib/hive-jdbc-1.2.0-standalone.jar',
-    libpath : 'hive_lib/hive-jdbc-1.1.0-standalone.jar',
-	libs : ['hive_lib/hadoop-common-2.6.0.jar'],
+	libpath : '/usr/local/hive/lib/hive-jdbc-1.2.0-standalone.jar',
+    // libpath : '/root/git/bdic-dm/api/hive_lib/hive-jdbc-1.1.0-standalone.jar',
+	libs : ['/root/git/bdic-dm/api/hive_lib/hadoop-common-2.6.0.jar'],
 	drivername : 'org.apache.hive.jdbc.HiveDriver',
 	url : 'jdbc:hive2://' + HIVE_IP + ':' + HIVE_PORT + '/bdicdm?connectTimeout=60000&socketTimeout=60000',
 	// optionally
