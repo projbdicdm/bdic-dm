@@ -317,7 +317,7 @@ app.post('/api/user/register', jsonParser, function(req, res){
 
 //var TimeUuid = require('cassandra-driver').types.TimeUuid;
 app.post('/api/transaction/buy', jsonParser, function(req, res){
-	
+
 	if (!req.body.hasOwnProperty('token')|| 
 	   !req.body.hasOwnProperty('cod_cliente')|| 
 	   !req.body.hasOwnProperty('creditcardNumber')||

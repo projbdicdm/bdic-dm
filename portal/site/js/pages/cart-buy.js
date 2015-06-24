@@ -143,14 +143,31 @@ cart_buy = function(){
 		_confirmacao_pagamento_mobile();
 	}
 	var _confirmacao_pagamento_mobile = function(){
-		var transacao_cartao = ({
-			"token": $.sessionStorage.getItem('userToken'),
-			"creditcardNumber": $('#numeroCartao').val(),
-			"value": $("#vrTotalCarrinho").html(),
-			"date": util.dataAgora(),
-			"geo": { "lat": $.sessionStorage.getItem('lat'), "lon": $.sessionStorage.getItem('long')},
-			"segment": "E-COMMERCE-VAREJO"
-		});
+		
+		var lista_produtos = [];
+		$.each(JSON.parse($.sessionStorage.getItem('cartProducts')), function(index, item) {
+			lista_produtos.push({"cod":parseInt(item.id),
+						  "value":util.formatParseFloat(item.valor),
+						  "qtd":parseInt(item.quantidade)
+						});
+		});		
+		
+		var parametros = { 
+			//token: $.sessionStorage.getItem('userToken'),
+			token: "1a87bb69-831e-4991-9917-e3adce68920e",
+			creditcardNumber: $('#numeroCartao').val(),
+			cod_cliente: parseInt($.sessionStorage.getItem('userIDMySQL')),
+			cod_credit_card: parseInt($("#codigoSegurancaCartao").val()),
+			products: lista_produtos,
+			value: util.formatParseFloat($("#vrTotalCarrinho").html()),
+			geo: {
+				lat: parseFloat($.sessionStorage.getItem('lat')),
+				lon: parseFloat($.sessionStorage.getItem('long')),
+			},
+			segment: "E-COMMERCE-VAREJO"
+		};		
+		
+		
 		$('#modal-payment-buy').openModal({
 			dismissible: false
 		});
@@ -160,16 +177,23 @@ cart_buy = function(){
             type: 'POST',
 			dataType: "json",
 			contentType: "application/json",
-			async: false,
-            //url: 'http://localhost:8899/api/transaction/buy',
-			url:'http://orion2412.startdedicated.net:8899/api/transaction/buy',
-			//url: '/api/transaction/buy',
-			data: JSON.stringify(transacao_cartao),
-            success: function (data) {
-				console.log(data);
+            url: '/api/transaction/buy',
+			data: JSON.stringify(parametros),
+            success: function (data) {			
+				$.sessionStorage.setItem('protocoloCompra', "Seu protocolo é: "+data.transactionid);
+				debugger;
+				if(data.status_venda == "ok" && data.status_tran == "ok")
+				{
+					$('#modal-payment-buy').closeModal({
+						complete: function() { _finalizar_pedido(); }
+					});
+				}else{
+					window.location = 'fail-compra.html';
+				}
 			},
 			statusCode: {
 				400: function(error) {
+				  $('.progress').hide();
 				  Materialize.toast(error.responseJSON.status, 4000);
 				}
 			}
@@ -191,16 +215,11 @@ cart_buy = function(){
 		
 	}
 	var _finalizar_pedido = function(){
-				$.sessionStorage.setItem('cartProducts','');
-				$('#modal-finish-buy').openModal({
-					dismissible: false
-				});
-				
-				_contagem_redirecionar();		
-				
+		$.sessionStorage.setItem('cartProducts','');
+		window.location = 'ok-compra.html';				
 	}
 	var _contagem_redirecionar = function(){
-		var count = 10;
+		var count = 30;
 		countdown = setInterval(function(){
 			$('#textRedirect').html('Em '+ count + ' segundos você será redirecionado para página principal.');
 			if(count == 0){
@@ -208,7 +227,7 @@ cart_buy = function(){
 			}
 			count--;
 		}, 1000);
-	}	
+	}
 	return {
 		init:_init,
 		pagamento: _pagamento,

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>BDIC-DM</title>
+
+  <!-- CSS  -->
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <style>
+  .right2{
+	text-align:right !important;
+	}
+	i{
+		cursor:pointer;
+	}
+	.top{
+		vertical-align: text-top;
+		padding-top:20px;
+	}
+  </style>
+</head>
+<body>
+  <nav class="light-blue lighten-1 headerPage" role="navigation">
+  </nav>
+
+  <div class="container">
+   			<div class="row center">
+			<br><br><br><br>
+			<h4 class="medium green-text">
+			<i class="large mdi-action-done"></i>
+			Pedido finalizado com sucesso!</h4>
+			<br>
+			<h5 class="green-text" id="textProtocolo">Seu protocolo é:</h5>
+			<br><br>
+			<div id="textRedirect" >Em 60 segundos, você será redirecionado para página principal.</div>
+			</div>
+    </div>
+  <br>
+  <footer class="page-footer orange"></footer>
+
+  <!--  Scripts-->
+  <script src="js/jquery-2.1.1.min.js"></script>
+  <script src="js/jquery.html5storage.min.js"></script>
+  <script src="js/materialize.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/init.js"></script>
+  <script>
+  $(document).ready(function(){
+  
+  	if(!sessionStorage.getItem('userName')){
+			window.location = '/';
+			return false;
+		}	
+
+		//carrega cabeçalho
+		util.loadHeader();
+		//carrega rodape
+		util.loadFooter();
+		
+		//carrega protocolo
+		$('#textProtocolo').html(sessionStorage.getItem('protocoloCompra'));
+	
+		//valida o tipo do usuário que logado
+		$(".liLogged").hide();
+		if($.sessionStorage.getItem('userType') == "client"){
+			util.setNameUser();
+			$(".lnkLogin").hide();
+			$(".liLogged").show();
+			
+		}
+  
+    		var count = 60;
+		countdown = setInterval(function(){
+			$('#textRedirect').html('Em '+ count + ' segundos você será redirecionado para página principal.');
+			if(count == 0){
+				window.location = '/';
+			}
+			count--;
+		}, 1000);
+  });
+  </script>
+  </body>
+</html>
+		

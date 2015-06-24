@@ -44,6 +44,13 @@ util = function(){
 				
         return tmp;
 	}
+	var _formatParseFloat = function(v){
+		var tmp = v;
+		tmp = tmp.replace(".","");
+		tmp = tmp.replace(",",".");
+		tmp = parseFloat(tmp);
+		return tmp;
+	}
 	var _load_details_product = function(id){
 		$.ajax({
             type: 'GET',
@@ -286,7 +293,8 @@ util = function(){
 		valida_form: _valida_form,
 		dataAgora: _dataAgora,
 		setLocationSession: _setLocationSession,
-		imageError: _imageError
+		imageError: _imageError,
+		formatParseFloat: _formatParseFloat
 	}
 }();
 
