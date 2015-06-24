@@ -317,7 +317,7 @@ app.post('/api/user/register', jsonParser, function(req, res){
 
 //var TimeUuid = require('cassandra-driver').types.TimeUuid;
 app.post('/api/transaction/buy', jsonParser, function(req, res){
-	
+
 	if (!req.body.hasOwnProperty('token')|| 
 	   !req.body.hasOwnProperty('cod_cliente')|| 
 	   !req.body.hasOwnProperty('creditcardNumber')||
@@ -411,7 +411,12 @@ app.post('/api/transaction/buy/confirm', jsonParser, function(req, res){
 			res.statusCode = 400;
 			res.json({status: "n_ok", msg: data.error});
 		} else {
-			res.json({status: 'ok'});
+
+			if (result.affectedRows > 0){
+				res.json({status: 'ok'});	
+			} else{
+				res.json({status: 'n_ok'});	
+			}
 		}
 	});
 	
