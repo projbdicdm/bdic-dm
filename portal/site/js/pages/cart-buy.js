@@ -181,7 +181,6 @@ cart_buy = function(){
 			data: JSON.stringify(parametros),
             success: function (data) {			
 				$.sessionStorage.setItem('protocoloCompra', "Seu protocolo é: "+data.transactionid);
-				debugger;
 				if(data.status_venda == "ok" && data.status_tran == "ok")
 				{
 					$('#modal-payment-buy').closeModal({
