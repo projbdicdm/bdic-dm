@@ -530,7 +530,7 @@ var genericQueryHandler = function (err, results) {
 
 //API para a US04 do TS03
 app.post('/api/custntrans', jsonParser, function (request, response) {
-
+	
 	//Variavel que recebe o Parametro de entrada
 	var hiveQueryId = request.body.queryId;
 
@@ -729,7 +729,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 });
 
 app.post('/api/prodncate', jsonParser, function (request, response) {
-
+	
 	//Variavel que recebe o Parametro de entrada
 	var hiveQueryId = request.body.queryId;
 
@@ -778,19 +778,30 @@ app.post('/api/prodncate', jsonParser, function (request, response) {
 			jdbc.open(function (err, conn) {
 				if (err) {
 					console.log(err);
+					
+					response.statusCode = 400;
+					return response.json({status: "Erro ao abrir conexão com o Hive." + err});
+
 				} else {
 					jdbc.executeQuery(hqlHive, function (err, results) {
 						if (err) {
 							console.log(err);
-							categories = err;
+							//categories = err;
+							
+							response.statusCode = 400;
+							return response.json({status: "Erro ao executar a query no Hive." + err});
+							
 						} else if (results) {
 							console.log(results);
 							categories = results;
-
 						}
 						jdbc.close(function (err) {
 							if (err) {
+								
 								console.log(err);
+								response.statusCode = 400;
+								return response.json({status: "Erro ao fechar conexão com o Hive." + err});
+								
 							} else {
 								console.log("Connection closed successfully!");
 							}
@@ -877,7 +888,7 @@ app.post('/api/prodncate', jsonParser, function (request, response) {
 });
 
 app.post('/api/clinprod', jsonParser, function (request, response) {
-
+	
 	//Variavel que recebe o Parametro de entrada
 	var hiveQueryId = request.body.queryId;
 
@@ -903,19 +914,30 @@ app.post('/api/clinprod', jsonParser, function (request, response) {
 			jdbc.open(function (err, conn) {
 				if (err) {
 					console.log(err);
+					
+					response.statusCode = 400;
+					return response.json({status: "Erro ao abrir conexão com o Hive." + err});
+
 				} else {
 					jdbc.executeQuery(hqlHive, function (err, results) {
 						if (err) {
 							console.log(err);
-							categories = err;
+							//categories = err;
+							
+							response.statusCode = 400;
+							return response.json({status: "Erro ao executar a query no Hive." + err});
+							
 						} else if (results) {
 							console.log(results);
 							categories = results;
-
 						}
 						jdbc.close(function (err) {
 							if (err) {
+								
 								console.log(err);
+								response.statusCode = 400;
+								return response.json({status: "Erro ao fechar conexão com o Hive." + err});
+								
 							} else {
 								console.log("Connection closed successfully!");
 							}
