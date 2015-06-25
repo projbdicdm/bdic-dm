@@ -32,7 +32,7 @@
 
       <?php if (!$_POST): ?>
 
-        <h4>Selecione o status: </h4>
+        <h4>Status da Transação: </h4>
 
         <div class="input-append">
           <form method="post" name="formulario" action="">
@@ -43,9 +43,18 @@
                 require       'lib/RobotBench/selectStatus.php';
 
                 foreach ($status as $item){
-                  echo "<option value=" . $item . ">" . $item . "</option>";
+                  echo '<option value="' . $item . '">' . $item . '</option>';
                 }
               ?>
+            </select>
+            <br /><br />
+            <h4>Quantidade de Registros a serem exibidos: </h4>
+            <select name="exibe">
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="250">250</option>
+              <option value="500">500</option>
+              <option value="1000">1000</option>
             </select>
             <!--<button class="btn" type="button" id="enviar">Go!</button>-->
             <input type="submit" name="enviar" value="Gerar Relatório"
