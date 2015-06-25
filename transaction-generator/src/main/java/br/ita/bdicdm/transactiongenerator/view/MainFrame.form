@@ -79,6 +79,8 @@
                       <Component id="scrollPane" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="generateJsonButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="exportCsvButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
@@ -112,7 +114,7 @@
                               </Group>
                               <Component id="generateTransactionsButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="12" max="32767" attributes="0"/>
+                          <EmptySpace pref="10" max="32767" attributes="0"/>
                           <Component id="generateUserButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -149,7 +151,10 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="scrollPane" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Component id="exportCsvButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="exportCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="generateJsonButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -296,6 +301,15 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="generateUserButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="generateJsonButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Gerar json"/>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="generateJsonButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

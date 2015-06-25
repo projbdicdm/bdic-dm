@@ -5,8 +5,10 @@
  */
 package br.ita.bdicdm.transactiongenerator.view;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +21,9 @@ import br.ita.bdicdm.transactiongenerator.control.UserDAO;
 import br.ita.bdicdm.transactiongenerator.control.UserFactory;
 import br.ita.bdicdm.transactiongenerator.model.Transaction;
 import br.ita.bdicdm.transactiongenerator.model.User;
+import br.ita.bdicdm.transactiongenerator.util.CsvReader;
+import br.ita.bdicdm.transactiongenerator.util.CsvSheet;
+import br.ita.bdicdm.transactiongenerator.util.CsvSheet.CsvRow;
 
 /**
  *
@@ -65,6 +70,7 @@ public class MainFrame extends javax.swing.JFrame {
         loginLabel = new javax.swing.JLabel();
         usersComboBox = new javax.swing.JComboBox();
         generateUserButton = new javax.swing.JButton();
+        generateJsonButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -140,6 +146,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        generateJsonButton.setText("Gerar json");
+        generateJsonButton.setEnabled(false);
+        generateJsonButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generateJsonButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout transactionsPaneLayout = new javax.swing.GroupLayout(transactionsPane);
         transactionsPane.setLayout(transactionsPaneLayout);
         transactionsPaneLayout.setHorizontalGroup(
@@ -151,6 +165,8 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(scrollPane)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, transactionsPaneLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(generateJsonButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(exportCsvButton))
                     .addGroup(transactionsPaneLayout.createSequentialGroup()
                         .addGroup(transactionsPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -176,7 +192,7 @@ public class MainFrame extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(limitField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(generateTransactionsButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                         .addComponent(generateUserButton)))
                 .addContainerGap())
         );
@@ -206,7 +222,9 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(exportCsvButton)
+                .addGroup(transactionsPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportCsvButton)
+                    .addComponent(generateJsonButton))
                 .addContainerGap())
         );
 
@@ -258,6 +276,7 @@ public class MainFrame extends javax.swing.JFrame {
     		generateTransactionsButton.setEnabled(false);
     	}
     	exportCsvButton.setEnabled(false);
+    	generateJsonButton.setEnabled(false);
     	csvOutput.setText("");
     }//GEN-LAST:event_usersComboBoxActionPerformed
 
@@ -302,6 +321,7 @@ public class MainFrame extends javax.swing.JFrame {
 	        List<Transaction> transactions = tf.create(100, expenses, creditLimit);
 	        populateTextArea(transactions);
 	        exportCsvButton.setEnabled(true);
+	        generateJsonButton.setEnabled(true);
     	}
     }//GEN-LAST:event_generateTransactionsButtonActionPerformed
 
@@ -322,6 +342,67 @@ public class MainFrame extends javax.swing.JFrame {
         builder.append(System.lineSeparator());
         JOptionPane.showMessageDialog(this, builder.toString());
     }//GEN-LAST:event_aboutMenuItemActionPerformed
+
+    private void generateJsonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateJsonButtonActionPerformed
+        //FileDialog dialog = new FileDialog(this, "Save csv file", FileDialog.SAVE);
+    	String folderName = System.getProperty("user.home")+"/bdicdm/";
+    	JFileChooser chooser = new JFileChooser(folderName);
+    	chooser.setSelectedFile(new File (((String)usersComboBox.getSelectedItem())+".txt"));
+    	
+    	if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+    		File file = chooser.getSelectedFile();
+    		try(PrintWriter writer = new PrintWriter(file);
+    			InputStream is = new ByteArrayInputStream(csvOutput.getText().getBytes("UTF-8"));) {
+    			
+    			CsvReader reader = new CsvReader(',');
+    			CsvSheet csv = reader.read(is);
+    			StringBuilder builder = new StringBuilder();
+    			for (CsvRow csvRow : csv) {
+					builder.append("{")
+					       .append(System.lineSeparator());
+					appendJson(builder, "token", csvRow.getColumn("usr_token"), 1);
+					appendJson(builder, "creditcardNumber", csvRow.getColumn("car_id"), 1);
+					appendJson(builder, "value", csvRow.getColumn("tra_value"), 1);
+					appendJson(builder, "date", csvRow.getColumn("tra_date"), 1);
+					appendJsonClass(builder, "geo", 1);
+					appendJson(builder, "lat", csvRow.getColumn("tra_lat"), 2);
+					appendJson(builder, "lon", csvRow.getColumn("tra_lon"), 2);
+					builder.append("    }")
+					       .append(System.lineSeparator());
+					appendJson(builder, "segment", csvRow.getColumn("tra_segment"), 1);
+					builder.append("}")
+				           .append(System.lineSeparator())
+				           .append(System.lineSeparator());
+				}
+    			
+    			writer.write(builder.toString());
+    			writer.flush();
+    		} catch (IOException e) {
+    			throw new RuntimeException ("Error when writing csv file.", e);
+    		}
+    		JOptionPane.showMessageDialog(this, "Arquivo "+file.toString()+" salvo com sucesso!");
+    	}
+    }//GEN-LAST:event_generateJsonButtonActionPerformed
+    
+    private void appendJson(StringBuilder builder, String label, String value, int level) {
+    	String mark = "\"";
+    	for (int i = 0; i < level; i++) {
+    		builder.append("    ");	
+		}
+		builder.append(mark+label+mark+": ")
+		       .append(mark+value+mark+",")
+		       .append(System.lineSeparator());
+
+	}
+    
+    private void appendJsonClass(StringBuilder builder, String label, int level) {
+    	String mark = "\"";
+    	for (int i = 0; i < level; i++) {
+    		builder.append("    ");	
+		}
+		builder.append(mark+label+mark+": { ")
+		       .append(System.lineSeparator());
+	}
 
 	private void populateTextArea(List<Transaction> transactions) {
 		StringBuilder builder = new StringBuilder(Transaction.csvHeader());
@@ -408,6 +489,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel expensesLabel;
     private javax.swing.JButton exportCsvButton;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JButton generateJsonButton;
     private javax.swing.JButton generateTransactionsButton;
     private javax.swing.JButton generateUserButton;
     private javax.swing.JMenu helpMenu;

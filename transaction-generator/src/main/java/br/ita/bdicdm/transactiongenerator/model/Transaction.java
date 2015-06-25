@@ -1,5 +1,6 @@
 package br.ita.bdicdm.transactiongenerator.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Transaction {
@@ -14,6 +15,8 @@ public class Transaction {
 	private String traSegment;
 	private String traStatus;
 	private double traValue;
+	
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public String getUsrToken() {
 		return usrToken;
@@ -128,7 +131,7 @@ public class Transaction {
 		  .append(carId).append(separator)
 		  .append(locId).append(separator)
 		  .append(traConfirmationcode).append(separator)
-		  .append(traDate).append(separator)
+		  .append(dateFormat.format(traDate)).append(separator)
 		  .append(traLat).append(separator)
 		  .append(traLon).append(separator)
 		  .append(traSegment).append(separator)
