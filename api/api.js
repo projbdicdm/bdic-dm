@@ -53,7 +53,7 @@ var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = 
 var query_add_buy = 'INSERT INTO "TRANSACTION" (tra_id, usr_token, car_id, loc_id, tra_date, tra_value, tra_lat, tra_lon, tra_confirmationcode, tra_status, tra_segment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 var query_transaction = 'SELECT tra_confirmationcode FROM "TRANSACTION" where usr_token = ? AND tra_id = ?'; 
 var query_last_geo_transaction = 'select unixTimestampOf(tra_id) as date, tra_lat, tra_lon, tra_status from "TRANSACTION" where usr_token = ? AND tra_segment = ?;';
-var query_confirm_transaction = 'UPDATE "TRANSACTION" SET tra_status = ? WHERE usr_token = ? AND tra_id = ?'
+var query_confirm_transaction = 'UPDATE "TRANSACTION" SET tra_status = ? WHERE usr_token = ? AND tra_id = ?';
 var Uuid = require('cassandra-driver').types.Uuid;
 var TimeUuid = require('cassandra-driver').types.TimeUuid;
 
@@ -77,14 +77,14 @@ app.post('/api/user/login', jsonParser, function(req, res){
             res.statusCode = 500;
             return res.json({status: "query_login Failed"});
         }else{
-            if(result.rows.length == 1){
+            if(result.rows.length === 1){
                 //precisamos verificar a senha 1o
-                if(result.rows[0].usr_password != req.body.password){
+                if(result.rows[0].usr_password !== req.body.password){
                     res.statusCode = 403;
                     return res.json({status: "Auth failed"});
                 } //senha OK, continua (menus um else...)
             //o ususario ja tem token?
-            if(result.rows[0].usr_token == null){
+            if(result.rows[0].usr_token === null){
                 //o usuario logou a 1a vez e nao tem token
                 //cria o token, atualiza o usuario
                 var id = Uuid.random().toString();
@@ -125,15 +125,15 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	var seguimentoEncontrado = false;
 	var segmentUsesGEO = false;
 	var trans_status = 'PENDING';
-	
-	for(var i = 0; i < segments.length; i++){
-		if (segments[i] == req.body.segment){
+	var i;
+	for(i = 0; i < segments.length; i+= 1){
+		if (segments[i] === req.body.segment){
 			seguimentoEncontrado = true;
 		}
 	}
 	
-	for(var i = 0; i < segmentsWithGEO.length; i++){
-		if (segmentsWithGEO[i] == req.body.segment){
+	for(i = 0; i < segmentsWithGEO.length; i+= 1){
+		if (segmentsWithGEO[i] === req.body.segment){
 			segmentUsesGEO = true;
 		}
 	}
@@ -161,7 +161,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 			return res.json({status: "Error on query_login", message: err});
 		}
 	
-		if(result.rows.length != 1){
+		if(result.rows.length !== 1){
 			res.statusCode = 400;
 			return res.json({status: "Buy with bad token"});
 		}
@@ -173,7 +173,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	}
 	
 	//se ultrapassa o limite de crédito: nega a transação
-	if(segmentUsesGEO && trans_status == 'PENDING'){
+	if(segmentUsesGEO && trans_status === 'PENDING'){
 
 		//se houver mais de um segmento com GEO, precisa atualizar isso aqui
 		client.execute(query_last_geo_transaction, 
@@ -184,7 +184,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 					res.statusCode = 500;
 					return res.json({status: "Error on query_last_geo_transaction", message: err});
 				}
-				if(result.rows.length == 0){
+				if(result.rows.length === 0){
 					//não dá pra fazer nenhuma verificacao
 					//se nao temos outra transacao para
 					//comparar...
@@ -205,11 +205,12 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 	
 		usr_login = got.login.rows[0].usr_login;
 
-		if(got.geo != null){
+		if(got.geo !== null){
 			var transacao;
-			for(var i = 0; i < got.geo.length; i++){
-				if(got.geo[i].tra_status == 'PENDING' ||
-				   got.geo[i].tra_status == 'CONFIRMED'){
+			var i;
+			for(i = 0; i < got.geo.length; i+= 1){
+				if(got.geo[i].tra_status === 'PENDING' ||
+				   got.geo[i].tra_status === 'CONFIRMED'){
 					transacao = got.geo[i];
 					break;
 				}
@@ -217,7 +218,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 			
 			if(transacao){		
 				var dLat = Math.sqrt(Math.pow((req.body.geo.lat - transacao.tra_lat), 2));
-				var dLon = Math.sqrt(Math.pow((req.body.geo.lon - transacao.tra_lon), 2))
+				var dLon = Math.sqrt(Math.pow((req.body.geo.lon - transacao.tra_lon), 2));
 				var hipo = Math.sqrt(Math.pow(dLat, 2) + Math.pow(dLon, 2));
 				var distanciaEmMN = hipo * 60;
 				var distanciaEmKm = distanciaEmMN * 1.852;
@@ -230,7 +231,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 			}
 		}
 	
-		if(trans_status == 'PENDING'){ //se não teve fraude no GEO (ou se segmento não usa)
+		if(trans_status === 'PENDING'){ //se não teve fraude no GEO (ou se segmento não usa)
 		
 		//connecta no Rserve
 		r.connect(RSERVE_IP, 6311, function(err, RClient) {
@@ -250,7 +251,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 					RClient.end();
 					calbacksProcessoR.keep('resultadoDoR', ans);
 				});
-		}})
+		}});
 	}else{
 		calbacksProcessoR.keep('resultadoDoR');
 	}
@@ -283,7 +284,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 						return res.json({status: "Buy internal error", message: err});
 					}
 
-					if(trans_status == 'PENDING'){
+					if(trans_status === 'PENDING'){
 						//enviamos o email com o código de confirmação para o usuário
 						var message = {
 							status: "ok",
@@ -351,7 +352,7 @@ app.post('/api/transaction/confirm', jsonParser, function(req, res){
 			return res.json({status: "Error on query_login: " + err});
 		}
 	
-		if(result.rows.length == 0){
+		if(result.rows.length === 0){
 			res.statusCode = 400;
 			return res.json({status: "Confirm with bad token"});
 		}
@@ -364,12 +365,12 @@ app.post('/api/transaction/confirm', jsonParser, function(req, res){
 				return res.json({status: "Error on query_transaction", message: err});			
 			}
 			
-			if(result.rows.length != 1){
+			if(result.rows.length !== 1){
 				res.statusCode = 400;
 				return res.json({status: "Transaction not found!"});						
 			}
 			
-			if(req.body.confirmationCode == result.rows[0].tra_confirmationcode){
+			if(req.body.confirmationCode === result.rows[0].tra_confirmationcode){
 			
 				client.execute(query_confirm_transaction, ['CONFIRMED', req.body.token, req.body.id], {prepare: true}, function(err, result) {
 					if(err){
@@ -425,7 +426,7 @@ app.get('/api/transaction/boxPlot/:token/:page', jsonParser, function(req, res){
 						status:""}], 
 				totalPages: 1, 
 				currentPage: 0
-				}
+				};
 
 
 	return res.json(retorno);
@@ -459,7 +460,7 @@ app.get('/api/transaction/query/:token/:dateStart/:dateEnd/:page', jsonParser, f
 				currentPage: 0,
 				startDate: req.params.dateStart,
 				endDate: req.params.dateEnd
-				}
+				};
 
 
 	return res.json(retorno);
@@ -491,7 +492,7 @@ var config = {
 	url : 'jdbc:hive2://' + HIVE_IP + ':' + HIVE_PORT + '/bdicdm?connectTimeout=60000&socketTimeout=60000',
 	// optionally
 	user : 'hduser',
-	password : 'hduser',
+	password : 'hduser'
 };
 
 // TS03 - Conexão com Hive - LOCALHOST
@@ -618,12 +619,13 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 								titulo : 'Clientes ou Transações',
 								dados : []
 							};
+							var counter;
 							switch (hiveQueryId) {
 							case "01": {
 									retorno.subtitulo = '01 - Classificar clientes que mais compraram em ordem decrescente';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
 
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 
@@ -632,7 +634,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 							case "02": {
 									retorno.subtitulo = '02 - Classificar, em ordem decrescente, os clientes por valor das transacoes';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -640,7 +642,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 							case "03": {
 									retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -648,7 +650,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 							case "04": {
 									retorno.subtitulo = '04 - Ordenar as transacoes em ordem decrescente por valor';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -656,7 +658,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 							case "05": {
 									retorno.subtitulo = '05 - Ordenar todos os clientes que realizaram compras por ordem alfabetica';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -664,7 +666,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 							case "06": {
 									retorno.subtitulo = '06 - Classificar as transacoes por data (decrescente), exibindo tambem o nome do cliente e valor';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -672,7 +674,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 							case "07": {
 									retorno.subtitulo = '07 - Classificar transacoes por local em ordem alfabetica, exibindo campos como nome, valor, regiao, pais, etc';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -680,7 +682,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 							case "08": {
 									retorno.subtitulo = '08 - Classificar transacoes por data (crescente) a cada 7 dias, exibindo o nome do cliente, local e valor';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -688,7 +690,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 							case "09": {
 									retorno.subtitulo = '09 - Classificar transacoes por data (crescente) a cada 30 dias, exibindo o nome do cliente, local (IP) e valor';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -696,7 +698,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 							case "10": {
 									retorno.subtitulo = '10 - Classificar clientes por quantidade de transações mensais no último ano em ordem decrescente';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -704,7 +706,7 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 							case "11": {
 									retorno.subtitulo = '11 - Classificar a quantidade de transações por país no último ano, agrupadas em meses';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -801,7 +803,7 @@ case "07":{
 									retorno.subtitulo = '01 - Classificar os produtos mais vendidos no último ano por quantidade';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
 
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 
@@ -810,7 +812,7 @@ case "07":{
 							case "02": {
 									retorno.subtitulo = '02 - Classificar os total de vendas por produto no último ano';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -818,7 +820,7 @@ case "07":{
 							case "03": {
 									retorno.subtitulo = '03 - Selecionar todos os campos de Transacoes e nome do cliente';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -826,7 +828,7 @@ case "07":{
 							case "04": {
 									retorno.subtitulo = '04 - Classificar as categorias mais vendidas nos últimos 365 dias';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -834,7 +836,7 @@ case "07":{
 							case "05": {
 									retorno.subtitulo = '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -842,7 +844,7 @@ case "07":{
 							case "06": {
 									retorno.subtitulo = '06 - Total de venda por produtos em dias específicos da semana:';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -850,7 +852,7 @@ case "07":{
 							case "07": {
 									retorno.subtitulo = '07 - Total de venda por produtos categorias em dias específicos da semana:';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 									break;
@@ -926,7 +928,7 @@ app.post('/api/clinprod', jsonParser, function (request, response) {
 									retorno.subtitulo = '01 - Classifica os clientes por grupo de tipo de compra agrupando por categoria';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
 
-									for (counter = 0; counter <= categories.length - 1; counter++) {
+									for (counter = 0; counter <= categories.length - 1; counter+= 1) {
 										retorno.dados.push(categories[counter]);
 									}
 
