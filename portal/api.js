@@ -509,7 +509,11 @@ app.get('/api/adtf/:category/:queryId', jsonParser, function(req, res){
             console.log(response);
 			
 			res.statusCode = 400;
-			return res.json({status: "Requisição falhou. Detalhes: " + response});
+			
+			if (response.hasOwnProperty('body'))
+				return res.json({status: "Requisição falhou. Detalhes: " + response});
+			else
+				return res.json({status: "Requisição falhou. Detalhes: " + response});
 
 		});
     
