@@ -461,9 +461,13 @@ app.get('/api/adtf/:category/:queryId', jsonParser, function(req, res){
         
         console.log(category);
         console.log(parametros);
+		
+		var options = {
+			timeout: 600000
+		}
 
 		//httprequest mode: post
-		requestify.post(MAIN_API + category, parametros)
+		requestify.post(MAIN_API + category, parametros, options)
 		.then(function(response) {
 
             console.log(response);
