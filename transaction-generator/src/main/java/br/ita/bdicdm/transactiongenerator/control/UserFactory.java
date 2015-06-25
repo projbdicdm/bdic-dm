@@ -23,7 +23,7 @@ public class UserFactory {
 	private Random random;
 	
 	static {
-		try(InputStream is = UserFactory.class.getResourceAsStream("/resources/names.properties")) {
+		try(InputStream is = UserFactory.class.getResourceAsStream("/names.properties")) {
 			Properties properties = new Properties();
 			properties.load(new InputStreamReader(is, Charset.forName("UTF-8")));
 			//firstNames = Arrays.asList(((String)properties.get("first.male.names")).split(","));
