@@ -48,18 +48,6 @@ var path = require('path');
 // variaveis 'mock'
 var tokenForResetPassword = "23530ddb-a566-485d-bc8f-237305b0bc3b";
 
-//adicionando o driver cassandra
-var cassandra = require('cassandra-driver');
-var client = new cassandra.Client({ contactPoints: ['orion2412.startdedicated.net'], keyspace: 'BDICDM'}); //Cassandra no servidor do André Lamas
-
-/*
-// querys cassandra
-var query_login = 'SELECT * FROM "USER" WHERE "usr_login" = ? ';
-var query_login_by_token = 'SELECT "usr_login" FROM "USER" WHERE "usr_token" = ?';
-var query_update_token = 'UPDATE "USER" SET "usr_token" = ? WHERE "usr_login" = ?';
-var Uuid = require('cassandra-driver').types.Uuid;
-*/
-
 // querys mysql
 var query_categorias = 'SELECT cat_id, cat_nm FROM categoria;';
 var query_lista_produtos = 'SELECT pro_id as id, pro_img as imagem, pro_nm as descricao, pro_vl as valor, pro_ds as observacao FROM produto';
