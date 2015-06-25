@@ -1,5 +1,6 @@
 //url da api principal
-var MAIN_API = "http://localhost:8899/api/";
+// var MAIN_API = "http://localhost:8899/api/";
+var MAIN_API = "http://orion2412.startdedicated.net:8899/api/";
 
 //criamos o obj que renderiza HTML na saida
 var jade = require('jade');
@@ -316,7 +317,7 @@ app.post('/api/user/register', jsonParser, function(req, res){
 
 //var TimeUuid = require('cassandra-driver').types.TimeUuid;
 app.post('/api/transaction/buy', jsonParser, function(req, res){
-	
+
 	if (!req.body.hasOwnProperty('token')|| 
 	   !req.body.hasOwnProperty('cod_cliente')|| 
 	   !req.body.hasOwnProperty('creditcardNumber')||
@@ -347,10 +348,12 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 
 			var body = response.getBody();
 
+			console.log(body);
+
 			var status = body.status;
 			var token_transaction = body.transactionid;
 
-			if (body.status == 'error'){
+			if (body.status == 'error' || body.status == 'Buy with bad token'){
 				res.statusCode = 400;
 				res.json({status: body.status});
 
@@ -381,6 +384,12 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 					
 				});
 			}
+		},function(response) {
+
+            console.log(response);
+            
+            res.statusCode = response.code;
+            res.json({status: response.body});
 		});
 
 	}
@@ -393,7 +402,7 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 
 app.post('/api/transaction/buy/confirm', jsonParser, function(req, res){
 	
-	if(!req.body.hasOwnProperty('token') || 
+	if(!req.body.hasOwnProperty('transaction_id') || 
 	   !req.body.hasOwnProperty('status')) {
 
 		res.statusCode = 400;
@@ -401,7 +410,7 @@ app.post('/api/transaction/buy/confirm', jsonParser, function(req, res){
 	}
 
 	var status = (req.body.status == 'ok' ? 2 : 4);
-	var query  = util.format("UPDATE venda SET ven_sta_cod = %d WHERE ven_tra_cod = '%s'", status, req.body.token);
+	var query  = util.format("UPDATE venda SET ven_sta_cod = %d WHERE ven_tra_cod = '%s'", status, req.body.transaction_id);
 
 	// MySQL
 	connection.query(query, function (error, result) {
@@ -410,7 +419,12 @@ app.post('/api/transaction/buy/confirm', jsonParser, function(req, res){
 			res.statusCode = 400;
 			res.json({status: "n_ok", msg: data.error});
 		} else {
-			res.json({status: 'ok'});
+
+			if (result.affectedRows > 0){
+				res.json({status: 'ok'});	
+			} else{
+				res.json({status: 'n_ok'});	
+			}
 		}
 	});
 	
@@ -442,15 +456,31 @@ app.get('/api/adtf/:category/:queryId', jsonParser, function(req, res){
     try {
         
 		var parametros = { 
-	        "queryI": queryId
+	        "queryId": queryId
 		};
+        
+        console.log(category);
+        console.log(parametros);
+		
+		var options = {
+			timeout: 600000
+		}
 
 		//httprequest mode: post
-		requestify.post(MAIN_API + category, parametros)
+		requestify.post(MAIN_API + category, parametros, options)
 		.then(function(response) {
 
+            console.log(response);
+            
 			var body = response.getBody();
 			res.json(body);
+
+		}, function(response) {
+
+            console.log(response);
+            
+            res.statusCode = response.code;
+            return res.json({status: "Requisição falhou. Detalhes: " + response.body});
 
 		});
     

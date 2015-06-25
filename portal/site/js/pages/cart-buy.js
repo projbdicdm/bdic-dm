@@ -4,7 +4,7 @@ cart_buy = function(){
 		if(!sessionStorage.getItem('userName')){
 			window.location = '/';
 			return false;
-		}	
+		}
 
 		//carrega cabeçalho
 		util.loadHeader();
@@ -34,8 +34,10 @@ cart_buy = function(){
 		_carrega_cartoes();
 			
 	}
-	var _carrega_cartoes = function(){
+	var _carrega_cartoes = function(){ 
+
 		var id = sessionStorage.getItem('userIDMySQL');
+
 		$.ajax({
 			url: '/api/card/client/' + id,
 			type: 'GET',
@@ -43,14 +45,24 @@ cart_buy = function(){
 			dataType: 'json',
 			success: function(data){
 				if(data.list.length){
+
+					//popula a lista de cartões do cliente
+					var options = $("#dw_cartoes");
+					$.each(options, function() {
+					    options.append($("<option />").val(data.list[0].car_id).attr('num_card',data.list[0].car_num).text(data.list[0].car_band + ' **** **** **** ' + data.list[0].car_num.substring(12,16)));
+					});
+
+					$('select').material_select();
+					
+					/*
 					$('.pagamentofinalizacao label').addClass('active');
 					$('#bandeiraCartao').val(data.list[0].car_band);
 					$('#numeroCartao').val(data.list[0].car_num);
 					$('#mesAnoValidadeCartao').val(data.list[0].car_valid_mes + '/'+ data.list[0].car_valid_ano);
 					$('#nomeClienteCartao').val(data.list[0].car_nm);
-					$('.pagamentofinalizacao input').attr('disabled','true');
-										
+					$('.pagamentofinalizacao input').attr('disabled','true');	
 					$('#codigoSegurancaCartao').attr('disabled',false).next().removeClass('active');
+					*/
 				}
 			},
 			statusCode: {
@@ -117,61 +129,112 @@ cart_buy = function(){
 			$('.pagamentofinalizacao').show();			
 	}
 	var _pagamento = function(){
-		//valida o preenchimento do cartão
-		validaCartao = true;
-		if(!$('#numeroCartao').val()){
-			$('#numeroCartao').addClass("invalid");
-			validaCartao = false;
+
+		var cartao_selecionado = parseInt($('#dw_cartoes').val());
+
+		if (cartao_selecionado == 0) {
+
+			//valida o preenchimento do cartão
+			validaCartao = true;
+
+			if(!$('#bandeiraCartao').val()){
+				$('#bandeiraCartao').addClass("invalid");
+				validaCartao = false;
+			}
+			if(!$('#numeroCartao').val()){
+				$('#numeroCartao').addClass("invalid");
+				validaCartao = false;
+			}
+			if(!$('#mesAnoValidadeCartao').val()){
+				$('#mesAnoValidadeCartao').addClass("invalid");
+				validaCartao = false;
+			}
+			if(!$('#nomeClienteCartao').val()){
+				$('#nomeClienteCartao').addClass("invalid");
+				validaCartao = false;
+			}		
+			if(!$('#codigoSegurancaCartao').val()){
+				$('#codigoSegurancaCartao').addClass("invalid");
+				validaCartao = false;
+			}
+
+			if(!validaCartao){
+				Materialize.toast('Selecione um cartão de crédito cadastrado ou preencha todos os dados do formulário', 4000);
+				return false;
+			}
 		}
-		if(!$('#mesAnoValidadeCartao').val()){
-			$('#mesAnoValidadeCartao').addClass("invalid");
-			validaCartao = false;
-		}
-		if(!$('#nomeClienteCartao').val()){
-			$('#nomeClienteCartao').addClass("invalid");
-			validaCartao = false;
-		}		
-		if(!$('#codigoSegurancaCartao').val()){
-			$('#codigoSegurancaCartao').addClass("invalid");
-			validaCartao = false;
-		}
-		if(!validaCartao){
-			Materialize.toast('Existem dados de pagamento inválidos!', 4000);
-			return false;
-		}
+
 		//_finalizar_pedido();
 		_confirmacao_pagamento_mobile();
 	}
 	var _confirmacao_pagamento_mobile = function(){
-		var transacao_cartao = ({
-			"token": $.sessionStorage.getItem('userToken'),
-			"creditcardNumber": $('#numeroCartao').val(),
-			"value": $("#vrTotalCarrinho").html(),
-			"date": util.dataAgora(),
-			"geo": { "lat": $.sessionStorage.getItem('lat'), "lon": $.sessionStorage.getItem('long')},
-			"segment": "E-COMMERCE-VAREJO"
-		});
+		
+		var lista_produtos = [];
+		$.each(JSON.parse($.sessionStorage.getItem('cartProducts')), function(index, item) {
+			lista_produtos.push(
+						{
+							"cod": parseInt(item.id),
+						  	"value": util.formatParseFloat(item.valor),
+						  	"qtd": parseInt(item.quantidade)
+						});
+		});		
+		
+		var id_cartao = $('#dw_cartoes').val() || 1;
+		var num_card = $('#dw_cartoes').find('option:selected').attr('num_card') || $('#numeroCartao').val();
+		var token_id_user = $.sessionStorage.getItem('userToken').toString();
+
+		var parametros = {
+			//token: token_id_user,
+			token: "1a87bb69-831e-4991-9917-e3adce68920e",
+			creditcardNumber: num_card,
+			cod_cliente: parseInt($.sessionStorage.getItem('userIDMySQL')),
+			cod_credit_card: parseInt(id_cartao),
+			products: lista_produtos,
+			value: util.formatParseFloat($("#vrTotalCarrinho").html()),
+			geo: {
+				lat: parseFloat($.sessionStorage.getItem('lat')),
+				lon: parseFloat($.sessionStorage.getItem('long')),
+			},
+			segment: "E-COMMERCE-VAREJO"
+		};
+		
+		
 		$('#modal-payment-buy').openModal({
 			dismissible: false
 		});
+
 		//esconde confirmacao de email
 		$('.row_confirmation_email').hide();
+
 		$.ajax({
             type: 'POST',
 			dataType: "json",
 			contentType: "application/json",
-			async: false,
-            //url: 'http://localhost:8899/api/transaction/buy',
-			url:'http://orion2412.startdedicated.net:8899/api/transaction/buy',
-			//url: '/api/transaction/buy',
-			data: JSON.stringify(transacao_cartao),
-            success: function (data) {
-				console.log(data);
+            url: '/api/transaction/buy',
+			data: JSON.stringify(parametros),
+            success: function (data) {		
+
+				$.sessionStorage.setItem('protocoloCompra', "Seu protocolo é: "+data.transactionid);
+				
+				if(data.status_venda == "ok" && data.status_tran == "ok")
+				{
+					$('#modal-payment-buy').closeModal({
+						complete: function() { _finalizar_pedido(); }
+					});
+				} else {
+					window.location = 'fail-compra.html';
+				}
 			},
 			statusCode: {
 				400: function(error) {
+				  $('.progress').hide();
 				  Materialize.toast(error.responseJSON.status, 4000);
+
+				  $('#modal-payment-buy').closeModal();
 				}
+			},
+			error: function(a, b, c){
+				console.log(a);
 			}
         });			
 		
@@ -191,16 +254,11 @@ cart_buy = function(){
 		
 	}
 	var _finalizar_pedido = function(){
-				$.sessionStorage.setItem('cartProducts','');
-				$('#modal-finish-buy').openModal({
-					dismissible: false
-				});
-				
-				_contagem_redirecionar();		
-				
+		$.sessionStorage.setItem('cartProducts','');
+		window.location = 'ok-compra.html';				
 	}
 	var _contagem_redirecionar = function(){
-		var count = 10;
+		var count = 30;
 		countdown = setInterval(function(){
 			$('#textRedirect').html('Em '+ count + ' segundos você será redirecionado para página principal.');
 			if(count == 0){
@@ -208,7 +266,7 @@ cart_buy = function(){
 			}
 			count--;
 		}, 1000);
-	}	
+	}
 	return {
 		init:_init,
 		pagamento: _pagamento,

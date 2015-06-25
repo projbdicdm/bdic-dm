@@ -6,11 +6,11 @@ set -e
 
 host="orion2412.startdedicated.net" 
 user="root" 
-passw="12root34!"  
+passw="12root34"  
 database="BDIC-DM" 
 
-echo "INSTALLING python-mysqldb"
-sudo apt-get install python-mysqldb -y
+#echo "INSTALLING python-mysqldb"
+#sudo apt-get install python-mysqldb -y
 
 echo "RUNNING ALL TEST CASES"
 
