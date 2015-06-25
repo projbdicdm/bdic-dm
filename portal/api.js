@@ -478,13 +478,14 @@ app.get('/api/adtf/:category/:queryId', jsonParser, function(req, res){
         console.log(parametros);
 		
 		var options = {
-			timeout: 600000
+			timeout: 1200000
 		}
 
 		//httprequest mode: post
 		requestify.post(MAIN_API + category, parametros, options)
 		.then(function(response) {
 
+			console.log("Success");
             console.log(response);
             
 			var body = response.getBody();
@@ -492,10 +493,15 @@ app.get('/api/adtf/:category/:queryId', jsonParser, function(req, res){
 
 		}, function(response) {
 
+            console.log("Erro");
             console.log(response);
-            
-            res.statusCode = response.code;
-            return res.json({status: "Requisição falhou. Detalhes: " + response.body});
+			
+			res.statusCode = 400;
+			
+			if (response.hasOwnProperty('body'))
+				return res.json({status: "Requisição falhou. Detalhes: " + response});
+			else
+				return res.json({status: "Requisição falhou. Detalhes: " + response});
 
 		});
     
