@@ -209,8 +209,7 @@ app.post('/api/user/login', jsonParser, function(req, res){
 	
 		res.statusCode = 400;
 		return res.json({status: 'Error 400: use of login with bad data.'});
-	} 
-
+	}
 
 	var params_login = {
 		login: req.body.login,
@@ -218,59 +217,19 @@ app.post('/api/user/login', jsonParser, function(req, res){
 	};
 
 	//chama a API root para obter o token da transação
-		requestify.post('http://orion2412.startdedicated.net:8899/api/user/login', params_login)
-		.then(function(response) {
+	requestify.post('http://orion2412.startdedicated.net:8899/api/user/login', params_login)
+	.then(function(response) {
 
-			var body = response.getBody();
-			console.log(body);
+		var body = response.getBody();
+		res.send(body);
 
-			res.send(body);
+	}, function(response) {
 
-		}, function(response) {
+        console.log(response);
+        res.statusCode = response.code;
 
-            console.log(response);
-            res.statusCode = response.code;
-
-            res.send(response.body);
-		});
-
-	/*
-	client.execute(query_login, [req.body.login], function(err, result) {
-		
-		if(err){
-			res.statusCode = 500;
-			return res.json({status: "query_login Failed"});
-		}else{
-			if(result.rows.length == 1){
-				//precisamos verificar a senha 1o
-				if(result.rows[0].usr_password != req.body.password){
-					res.statusCode = 403;
-					return res.json({status: "Auth failed"});
-				} //senha OK, continua (menus um else...)
-			//o ususario ja tem token?
-			if(result.rows[0].usr_token == null){
-				//o usuario logou a 1a vez e nao tem token
-				//cria o token, atualiza o usuario
-				var id = Uuid.random().toString();
-				client.execute(query_update_token, [id, req.body.login], {prepare: true}, function(err, result_update) {
-					if(err){
-						res.statusCode = 500;
-						return res.json({status: "Erro no query_update_token" + err});
-					}else{
-						return res.json({token:id, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
-					}
-				});
-				//retorna o token
-				}else{
-					return res.json({token:result.rows[0].usr_token, userType:result.rows[0].usr_type, userName:result.rows[0].usr_name, userEmail: result.rows[0].usr_login});
-				}
-			}else{
-				res.statusCode = 400;
-				return res.json({status: "Auth failed"});
-			}
-		}
+        res.send(response.body);
 	});
-	*/
 });
 
 app.post('/api/user/resetpassword', jsonParser, function(req, res){
@@ -362,8 +321,6 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 		.then(function(response) {
 
 			var body = response.getBody();
-
-			console.log(body);
 
 			var status = body.status;
 			var token_transaction = body.transactionid;
