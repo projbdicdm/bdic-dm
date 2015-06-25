@@ -23,7 +23,7 @@ public class UserFactory {
 	private Random random;
 	
 	static {
-		try(InputStream is = UserFactory.class.getResourceAsStream("/resources/names.properties")) {
+		try(InputStream is = UserFactory.class.getResourceAsStream("/names.properties")) {
 			Properties properties = new Properties();
 			properties.load(new InputStreamReader(is, Charset.forName("UTF-8")));
 			//firstNames = Arrays.asList(((String)properties.get("first.male.names")).split(","));
@@ -51,7 +51,7 @@ public class UserFactory {
 		//String login = firstName.charAt(0)+surname+"@email.com.br";
 		//login = login.toLowerCase();
 		user.setUsrLogin(email);
-		user.setUsrPassword(user.getUsrLogin());
+		user.setUsrPassword("123456");
 		user.setUsrToken(UUID.randomUUID().toString());
 		user.setUsrType("client");
 		return user;

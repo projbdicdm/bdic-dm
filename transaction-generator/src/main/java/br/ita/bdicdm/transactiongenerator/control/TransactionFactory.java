@@ -52,7 +52,7 @@ public class TransactionFactory {
 			transaction.setTraLat(-1f);
 			transaction.setTraLon(-1f);
 			transaction.setTraSegment("E-COMMERCE-VAREJO");
-			transaction.setTraStatus("em espera");
+			transaction.setTraStatus("PENDING");
 			transaction.setTraValue(values.get(i));
 
 			monthLimit+= transaction.getTraValue();

@@ -30,6 +30,7 @@ public class UserDAO {
 	private Session session;
 	private PreparedStatement selectCassandraUser;
 	private PreparedStatement findCassandraUser;
+	private PreparedStatement insertCassandraUser;
 	private UserFactory userFactory;
 	
 	private static UserDAO instance = new UserDAO();
@@ -62,6 +63,7 @@ public class UserDAO {
 	private void initStatements() {
 		selectCassandraUser = session.prepare("SELECT usr_login, usr_token from \"USER\"");
 		findCassandraUser = session.prepare("SELECT * from \"USER\" where usr_login = ?");
+		insertCassandraUser = session.prepare("INSERT INTO \"USER\" (usr_login, usr_name, usr_password, usr_token, usr_type) VALUES (?, ?, ?, ?, ?)");
 	}
 
 	public List<String> listUserLogins() {
@@ -124,7 +126,12 @@ public class UserDAO {
 		}
 			
 		return users;
-
+	}
+	
+	public void insert(User user) {
+		BoundStatement bs = insertCassandraUser.bind(user.getUsrLogin(), user.getUsrName(),
+				user.getUsrPassword(), user.getUsrToken(), user.getUsrType());
+		session.execute(bs);
 	}
 
 	public User find(String userLogin) {

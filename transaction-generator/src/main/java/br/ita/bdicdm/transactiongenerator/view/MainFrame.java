@@ -286,6 +286,7 @@ public class MainFrame extends javax.swing.JFrame {
         		== JOptionPane.OK_OPTION) {
 	    	UserFactory uf = new UserFactory();
 	        User user = uf.create();
+	        userDao.insert(user);
 	        usersComboBox.addItem(user.getUsrLogin());
 	        JOptionPane.showMessageDialog(this, "Usuário "+user.getUsrLogin()+" criado!");
         }

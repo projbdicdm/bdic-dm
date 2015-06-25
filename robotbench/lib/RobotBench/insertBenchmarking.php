@@ -34,7 +34,7 @@
                     tra_lat,
                     tra_lon,
                     tra_status,
-                    tra_value)
+                    tra_value,
                     tra_alt)
             VALUES (
                     :usr_token,
@@ -46,7 +46,7 @@
                     :tra_lat,
                     :tra_lon,
                     :tra_status,
-                    :tra_value),
+                    :tra_value,
                     :tra_alt)',
           [
             new Cassandra\Type\Varchar("$usr_token"),
@@ -64,8 +64,8 @@
           $rows = $statement->getResponse();
 
         }catch (Cassandra\Exception $e){
-          //echo 'Caught exception: ',  $e->getMessage(), "\n";
-          //exit;//if connect failed it may be good idea not to continue
+          echo 'Caught exception: ',  $e->getMessage(), "\n";
+          exit;//if connect failed it may be good idea not to continue
         }
     }
 ?>
