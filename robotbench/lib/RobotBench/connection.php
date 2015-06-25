@@ -7,7 +7,7 @@
                 //'password'  => 'usuario',
                 //'socket'    => [SO_RCVTIMEO => ["sec" => 10, "usec" => 0]], //socket transport only
 
-                'host'      => 'orion2412.startdedicated.net'
+                'host'      => 'orion2412.startdedicated.net',
                 'port'      => 9042, //default 9042
             ]
           ];

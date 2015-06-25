@@ -4,8 +4,8 @@ Relatório gerado com Sucesso!
 <table class="table table-striped table-hover table-condensed">
   <thead>
     <tr>
-      <td> <h4>LISTAGEM COM STATUS <?php echo $_REQUEST["status"]; ?>: </h4>
-      <h5>Total de transações: <?php echo count($rowsSelect); ?></h5>
+      <h5>Total de transações status "<?php echo $_REQUEST["status"]; ?>": <?php echo $count[0]["count"]; ?></h5>
+      <h5>Exibindo: <?php echo count($rowsSelect); ?></h5>
       </td>
     </tr>
     <tr>
