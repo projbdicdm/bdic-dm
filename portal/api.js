@@ -348,10 +348,12 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 
 			var body = response.getBody();
 
+			console.log(body);
+
 			var status = body.status;
 			var token_transaction = body.transactionid;
 
-			if (body.status == 'error'){
+			if (body.status == 'error' || body.status == 'Buy with bad token'){
 				res.statusCode = 400;
 				res.json({status: body.status});
 
@@ -382,6 +384,12 @@ app.post('/api/transaction/buy', jsonParser, function(req, res){
 					
 				});
 			}
+		},function(response) {
+
+            console.log(response);
+            
+            res.statusCode = response.code;
+            res.json({status: response.body});
 		});
 
 	}
