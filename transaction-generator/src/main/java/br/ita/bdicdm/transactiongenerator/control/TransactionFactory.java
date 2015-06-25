@@ -49,10 +49,10 @@ public class TransactionFactory {
 			Date transactionTime = getRandomDateInMonth(currentDate);
 			
 			transaction.setTraDate(transactionTime);
-			transaction.setTraLat(0.0f);
-			transaction.setTraLon(0.0f);
+			transaction.setTraLat(-1f);
+			transaction.setTraLon(-1f);
 			transaction.setTraSegment("E-COMMERCE-VAREJO");
-			transaction.setTraStatus("PENDENTE");
+			transaction.setTraStatus("em espera");
 			transaction.setTraValue(values.get(i));
 
 			monthLimit+= transaction.getTraValue();
