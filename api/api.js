@@ -769,6 +769,7 @@ app.post('/api/prodncate', jsonParser, function (request, response) {
 			hqlHive = "select from_unixtime(unix_timestamp(sale_date), 'EEE') DiaDeSemana, c.cat_name Categoria, sum(salepr_value) Total from sales s, products p, categories c where s.salepr_prod_id=p.prd_id and p.prd_category_id=c.cat_id group by from_unixtime(unix_timestamp(sale_date), 'EEE'), c.cat_name";
 			break;
 		}
+}
 
 	// Execute call
 	jdbc.initialize(config, function (err, res) {
@@ -884,7 +885,7 @@ app.post('/api/prodncate', jsonParser, function (request, response) {
 }
 });
 
-}
+
 });
 
 app.post('/api/clinprod', jsonParser, function (request, response) {
