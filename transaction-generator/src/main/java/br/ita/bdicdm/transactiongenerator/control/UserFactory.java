@@ -51,7 +51,7 @@ public class UserFactory {
 		//String login = firstName.charAt(0)+surname+"@email.com.br";
 		//login = login.toLowerCase();
 		user.setUsrLogin(email);
-		user.setUsrPassword(user.getUsrLogin());
+		user.setUsrPassword("123456");
 		user.setUsrToken(UUID.randomUUID().toString());
 		user.setUsrType("client");
 		return user;
