@@ -3,7 +3,8 @@
   <head>
     <title>Instituto Tecnológico da Aeronáutica - RobotBench BDIC-DM - #TS02 - Cassandra</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="utf-8">
+    
     <!-- Bootstrap -->
     <script src="js/jquery.js"></script>
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
