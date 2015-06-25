@@ -544,30 +544,30 @@ app.post('/api/custntrans', jsonParser, function (request, response) {
 			break;
 		}
 	case "02": {
-			hqlHive = "SELECT clients.cli_id as id, clients.cli_first as nome,clients.cli_last as sobrenome, trans_value as value FROM transactions JOIN clients ON (trans_user_token = usr_token ) ORDER BY trans_value DESC LIMIT 250";
+			hqlHive = "SELECT clients.cli_id as id, clients.cli_first as nome,clients.cli_last as sobrenome, trans_value as value FROM transactions JOIN clients ON (trans_user_token = usr_token ) ORDER BY value DESC LIMIT 250";
 			break;
 		}
 	case "03": {
-			hqlHive = "SELECT clients.cli_first as nome,clients.cli_last as sobrenome,transactions.* as all FROM transactions JOIN clients ON (trans_user_token = usr_token)";
+			hqlHive = "SELECT clients.cli_first as nome,clients.cli_last as sobrenome,transactions.trans_id as id FROM transactions JOIN clients ON (trans_user_token = usr_token)";
 			break;
 		}
 	case "04":
-		hqlHive = "SELECT clients.cli_first as nome,clients.cli_last as sobrenome,transactions.trans_date as date,transactions.trans_value as value,transactions.trans_loc_id as IdLocal FROM transactions JOIN clients ON (trans_user_token = usr_token) ORDER BY trans_value DESC LIMIT 250";
+		hqlHive = "SELECT clients.cli_first as nome,clients.cli_last as sobrenome,transactions.trans_date as data,transactions.trans_value as value,transactions.trans_loc_id as IdLocal FROM transactions JOIN clients ON (trans_user_token = usr_token) ORDER BY value DESC LIMIT 250";
 		break;
 	case "05":
-		hqlHive = "SELECT clients.cli_first as nome, clients.cli_last as sobrenome, transactions.trans_date as date, transactions.trans_value as value FROM transactions JOIN clients ON (trans_user_token = usr_token) ORDER BY clients.cli_first";
+		hqlHive = "SELECT clients.cli_first as nome, clients.cli_last as sobrenome, transactions.trans_date as data, transactions.trans_value as value FROM transactions JOIN clients ON (trans_user_token = usr_token) ORDER BY nome";
 		break;
 	case "06":
-		hqlHive = "SELECT clients.cli_first as nome,clients.cli_last as sobrenome,transactions.trans_date as date,transactions.trans_value as value,transactions.trans_loc_id as IdLocal FROM transactions JOIN clients ON (trans_user_token = usr_token) ORDER BY trans_date DESC LIMIT 250";
+		hqlHive = "SELECT clients.cli_first as nome,clients.cli_last as sobrenome,transactions.trans_date as data,transactions.trans_value as value,transactions.trans_loc_id as IdLocal FROM transactions JOIN clients ON (trans_user_token = usr_token) ORDER BY data DESC LIMIT 250";
 		break;
 	case "07":
-		hqlHive = "SELECT clients.cli_first as nome, clients.cli_last as sobrenome, transactions.trans_date as date, transactions.trans_value as value, transactions.trans_loc_id as IdLocal, locations.city_name as city, locations.state_name as state, locations.country_name as country FROM transactions JOIN clients ON (trans_user_token = usr_token) JOIN locations ON (trans_loc_id = loc_id) ORDER BY locations.city_name as city LIMIT 250";
+		hqlHive = "SELECT clients.cli_first as nome, clients.cli_last as sobrenome, transactions.trans_date as data, transactions.trans_value as value, transactions.trans_loc_id as IdLocal, locations.city_name as city, locations.state_name as state, locations.country_name as country FROM transactions JOIN clients ON (trans_user_token = usr_token) JOIN locations ON (trans_loc_id = loc_id) ORDER BY city LIMIT 250";
 		break;
 	case "08":
-		hqlHive = "SELECT transactions.trans_user_token, clients.cli_first as nome, clients.cli_last as sobrenome, locations.city_name as city, country_name, SUM(transactions.trans_value as value) as trans_total FROM transactions JOIN clients ON (trans_user_token = usr_token) JOIN locations ON (cli_loc_id = loc_id AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()), 7)) GROUP BY cli_first, cli_last, trans_user_token, city_name , country_name, trans_date ORDER BY trans_total LIMIT 250";
+		hqlHive = "SELECT transactions.trans_user_token, clients.cli_first as nome, clients.cli_last as sobrenome, locations.city_name as city, country_name, SUM(transactions.trans_value) as trans_total FROM transactions JOIN clients ON (trans_user_token = usr_token) JOIN locations ON (cli_loc_id = loc_id AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()), 7)) GROUP BY cli_first, cli_last, trans_user_token, city_name , country_name, trans_date ORDER BY trans_total LIMIT 250";
 		break;
 	case "09":
-		hqlHive = "SELECT transactions.trans_user_token, clients.cli_first as nome, clients.cli_last as sobrenome, locations.city_name as city, country_name as country, SUM(transactions.trans_value as value) as trans_total FROM transactions JOIN clients ON (trans_user_token = usr_token) JOIN locations ON (cli_loc_id = loc_id AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()), 30)) GROUP BY cli_first, cli_last, trans_user_token, city_name , country_name, trans_date ORDER BY trans_total LIMIT 250";
+		hqlHive = "SELECT transactions.trans_user_token, clients.cli_first as nome, clients.cli_last as sobrenome, locations.city_name as city, country_name as country, SUM(transactions.trans_value) as trans_total FROM transactions JOIN clients ON (trans_user_token = usr_token) JOIN locations ON (cli_loc_id = loc_id AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()), 30)) GROUP BY cli_first, cli_last, trans_user_token, city_name , country_name, trans_date ORDER BY trans_total LIMIT 250";
 		break;
 	case "10":
 		hqlHive = "SELECT transactions.trans_user_token, clients.cli_first as nome, cli_last as sobrenome, MONTH(trans_date) as month, COUNT(MONTH(trans_date)) as age FROM transactions JOIN clients ON (trans_user_token = usr_token AND trans_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) GROUP BY cli_first, cli_last, trans_user_token, MONTH(trans_date) LIMIT 250";
@@ -756,6 +756,14 @@ app.post('/api/prodncate', jsonParser, function (request, response) {
 		hqlHive = "SELECT prd_category_id as id, cat_name as categories, COUNT(sales.salepr_pro_cod) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) JOIN categories ON (prd_category_id = cat_id) GROUP BY prd_category_id, cat_name ORDER BY count DESC LIMIT 250";
 		break;
 	}
+case "06":
+		hqlHive = "SELECT from_unixtime(unix_timestamp(sale_date), 'EEE') Weekday, p.prd_name Product, sum(salepr_value) FROM sales s, products p WHERE s.salepr_pro_cod=p.prd_id GROUP BY from_unixtime(unix_timestamp(sale_date), 'EEE'), p.prd_name";
+		break;
+	}
+case "07":
+		hqlHive = "select from_unixtime(unix_timestamp(sale_date), 'EEE') DiaDeSemana, c.cat_name Categoria, sum(salepr_value) Total from sales s, products p, categories c where s.salepr_prod_id=p.prd_id and p.prd_category_id=c.cat_id group by from_unixtime(unix_timestamp(sale_date), 'EEE'), c.cat_name";
+		break;
+	}
 
 	// Execute call
 	jdbc.initialize(config, function (err, res) {
@@ -824,6 +832,22 @@ app.post('/api/prodncate', jsonParser, function (request, response) {
 								}
 							case "05": {
 									retorno.subtitulo = '05 - Classificar os produtos mais vendidos nos em um intervalo com data inicial e data final';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "06": {
+									retorno.subtitulo = '06 - Total de venda por produtos em dias específicos da semana:';
+									retorno.descricao = '[ Descrição detalhada aqui ]';
+									for (counter = 0; counter <= categories.length - 1; counter++) {
+										retorno.dados.push(categories[counter]);
+									}
+									break;
+								}
+							case "07": {
+									retorno.subtitulo = '07 - Total de venda por produtos categorias em dias específicos da semana:';
 									retorno.descricao = '[ Descrição detalhada aqui ]';
 									for (counter = 0; counter <= categories.length - 1; counter++) {
 										retorno.dados.push(categories[counter]);
