@@ -44,12 +44,12 @@ cart_buy = function(){
 			contentType: 'application/json; charset=utf-8',
 			dataType: 'json',
 			success: function(data){
-				if(data.list.length){
+				if (data.list.length > 0){
 
 					//popula a lista de cartões do cliente
 					var options = $("#dw_cartoes");
-					$.each(options, function() {
-					    options.append($("<option />").val(data.list[0].car_id).attr('num_card',data.list[0].car_num).text(data.list[0].car_band + ' **** **** **** ' + data.list[0].car_num.substring(12,16)));
+					$.each(data.list, function(index, cartao) {
+					    options.append($("<option />").val(cartao.car_id).attr('num_card', cartao.car_num).text(cartao.car_band + ' **** **** **** ' + cartao.car_num.substring(12,16)));
 					});
 
 					$('select').material_select();
@@ -114,11 +114,13 @@ cart_buy = function(){
 			tr.append("<td>" + item.descricao + "</td>");
 			tr.append("<td class='center'>" + item.quantidade + "</td>");
 			tr.append("<td class='right2'>" + item.valor + "</td>");
+
 			valorCalc = item.valor;
-			valorCalc = valorCalc.replace(".","");
 			valorCalc = valorCalc.replace(",",".");
-			subTotal = parseFloat(valorCalc)*parseFloat(item.quantidade);
+			subTotal = parseFloat(valorCalc) * parseFloat(item.quantidade);
+
 			total+=subTotal;
+
 			tr.append("<td class='right2'>" + util.formatReal(subTotal) + "</td>");
 			$('table tbody').append(tr);
 		});
@@ -184,8 +186,7 @@ cart_buy = function(){
 		var token_id_user = $.sessionStorage.getItem('userToken').toString();
 
 		var parametros = {
-			//token: token_id_user,
-			token: "1a87bb69-831e-4991-9917-e3adce68920e",
+			token: token_id_user,
 			creditcardNumber: num_card,
 			cod_cliente: parseInt($.sessionStorage.getItem('userIDMySQL')),
 			cod_credit_card: parseInt(id_cartao),
