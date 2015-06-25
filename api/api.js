@@ -749,18 +749,19 @@ app.post('/api/prodncate', jsonParser, function (request, response) {
 			hqlHive = "SELECT products.prd_name as products, COUNT(sales.salepr_prod_id) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),7)) GROUP BY prd_name ORDER BY count DESC LIMIT 250";
 			break;
 		}
-	case "04":
+	case "04":{
 		hqlHive = "SELECT prd_category_id as id, cat_name as categories, COUNT(sales.salepr_pro_cod) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) JOIN categories ON (prd_category_id = cat_id) GROUP BY prd_category_id, cat_name ORDER BY count DESC LIMIT 250";
 		break;
-	case "05":
+}
+	case "05":{
 		hqlHive = "SELECT prd_category_id as id, cat_name as categories, COUNT(sales.salepr_pro_cod) as count FROM products JOIN sales ON (salepr_pro_cod = prd_id AND sale_date > DATE_SUB(FROM_UNIXTIME(unix_timestamp()),365)) JOIN categories ON (prd_category_id = cat_id) GROUP BY prd_category_id, cat_name ORDER BY count DESC LIMIT 250";
 		break;
 	}
-case "06":
+case "06":{
 		hqlHive = "SELECT from_unixtime(unix_timestamp(sale_date), 'EEE') Weekday, p.prd_name Product, sum(salepr_value) FROM sales s, products p WHERE s.salepr_pro_cod=p.prd_id GROUP BY from_unixtime(unix_timestamp(sale_date), 'EEE'), p.prd_name";
 		break;
 	}
-case "07":
+case "07":{
 		hqlHive = "select from_unixtime(unix_timestamp(sale_date), 'EEE') DiaDeSemana, c.cat_name Categoria, sum(salepr_value) Total from sales s, products p, categories c where s.salepr_prod_id=p.prd_id and p.prd_category_id=c.cat_id group by from_unixtime(unix_timestamp(sale_date), 'EEE'), c.cat_name";
 		break;
 	}
@@ -868,6 +869,7 @@ case "07":
 		}
 	});
 
+}
 });
 
 app.post('/api/clinprod', jsonParser, function (request, response) {
