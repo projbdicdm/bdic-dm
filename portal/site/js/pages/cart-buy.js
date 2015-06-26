@@ -106,7 +106,7 @@ cart_buy = function(){
 			$('.pagamentofinalizacao').hide();
 			return false;
 		}
-		var total = 0;
+		var total = 0.0;
 		$.each(JSON.parse(cart), function(index, item) {
 			tr = $('<tr/>');
 			tr.append("<td class='top'><i class='mdi-action-delete small' onclick=cart_buy.remove_item('"+item.id+"');></i></td>");
@@ -116,19 +116,23 @@ cart_buy = function(){
 			tr.append("<td class='right2'>" + item.valor + "</td>");
 
 			valorCalc = item.valor;
+			valorCalc = valorCalc.replace(".","");
 			valorCalc = valorCalc.replace(",",".");
-			subTotal = parseFloat(valorCalc) * parseFloat(item.quantidade);
+			subTotal = parseFloat(valorCalc) * parseInt(item.quantidade);
 
 			total+=subTotal;
 
-			tr.append("<td class='right2'>" + util.formatReal(subTotal) + "</td>");
+			tr.append("<td class='right2'>" + util.formatReal(subTotal.toFixed(2)) + "</td>");
 			$('table tbody').append(tr);
 		});
-			tr = $('<tr/>');
-			tr.append("<td colspan='5' class='right2'><b>Total</b></td>");
-			tr.append("<td class='right2' id='vrTotalCarrinho'>" + util.formatReal(total) + "</td>");
-			$('table').append(tr);
-			$('.pagamentofinalizacao').show();			
+
+		var total_real = total.toFixed(2);
+
+		tr = $('<tr/>');
+		tr.append("<td colspan='5' class='right2'><b>Total</b></td>");
+		tr.append("<td class='right2' id='vrTotalCarrinho'>" + util.formatReal(total_real) + "</td>");
+		$('table').append(tr);
+		$('.pagamentofinalizacao').show();			
 	}
 	var _pagamento = function(){
 
