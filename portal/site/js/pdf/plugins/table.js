@@ -287,7 +287,15 @@ function calculateDim(data, dimensions) {
 	for (var i = 0; i < heights.length; i++) {
 		value += heights[i];
 		indexHelper += heights[i];
-		if (indexHelper > (doc.internal.pageSize.height - pageStart)) {
+		
+		// if (indexHelper > (doc.internal.pageSize.height - pageStart)) {
+            // SplitIndex.push(i-1);
+			// indexHelper = 0;
+			// pageStart = dimensions[4] + 30;
+		// }
+		
+		// fix page overflow
+		if (indexHelper > ((doc.internal.pageSize.height - 40) - pageStart)) {
             SplitIndex.push(i-1);
 			indexHelper = 0;
 			pageStart = dimensions[4] + 30;
