@@ -108,17 +108,31 @@ index = function(){
         // Get columns
         jsonDataItems = jsonData[0];
         
-        counter = 0
+        counter = 0;
+		var counterNumberColumns = 0;
         Object.keys(jsonData[0]).forEach(function(key) {
             var columnType = isNaN(jsonData[0][key]) ? 'string' : 'number';
             if(counter == 0)
                 googleDataTable.addColumn('string', key);
                 
             else if(counter > 0 && columnType == 'number')
+			{
                 googleDataTable.addColumn(columnType, key);
+				counterNumberColumns++;
+			}
                 
             counter++;
         });
+		
+		if(counterNumberColumns == 0)
+		{
+			$("#grafico").hide();
+			return;
+		}
+		else
+		{
+			$("#grafico").show();
+		}
         
         // Get values
         for (i = 0; i < jsonData.length; i++)
@@ -178,14 +192,17 @@ index = function(){
             var pageWidth = 210 * k;
             var pageHeight = 297 * k;
             var pageMargin = 10 * k;
-            var imageResizeFactor = charDiv.width() / (pageWidth - (pageMargin * 2));
-            
-            var imageWidth = charDiv.width() / imageResizeFactor;
-            var imageHeight = charDiv.height() / imageResizeFactor;
-            var imageCompress = 'none';
-            
-            var img = chart.getImageURI();
-            //console.log(img);
+			
+			var imageResizeFactor, imageWidth, imageHeight, imageCompress, img;
+			if (charDiv.is(":visible"))
+			{
+				var imageResizeFactor = charDiv.width() / (pageWidth - (pageMargin * 2));
+				var imageWidth = charDiv.width() / imageResizeFactor;
+				var imageHeight = charDiv.height() / imageResizeFactor;
+				var imageCompress = 'none';
+				var img = chart.getImageURI();
+				//console.log(img);
+			}
             
             var doc = new jsPDF('p', 'pt', 'a4', true);
                     
@@ -212,10 +229,14 @@ index = function(){
             
             // Chart
             verticalShift = verticalShift + (6 * k);
-            doc.addImage(img, 'png', pageMargin, verticalShift, imageWidth, imageHeight, undefined, imageCompress);
+			
+			if (charDiv.is(":visible"))
+			{
+				doc.addImage(img, 'png', pageMargin, verticalShift, imageWidth, imageHeight, undefined, imageCompress);
+				verticalShift = verticalShift + imageHeight;
+			}
             
             // Table
-            verticalShift = verticalShift + imageHeight;
             //doc.setFont("times", "normal");
             doc.setFontSize(10);
             height = doc.drawTable(jsonData, {
