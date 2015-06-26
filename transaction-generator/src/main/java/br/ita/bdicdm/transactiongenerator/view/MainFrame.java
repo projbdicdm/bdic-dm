@@ -35,6 +35,10 @@ public class MainFrame extends javax.swing.JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -8011436078552457781L;
+
+	private static final String AS_NUMBER = "as number";
+
+	private static final String AS_STRING = "as string";
 	
 	private UserDAO userDao = UserDAO.getInstance();
 	/**
@@ -358,20 +362,35 @@ public class MainFrame extends javax.swing.JFrame {
     			CsvReader reader = new CsvReader(',');
     			CsvSheet csv = reader.read(is);
     			StringBuilder builder = new StringBuilder();
+    			String comma = ",";
     			for (CsvRow csvRow : csv) {
 					builder.append("{")
-					       .append(System.lineSeparator());
-					appendJson(builder, "token", csvRow.getColumn("usr_token"), 1);
-					appendJson(builder, "creditcardNumber", csvRow.getColumn("car_id"), 1);
-					appendJson(builder, "value", csvRow.getColumn("tra_value"), 1);
-					appendJson(builder, "date", csvRow.getColumn("tra_date"), 1);
-					appendJsonClass(builder, "geo", 1);
-					appendJson(builder, "lat", csvRow.getColumn("tra_lat"), 2);
-					appendJson(builder, "lon", csvRow.getColumn("tra_lon"), 2);
-					builder.append("    }")
-					       .append(System.lineSeparator());
-					appendJson(builder, "segment", csvRow.getColumn("tra_segment"), 1);
-					builder.append("}")
+					       .append(System.lineSeparator())
+					       .append(jsonAttribute("token", csvRow.getColumn("usr_token"), 1, AS_STRING))
+					       .append(comma)
+					       .append(System.lineSeparator())
+					       .append(jsonAttribute("creditcardNumber", csvRow.getColumn("car_id"), 1, AS_NUMBER))
+					       .append(comma)
+					       .append(System.lineSeparator())
+					       .append(jsonAttribute("value", csvRow.getColumn("tra_value"), 1, AS_NUMBER))
+					       .append(comma)
+					       .append(System.lineSeparator())
+					       .append(jsonAttribute("date", csvRow.getColumn("tra_date"), 1, AS_STRING))
+					       .append(comma)
+					       .append(System.lineSeparator())
+					       .append(jsonClass("geo", 1))
+					       .append(System.lineSeparator())
+					       .append(jsonAttribute("lat", csvRow.getColumn("tra_lat"), 1, AS_NUMBER))
+					       .append(comma)
+					       .append(System.lineSeparator())
+					       .append(jsonAttribute("lon", csvRow.getColumn("tra_lon"), 1, AS_NUMBER))
+					       .append(System.lineSeparator())
+					       .append("    }")
+					       .append(comma)
+					       .append(System.lineSeparator())
+					       .append(jsonAttribute("segment", csvRow.getColumn("tra_segment"), 1, AS_STRING))
+					       .append(System.lineSeparator())
+					       .append("}")
 				           .append(System.lineSeparator())
 				           .append(System.lineSeparator());
 				}
@@ -385,24 +404,30 @@ public class MainFrame extends javax.swing.JFrame {
     	}
     }//GEN-LAST:event_generateJsonButtonActionPerformed
     
-    private void appendJson(StringBuilder builder, String label, String value, int level) {
+    private String jsonAttribute(String label, String value, int level, String valueType) {
+    	StringBuilder builder = new StringBuilder();
     	String mark = "\"";
     	for (int i = 0; i < level; i++) {
     		builder.append("    ");	
 		}
-		builder.append(mark+label+mark+": ")
-		       .append(mark+value+mark+",")
-		       .append(System.lineSeparator());
-
+		builder.append(mark+label+mark+": ");
+		if (valueType.equals(AS_NUMBER)) {
+			builder.append(value);
+		} else if (valueType.equals(AS_STRING)){
+			builder.append(mark+value+mark);
+		}
+		       
+		return builder.toString();
 	}
     
-    private void appendJsonClass(StringBuilder builder, String label, int level) {
+    private String jsonClass(String label, int level) {
+    	StringBuilder builder = new StringBuilder();
     	String mark = "\"";
     	for (int i = 0; i < level; i++) {
     		builder.append("    ");	
 		}
-		builder.append(mark+label+mark+": { ")
-		       .append(System.lineSeparator());
+		builder.append(mark+label+mark+": { ");
+		return builder.toString();
 	}
 
 	private void populateTextArea(List<Transaction> transactions) {
