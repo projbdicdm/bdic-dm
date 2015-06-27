@@ -3,6 +3,12 @@ var RSERVE_IP = "orion2412.startdedicated.net";
 var ACTIVEMQ_IP = "orion2412.startdedicated.net";
 var HIVE_IP = "orion2412.startdedicated.net";
 var HIVE_PORT = "10000";
+var CONFIRM_TRANSACTION_HOST = "orion2412.startdedicated.net";
+var CONFIRM_TRANSACTION_PORT = 8898;
+var CONFIRM_TRANSACTION_PATH = "/api/transaction/buy/confirm";
+
+//obj http para chamadas rest de dentro da API
+var httpClient = require('http');
 
 //criamos o obj que renderiza HTML na saida
 var jade = require('jade');
@@ -379,6 +385,35 @@ client.execute(query_login_by_token, [req.body.token], {prepare: true}, function
 						res.statusCode = 500;
 						return res.json({status: "Error on query_confirm_transaction", message: err});			
 					}
+					
+					var httpRequestOptions = {
+						host: CONFIRM_TRANSACTION_HOST,
+						port: CONFIRM_TRANSACTION_PORT,
+						path: CONFIRM_TRANSACTION_PATH,
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					}
+					
+					var confirmToEComm = {
+						transaction_id: req.body.id,
+						status: "ok"
+					};
+					
+					var post_req = httpClient.request(httpRequestOptions, function(res) {
+						res.setEncoding('utf8');
+						res.on('data', function (chunk) {
+							//console.log('Response: ' + chunk);
+							//o que fazer com o retorno da 
+							//confirmacao do EComm? Para o Cliente
+							//foi OK, o site que precisa procurar
+							//a transacao depois via pooling
+						});
+					});
+
+					post_req.write(JSON.stringify(confirmToEComm));
+					post_req.end();
 					
 					return res.json({status: "ok"});
 					/*var message = {
