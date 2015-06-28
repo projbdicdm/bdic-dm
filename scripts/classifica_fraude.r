@@ -3,6 +3,7 @@ library(HMM)
 
 prob <- function (x) {x / sum (x)}
 
+
 categoriza <- function(value){
 	valor = as.numeric(value)
 	if(valor < 100){
@@ -22,7 +23,8 @@ pegaOMaior <- function(coluna){
 obtemTransacoes <- function(uuid){
 	cassdrv <- JDBC("org.apache.cassandra.cql.jdbc.CassandraDriver", list.files("/root/cassandra-jdbc",pattern="jar$",full.names=T))
 	casscon <- dbConnect(cassdrv, "jdbc:cassandra://orion2412.startdedicated.net:9160/BDICDM")
-	res <- dbGetQuery(casscon, "select * from \"TRANSACTION\" where usr_token = ? ", uuid)
+	res <- dbGetQuery(casscon, "select tra_value, tra_status from \"TRANSACTION\" where usr_token = ? LIMIT 10", uuid)
+	dbDisconnect(casscon)
 	return(res)
 }
 
@@ -47,7 +49,7 @@ classificaHMM <- function (uuid, valorNovo){
 	res <- obtemTransacoes(uuid)
 	res2 <- res[res$tra_status %in% c('PENDING','CONFIRMED'),]
 	
-	if(length(res[,1]) < 10){
+	if(length(res2[,1]) < 10){
 		return(TRUE)
 	}
 	
